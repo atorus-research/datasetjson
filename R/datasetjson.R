@@ -10,13 +10,19 @@
 #' @param dataset_metadata Metadata pertaining to the .data parameter. Written
 #'   to the itemGroupData parameter
 #' @param version Version of Dataset JSON schema to follow.
-#' @return dataset_json object pertaining to the specific Dataset JSON version specific
+#' @param data_type Type of data being written. clinicalData for subject level
+#'   data, and referenceData for non-subject level data (i.e. TDMs, Associated
+#'   Persons)
+#'
+#' @return dataset_json object pertaining to the specific Dataset JSON version
+#'   specific
 #' @export
 #'
 #' @examples
 #' # TODO:
-dataset_json <- function(.data, item_id, dataset_metadata, version="1.0.0") {
-  new_dataset_json(version, item_id)
+dataset_json <- function(.data, item_id, dataset_metadata, version="1.0.0", data_type = c('clinicalData', 'referenceData')) {
+  data_type = match.arg(data_type)
+  new_dataset_json(version, item_id, data_type)
 }
 
 #' Create a base Dataset JSON Container
@@ -25,22 +31,23 @@ dataset_json <- function(.data, item_id, dataset_metadata, version="1.0.0") {
 #' schema
 #'
 #' @return datasetjson object
+#'
 #' @noRd
-new_dataset_json <- function(version, item_id) {
+new_dataset_json <- function(version, item_id, data_type) {
   # List of version specific generators
   funcs <- list(
     "1.0.0" = new_dataset_json_v1_0_0
   )
 
   # Extract the function and call it to return the base structure
-  funcs[[version]](item_id)
+  funcs[[version]](item_id, data_type)
 }
 
 #' Dataset JSON v1.0.0 Generator
 #'
 #' @return datasetjson_v1_0_0 object
 #' @noRd
-new_dataset_json_v1_0_0 <- function(item_id) {
+new_dataset_json_v1_0_0 <- function(item_id, data_type) {
 
   x <- list(
     "creationDateTime"= get_datetime(),
@@ -50,12 +57,17 @@ new_dataset_json_v1_0_0 <- function(item_id) {
     "originator" = "NA",
     "sourceSystem" = "NA",
     "sourceSystemVersion" = "NA",
+    #TODO: Add toggle here to write reference data taken from object creation
+    #parameter
     "clinicalData" = list(
       "studyOID" = "NA",
       "metaDataVersionOID" = "NA",
       "metaDataRef" = "NA",
       "itemGroupData"= list(
         list(
+          "records" = integer(),
+          "name" = character(),
+          "label" = character(),
           "items" = data.frame(),
           "itemData" = data.frame()
         )
@@ -63,6 +75,8 @@ new_dataset_json_v1_0_0 <- function(item_id) {
     )
   )
 
+  #TODO: Add toggle here to write reference data taken from object creation
+  #parameter
   names(x$clinicalData$itemGroupData) <- item_id
 
   structure(
