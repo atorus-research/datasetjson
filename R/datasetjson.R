@@ -49,6 +49,8 @@ new_dataset_json <- function(version, item_id, data_type) {
 #' @noRd
 new_dataset_json_v1_0_0 <- function(item_id, data_type) {
 
+  # TODO: Split this out more, where clinicalData and itemGroupData
+  # are built instead in chunks
   x <- list(
     "creationDateTime"= get_datetime(),
     "datasetJSONVersion"= "1.0.0",
