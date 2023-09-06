@@ -4,12 +4,7 @@
 \alias{data_metadata}
 \title{Create the data metadata container for a Dataset JSON object}
 \usage{
-data_metadata(
-  study,
-  metadata_version,
-  metadata_ref,
-  data_type = c("clinicalData", "referenceData")
-)
+data_metadata(study, metadata_version, metadata_ref)
 }
 \arguments{
 \item{data_type}{Type of data being written. clinicalData for subject level

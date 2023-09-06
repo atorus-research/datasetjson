@@ -6,13 +6,22 @@
 \alias{datasetjson-package}
 \title{datasetjson: Read and write CDISC Dataset JSON files}
 \description{
-
+R package for reading and writing CDISC Dataset JSON files
 }
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://pharmaverse.github.io/admiraltemplate}
-  \item \url{https://github.com/pharmaverse/admiraltemplate}
+  \item \url{https://github.com/atorus-research/datasetjson}
+  \item Report bugs at \url{https://github.com/atorus-research/datasetjson/issues}
+}
+
+}
+\author{
+\strong{Maintainer}: Mike Stackhouse \email{mike.stackhouse@atorusresearch.com} (\href{https://orcid.org/0000-0001-6030-723X}{ORCID})
+
+Authors:
+\itemize{
+  \item Nicholas Masel \email{nmasel@its.jnj.com}
 }
 
 }

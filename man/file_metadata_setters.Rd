@@ -2,12 +2,18 @@
 % Please edit documentation in R/file_metadata.R
 \name{set_source_system}
 \alias{set_source_system}
+\alias{set_originator}
+\alias{set_file_oid}
 \title{Set source system information}
 \usage{
-set_source_system(dsjson, sys, sys_version)
+set_source_system(x, sys, sys_version)
+
+set_originator(x, originator)
+
+set_file_oid(x, file_oid)
 }
 \arguments{
-\item{dsjson}{datasetjson object}
+\item{x}{datasetjson object}
 
 \item{sys}{sourceSystem parameter, defined as "The computer system or
 database management system that is the source of the information in this
@@ -15,9 +21,15 @@ file."}
 
 \item{sys_version}{sourceSystemVersion, defined as "The version of the
 sourceSystem"}
+
+\item{originator}{originator parameter, defined as "The organization that
+generated the Dataset-JSON file."}
+
+\item{file_oid}{fileOID parameter, defined as "A unique identifier for this
+file."}
 }
 \value{
-datasetjson object
+datasetjson or file_metadata object
 }
 \description{
 Set information about the source system used to generate the Dataset JSON
@@ -26,3 +38,4 @@ object.
 \examples{
 # TODO:
 }
+\concept{File Metadata Setters}
