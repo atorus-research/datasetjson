@@ -1,9 +1,15 @@
-#' Title
+#' Generate an individual element that fills the itemGroupData field
 #'
-#' @param uid Data Object ID for item in Dataset JSON object
+#' @param .data Dataframe to be written to Dataset JSON file
+#' @param uid Data Object ID for item in Dataset JSON object, corresponding to
+#'   ItemGroupDef/@OID in Define-XML.
+#' @param name Dataset name
+#' @param label Dataset Label
+#' @param items Variable metadata
 #'
 #' @return List of dataset metadata
-#' TODO: This is completely untested and hasn't been run yet.
+#' # TODO: This is completely untested and hasn't
+#' #  been run yet.
 dataset_metadata <- function(.data, uid, name, label, items) {
 
   # Check items before moving any further
