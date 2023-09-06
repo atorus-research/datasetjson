@@ -7,8 +7,6 @@
 #' @param item_id ID used to label dataset with the itemGroupData parameter.
 #'   Defined as "Object of Datasets. Key value is a unique identifier for
 #'   Dataset, corresponding to ItemGroupDef/@OID in Define-XML."
-#' @param dataset_metadata Metadata pertaining to the .data parameter. Written
-#'   to the itemGroupData parameter
 #' @param version Version of Dataset JSON schema to follow.
 #' @param data_type Type of data being written. clinicalData for subject level
 #'   data, and referenceData for non-subject level data (i.e. TDMs, Associated
@@ -19,8 +17,9 @@
 #' @export
 #'
 #' @examples
-#' # TODO:
-dataset_json <- function(.data, item_id, dataset_metadata, version="1.0.0", data_type = c('clinicalData', 'referenceData')) {
+#' TODO: Re-look at this to allow providing the sections all separately.
+#' # The file logicially splits into the file metadata, data metadata, and dataset metadata
+dataset_json <- function(.data, item_id, version="1.0.0", data_type = c('clinicalData', 'referenceData')) {
   data_type = match.arg(data_type)
   new_dataset_json(version, item_id, data_type)
 }
@@ -48,6 +47,10 @@ new_dataset_json <- function(version, item_id, data_type) {
 #' @return datasetjson_v1_0_0 object
 #' @noRd
 new_dataset_json_v1_0_0 <- function(item_id, data_type) {
+
+  # Build file metadata
+  # Build Data metadata
+  # Add dataset metadata
 
   # TODO: Split this out more, where clinicalData and itemGroupData
   # are built instead in chunks
