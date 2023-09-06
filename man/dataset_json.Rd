@@ -4,7 +4,7 @@
 \alias{dataset_json}
 \title{Create a Dataset JSON Object}
 \usage{
-dataset_json(.data, item_id, dataset_metadata, version = "1.0.0")
+dataset_json(.data, item_id, version = "1.0.0")
 }
 \arguments{
 \item{.data}{Input data to contain within the Dataset JSON file. Written to
@@ -14,17 +14,20 @@ the itemData parameter.}
 Defined as "Object of Datasets. Key value is a unique identifier for
 Dataset, corresponding to ItemGroupDef/@OID in Define-XML."}
 
-\item{dataset_metadata}{Metadata pertaining to the .data parameter. Written
-to the itemGroupData parameter}
-
 \item{version}{Version of Dataset JSON schema to follow.}
+
+\item{data_type}{Type of data being written. clinicalData for subject level
+data, and referenceData for non-subject level data (i.e. TDMs, Associated
+Persons)}
 }
 \value{
-dataset_json object pertaining to the specific Dataset JSON version specific
+dataset_json object pertaining to the specific Dataset JSON version
+specific
 }
 \description{
 Create the base object used to write a Dataset JSON file.
 }
 \examples{
-# TODO:
+TODO: Re-look at this to allow providing the sections all separately.
+# The file logicially splits into the file metadata, data metadata, and dataset metadata
 }
