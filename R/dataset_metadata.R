@@ -1,38 +1,23 @@
 #' Generate an individual element that fills the itemGroupData field
 #'
-#' @param .data Dataframe to be written to Dataset JSON file
 #' @param uid Data Object ID for item in Dataset JSON object, corresponding to
 #'   ItemGroupDef/@OID in Define-XML.
 #' @param name Dataset name
 #' @param label Dataset Label
 #' @param items Variable metadata
+#' @param .data Dataframe to be written to Dataset JSON file
 #'
 #' @return List of dataset metadata
+#' @examples
 #' # TODO: This is completely untested and hasn't
-#' #  been run yet.
-dataset_metadata <- function(.data, uid, name, label, items) {
+#' # been run yet.
+dataset_metadata <- function(uid, name, label, items, .data) {
 
   # Check items before moving any further
   validate_dataset_items(items)
 
-  records <- nrow(.data)
-
-  # Create the container with proper elements
-  x <- list(
-    list(
-      "records" = records,
-      "name" = name,
-      "label" = label,
-      "items" = NULL,
-      "itemData" = NULL
-    )
-  )
-
-  # Set the Object ID
-  names(x) <- uid
-
   # Attach in the variable metadata
-  if (!("ITEMGROUPDATASEQ" %in% names(items))) {
+  if (!("ITEMGROUPDATASEQ" %in% items$OID)) {
     igds_row <- data.frame(
       OID = "ITEMGROUPDATASEQ",
       name = "ITEMGROUPDATASEQ",
@@ -40,18 +25,79 @@ dataset_metadata <- function(.data, uid, name, label, items) {
       type = "integer"
     )
 
+    # Match up columns and fill
+    igds_row[setdiff(names(items), names(igds_row))] <- NA
+    items[setdiff(names(igds_row), names(items))] <- NA
+
     items <- rbind(igds_row, items)
   }
-  x['items'] <- items
 
-  # Derive ITEMGROUPDATASEQ and insert it up front in the dataframe
-  .data <- cbind(ITEMGROUPDATASEQ = 1:records, .data)
-  x['itemData'] <- .data
+  if (!missing(.data)) {
+    records <- nrow(.data)
+    # Derive ITEMGROUPDATASEQ and insert it up front in the dataframe
+    item_data <- cbind(ITEMGROUPDATASEQ = 1:records, .data)
+  } else {
+    records <- NULL
+    item_data <- NULL
+  }
+
+  # Create the container with proper elements
+  x <- list(
+    list(
+      "records" = records,
+      "name" = name,
+      "label" = label,
+      "items" = items,
+      "itemData" = item_data
+    )
+  )
+
+  # Set the Object ID
+  names(x) <- uid
 
   structure(
     x,
     class = c('dataset_metadata', 'list')
   )
+}
+
+#' Apply dataframe to itemData attribute
+#'
+#' This function will set the itemData attribute within a datasetjson or
+#' dataset_metadata object. It additionally sets the records parameter with the
+#' proper number of rows in .data.
+#'
+#' @param x Object to set itemData
+#' @param .data Dataframe to be written to Dataset JSON file
+#' @param ... Additional params
+#'
+#' @return Input object with itemData applied
+#' @export
+#'
+#' @examples
+#' # TODO:
+set_item_data <- function(x, .data, ...) {
+  UseMethod("set_item_data")
+}
+
+#' @noRd
+#' @export
+#' @method set_item_data dataset_metadata
+set_item_data.dataset_metadata <- function(x, .data) {
+  stopifnot_dataset_metadata(x)
+
+  if (!inherits(.data, "data.frame")) {
+    stop(".data must be a data.frame", call.=FALSE)
+  }
+
+  records <- nrow(.data)
+  # Derive ITEMGROUPDATASEQ and insert it up front in the dataframe
+  item_data <- cbind(ITEMGROUPDATASEQ = 1:records, .data)
+
+  # Insert into object in proper spots
+  x[[1]][['records']] <- records
+  x[[1]][['itemData']] <- item_data
+  x
 }
 
 #' Verify that the item metadata supplied is the appropriate format
