@@ -23,7 +23,7 @@ stopifnot_data_metadata <- function(x) {
 }
 
 stopifnot_file_metadata <- function(x) {
-  if (!inherits(x, "file_metadata")) {
-    stop("Input must be a file_metadata object", call.=FALSE)
+  if (!(inherits(x, "datasetjson") | inherits(x, "file_metadata"))) {
+    stop("x must be a datasetjson object or file_metadata object", call.=FALSE)
   }
 }
