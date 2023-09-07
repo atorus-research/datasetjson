@@ -4,26 +4,82 @@
 #'   data, and referenceData for non-subject level data (i.e. TDMs, Associated
 #'   Persons)
 #'
-#' @return
+#' @return data_metadata object
 #' @export
 #'
 #' @examples
-data_metadata <- function(data_type = c('clinicalData', 'referenceData')) {
-  data_type = match.arg(data_type)
+#' # TODO:
+data_metadata <- function(study, metadata_version, metadata_ref) {
 
   x <- list(
-    studyOID = NULL,
-    metaDataVersionOID = NULL,
-    metaDataRef = NULL,
+    studyOID = "NA",
+    metaDataVersionOID = "NA",
+    metaDataRef = "NA",
     itemGroupData = NULL
   )
 
-  names(x) <- data_type
+  structure(
+    x,
+    class = c("data_metadata", "list")
+  )
 }
 
-# Build up the clinicalData or referenceData elements
-set_study_oid <- function() {}
+#' Set data metadata parameters
+#'
+#' This set of functions
+#' @param x data metadata or datasetjson object
+#' @param study Study OID value
+#' @param ...
+#'
+#' @return A datasetjson or data_metadata object
+#' @export
+#'
+#' @family Data metadata setters
+#' @rdname data_metadata_setters
+#'
+#' @examples
+#' # TODO:
+set_study_oid <- function(x, study, ...) {
+  UseMethod("set_study_oid")
+}
 
-set_metadata_version <- function() {}
+#' @family Data metadata setters
+#' @rdname data_metadata_setters
+#' @export
+set_study_oid.data_metadata <- function(x, study) {
+  stopifnot_data_metadata(x)
+  x[['studyOID']] <- study
+  x
+}
 
-set_metadata_ref <- function () {}
+#' @param metadata_version Metadata version OID value
+#' @family Data metadata setters
+#' @rdname data_metadata_setters
+#' @export
+set_metadata_version <- function(x, metadata_version, ...) {
+  UseMethod("set_metadata_version")
+}
+
+#' @export
+#' @noRd
+set_metadata_version.data_metadata <- function(x, metadata_version) {
+  stopifnot_data_metadata(x)
+  x[['metaDataVersionOID']] <- metadata_version
+  x
+}
+
+#' @param metadata_ref Metadata reference (i.e. path to Define.xml)
+#' @family Data metadata setters
+#' @rdname data_metadata_setters
+#' @export
+set_metadata_ref <- function(x, metadata_ref) {
+  UseMethod("set_metadata_ref")
+}
+
+#' @export
+#' @noRd
+set_metadata_ref.data_metadata <- function(x, metadata_ref) {
+  stopifnot_data_metadata(x)
+  x[['metaDataRef']] <- metadata_ref
+  x
+}
