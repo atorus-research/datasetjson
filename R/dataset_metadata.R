@@ -1,17 +1,16 @@
 #' Generate an individual element that fills the itemGroupData field
 #'
-#' @param uid Data Object ID for item in Dataset JSON object, corresponding to
+#' @param item_id Data Object ID for item in Dataset JSON object, corresponding to
 #'   ItemGroupDef/@OID in Define-XML.
 #' @param name Dataset name
 #' @param label Dataset Label
 #' @param items Variable metadata
 #' @param .data Dataframe to be written to Dataset JSON file
 #'
-#' @return List of dataset metadata
+#' @return dataset_metadata object
 #' @examples
-#' # TODO: This is completely untested and hasn't
-#' # been run yet.
-dataset_metadata <- function(uid, name, label, items, .data) {
+#' # TODO:
+dataset_metadata <- function(item_id, name, label, items, .data) {
 
   # Check items before moving any further
   validate_dataset_items(items)
@@ -53,7 +52,7 @@ dataset_metadata <- function(uid, name, label, items, .data) {
   )
 
   # Set the Object ID
-  names(x) <- uid
+  names(x) <- item_id
 
   structure(
     x,
@@ -135,10 +134,9 @@ validate_dataset_items <- function(items) {
 #' @param metadata A list containing Dataset JSON dataset object metadata
 #'
 #' @return dataframe
-#' @export
-#'
 #' @examples
 #' # TODO:
+#' @noRd
 apply_dataset_metadata <- function(.data, metadata) {
   # TODO: Set records, name, and label to the dataframe as a whole
 
@@ -156,10 +154,7 @@ apply_dataset_metadata <- function(.data, metadata) {
 #' @param .data A dataframe with Dataset JSON attributes applied
 #'
 #' @return A list of Dataset dataset object JSON metadata
-#' @export
-#'
-#' @examples
-#' TODO:
+#' @noRd
 gather_dataset_metadata <- function(.data) {
 
   # Retrieve the necessary metadata off of a data frame that pertains to a dataset JSON object
