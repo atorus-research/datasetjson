@@ -4,6 +4,7 @@
 \alias{set_source_system}
 \alias{set_originator}
 \alias{set_file_oid}
+\alias{set_data_type}
 \title{Set source system information}
 \usage{
 set_source_system(x, sys, sys_version)
@@ -11,6 +12,8 @@ set_source_system(x, sys, sys_version)
 set_originator(x, originator)
 
 set_file_oid(x, file_oid)
+
+set_data_type(x, data_type = c("clinicalData", "referenceData"))
 }
 \arguments{
 \item{x}{datasetjson object}
@@ -27,6 +30,8 @@ generated the Dataset-JSON file."}
 
 \item{file_oid}{fileOID parameter, defined as "A unique identifier for this
 file."}
+
+\item{data_type}{}
 }
 \value{
 datasetjson or file_metadata object

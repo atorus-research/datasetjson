@@ -4,10 +4,10 @@
 \alias{dataset_metadata}
 \title{Generate an individual element that fills the itemGroupData field}
 \usage{
-dataset_metadata(uid, name, label, items, .data)
+dataset_metadata(item_id, name, label, items, .data)
 }
 \arguments{
-\item{uid}{Data Object ID for item in Dataset JSON object, corresponding to
+\item{item_id}{Data Object ID for item in Dataset JSON object, corresponding to
 ItemGroupDef/@OID in Define-XML.}
 
 \item{name}{Dataset name}
@@ -19,12 +19,11 @@ ItemGroupDef/@OID in Define-XML.}
 \item{.data}{Dataframe to be written to Dataset JSON file}
 }
 \value{
-List of dataset metadata
+dataset_metadata object
 }
 \description{
 Generate an individual element that fills the itemGroupData field
 }
 \examples{
-# TODO: This is completely untested and hasn't
-# been run yet.
+# TODO:
 }

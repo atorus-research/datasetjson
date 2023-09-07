@@ -7,11 +7,14 @@
 dataset_json(
   .data,
   item_id,
+  name,
+  label,
+  items,
+  dataset_meta,
   version = "1.0.0",
   data_type = c("clinicalData", "referenceData"),
-  file_metadata,
-  data_metadata,
-  dataset_metadata
+  file_meta = file_metadata(),
+  data_meta = data_metadata()
 )
 }
 \arguments{
@@ -22,20 +25,26 @@ the itemData parameter.}
 Defined as "Object of Datasets. Key value is a unique identifier for
 Dataset, corresponding to ItemGroupDef/@OID in Define-XML."}
 
+\item{name}{Dataset name}
+
+\item{label}{Dataset Label}
+
+\item{items}{Variable metadata}
+
+\item{dataset_meta}{A dataset_metadata object holding pre-specified
+dataset metadata.}
+
 \item{version}{Version of Dataset JSON schema to follow.}
 
 \item{data_type}{Type of data being written. clinicalData for subject level
 data, and referenceData for non-subject level data (i.e. TDMs, Associated
 Persons)}
 
-\item{file_metadata}{A file_metadata object holding pre-specified file
+\item{file_meta}{A file_metadata object holding pre-specified file
 metadata}
 
-\item{data_metadata}{A data_metadata object holding pre-specified data
+\item{data_meta}{A data_metadata object holding pre-specified data
 metadata}
-
-\item{dataset_metadata}{A dataset_metadata object holding pre-specified
-dataset metadata.}
 }
 \value{
 dataset_json object pertaining to the specific Dataset JSON version
