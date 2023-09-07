@@ -7,10 +7,19 @@
 #' @param item_id ID used to label dataset with the itemGroupData parameter.
 #'   Defined as "Object of Datasets. Key value is a unique identifier for
 #'   Dataset, corresponding to ItemGroupDef/@OID in Define-XML."
+#' @param name Dataset name
+#' @param label Dataset Label
+#' @param items Variable metadata
+#' @param dataset_meta A dataset_metadata object holding pre-specified
+#'   dataset metadata.
 #' @param version Version of Dataset JSON schema to follow.
 #' @param data_type Type of data being written. clinicalData for subject level
 #'   data, and referenceData for non-subject level data (i.e. TDMs, Associated
 #'   Persons)
+#' @param file_meta A file_metadata object holding pre-specified file
+#'   metadata
+#' @param data_meta A data_metadata object holding pre-specified data
+#'   metadata
 #'
 #' @return dataset_json object pertaining to the specific Dataset JSON version
 #'   specific
@@ -19,70 +28,60 @@
 #' @examples
 #' TODO: Re-look at this to allow providing the sections all separately.
 #' # The file logicially splits into the file metadata, data metadata, and dataset metadata
-dataset_json <- function(.data, item_id, version="1.0.0", data_type = c('clinicalData', 'referenceData')) {
+dataset_json <- function(.data, item_id, name, label, items, dataset_meta,
+                         version="1.0.0", data_type = c('clinicalData', 'referenceData'),
+                         file_meta = file_metadata(),
+                         data_meta = data_metadata()
+                         ) {
   data_type = match.arg(data_type)
-  new_dataset_json(version, item_id, data_type)
+  new_dataset_json(version, item_id, data_type, name, label, items, dataset_meta, file_meta, data_meta, .data)
 }
 
 #' Create a base Dataset JSON Container
 #'
 #' Returns the base datasetjson object following a specific version of the
-#' schema
+#' schema. Note - the purpose of this is just to lay a framework for how
+#' versioning might be handled later on. Only one version is handled.
 #'
 #' @return datasetjson object
 #'
 #' @noRd
-new_dataset_json <- function(version, item_id, data_type) {
+new_dataset_json <- function(version, item_id, data_type, name, label, items,
+                             dataset_meta, file_meta, data_meta, .data) {
   # List of version specific generators
   funcs <- list(
     "1.0.0" = new_dataset_json_v1_0_0
   )
 
   # Extract the function and call it to return the base structure
-  funcs[[version]](item_id, data_type)
+  funcs[[version]](item_id, data_type, name, label, items, dataset_meta, file_meta, data_meta, .data)
 }
 
 #' Dataset JSON v1.0.0 Generator
 #'
 #' @return datasetjson_v1_0_0 object
 #' @noRd
-new_dataset_json_v1_0_0 <- function(item_id, data_type) {
+new_dataset_json_v1_0_0 <- function(item_id, data_type, name, label, items, dataset_meta, file_meta, data_meta, .data) {
 
   # Build file metadata
-  # Build Data metadata
-  # Add dataset metadata
+  if (!missing(data_type)) {
+    file_meta <- set_data_type(data_type)
+  }
 
-  # TODO: Split this out more, where clinicalData and itemGroupData
-  # are built instead in chunks
-  x <- list(
-    "creationDateTime"= get_datetime(),
-    "datasetJSONVersion"= "1.0.0",
-    "fileOID" = character(),
-    "asOfDateTime" = character(),
-    "originator" = "NA",
-    "sourceSystem" = "NA",
-    "sourceSystemVersion" = "NA",
-    #TODO: Add toggle here to write reference data taken from object creation
-    #parameter
-    "clinicalData" = list(
-      "studyOID" = "NA",
-      "metaDataVersionOID" = "NA",
-      "metaDataRef" = "NA",
-      "itemGroupData"= list(
-        list(
-          "records" = integer(),
-          "name" = character(),
-          "label" = character(),
-          "items" = data.frame(),
-          "itemData" = data.frame()
-        )
-      )
-    )
-  )
+  if (missing(dataset_meta)) {
+    if (any(missing(item_id), missing(name), missing(label), missing(items))) {
+      stop("If dataset_meta is not provided, then name, label, and items must be provided", call.=FALSE)
+    }
 
-  #TODO: Add toggle here to write reference data taken from object creation
-  #parameter
-  names(x$clinicalData$itemGroupData) <- item_id
+    # TODO: Make sure this step works
+    dataset_meta <- dataset_metadata(item_id, name, label, items)
+  }
+
+  # TODO: Attach .data into dataset_meta
+
+  # TODO: Combine file_meta, data_meta, and dataset_meta together
+
+  browser()
 
   structure(
     x,
