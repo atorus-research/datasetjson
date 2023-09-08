@@ -9,3 +9,13 @@ iris_items <- tibble::tribble(
 )
 
 usethis::use_data(iris_items, overwrite = TRUE)
+
+# code to prepare `iris_items_bad` used for unit tests
+iris_items_bad <- tibble::tribble(
+  ~OID,                 ~name, ~bad_col,           ~type,      ~length,       ~keySequence,
+  "IT.IR.Sepal.Length", 1,     "Sepal Length",     "numeric",   NA_integer_,   2,
+  "IT.IR.Sepal.Width",  2,     "Sepal Width",      "float",     NA_integer_,   NA,
+  "IT.IR.Petal.Length", 3,     "Petal Length",     "float",     NA_integer_,   3,
+  "IT.IR.Petal.Width",  4,     "Petal Width",      "float",     NA_integer_,   NA,
+  NA_character_,        5,     "Flower Species",   "character", 10L,           1,
+)
