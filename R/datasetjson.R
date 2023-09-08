@@ -65,7 +65,7 @@ new_dataset_json_v1_0_0 <- function(item_id, data_type, name, label, items, data
 
   # Build file metadata
   if (!missing(data_type)) {
-    file_meta <- set_data_type(data_type)
+    file_meta <- set_data_type(file_meta, data_type)
   }
 
   if (missing(dataset_meta)) {
@@ -73,18 +73,20 @@ new_dataset_json_v1_0_0 <- function(item_id, data_type, name, label, items, data
       stop("If dataset_meta is not provided, then name, label, and items must be provided", call.=FALSE)
     }
 
-    # TODO: Make sure this step works
+    # Create the dataset metadata with provided info
     dataset_meta <- dataset_metadata(item_id, name, label, items)
   }
 
-  # TODO: Attach .data into dataset_meta
+  # Attach .data into dataset_meta
+  dataset_meta <- set_item_data(dataset_meta, .data)
 
-  # TODO: Combine file_meta, data_meta, and dataset_meta together
-
-  browser()
+  # Combine file_meta, data_meta, and dataset_meta together
+  ds_json <- file_meta
+  ds_json[[data_type]] <- data_meta
+  ds_json[[data_type]][['itemGroupData']] <- dataset_meta
 
   structure(
-    x,
+    ds_json,
     class = c("datasetjson_v1_0_0", "datasetjson", "list")
   )
 }
