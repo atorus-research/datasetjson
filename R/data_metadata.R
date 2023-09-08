@@ -3,18 +3,20 @@
 #' @param data_type Type of data being written. clinicalData for subject level
 #'   data, and referenceData for non-subject level data (i.e. TDMs, Associated
 #'   Persons)
+#' @param metadata_version Metadata version OID value
+#' @param metadata_ref Metadata reference (i.e. path to Define.xml)
 #'
 #' @return data_metadata object
 #' @export
 #'
 #' @examples
 #' # TODO:
-data_metadata <- function(study, metadata_version, metadata_ref) {
+data_metadata <- function(study = "NA", metadata_version = "NA", metadata_ref = "NA") {
 
   x <- list(
-    studyOID = "NA",
-    metaDataVersionOID = "NA",
-    metaDataRef = "NA",
+    studyOID = study,
+    metaDataVersionOID = metadata_version,
+    metaDataRef = metadata_ref,
     itemGroupData = NULL
   )
 
@@ -29,6 +31,7 @@ data_metadata <- function(study, metadata_version, metadata_ref) {
 #' This set of functions
 #' @param x data metadata or datasetjson object
 #' @param study Study OID value
+#'
 #' @param ...
 #'
 #' @return A datasetjson or data_metadata object
