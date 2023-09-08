@@ -3,6 +3,13 @@
 #' @param data_type Type of data being written. clinicalData for subject level
 #'   data, and referenceData for non-subject level data (i.e. TDMs, Associated
 #'   Persons)
+#' @param originator originator parameter, defined as "The organization that
+#'   generated the Dataset-JSON file."
+#' @param sys sourceSystem parameter, defined as "The computer system or
+#'   database management system that is the source of the information in this
+#'   file."
+#' @param sys_version sourceSystemVersion, defined as "The version of the
+#'   sourceSystem"
 #' @param version Dataset JSON schema version being used
 #'
 #' @return file_metadata object
@@ -10,15 +17,20 @@
 #'
 #' @examples
 #' # TODO:
-file_metadata <- function(data_type, version = "1.0.0") {
+file_metadata <- function(data_type, originator="NA", sys = "NA", sys_version = "NA", version = "1.0.0") {
+
+  if (!(version %in% c("1.0.0"))) {
+    stop("Unsupported version specified - currently only version 1.0.0 is supported", call.=FALSE)
+  }
+
   x <- list(
     "creationDateTime"= get_datetime(),
     "datasetJSONVersion"= version,
     "fileOID" = character(),
     "asOfDateTime" = character(),
-    "originator" = "NA",
-    "sourceSystem" = "NA",
-    "sourceSystemVersion" = "NA",
+    "originator" = originator,
+    "sourceSystem" = sys,
+    "sourceSystemVersion" = sys_version,
     NULL
   )
 
