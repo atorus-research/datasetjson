@@ -1,5 +1,3 @@
-iris_items <- readRDS(test_path("testdata", "iris_metadata.Rds"))
-
 # Object to use for testing
 current_time <- get_datetime()
 ds_json <- dataset_json(iris, "IG.IRIS", "IRIS", "Iris", iris_items)
@@ -46,7 +44,8 @@ test_that("datasetjson object builds with minimal defaults", {
                label = "Record Identifier",
                type = "integer",
                length = NA_integer_,
-               keySequence = NA_integer_),
+               keySequence = NA_integer_,
+               displayFormat = NA_character_),
     iris_items
   )
 
