@@ -4,12 +4,28 @@
 \alias{file_metadata}
 \title{Create a file metadata object}
 \usage{
-file_metadata(data_type, version = "1.0.0")
+file_metadata(
+  data_type,
+  originator = "NA",
+  sys = "NA",
+  sys_version = "NA",
+  version = "1.0.0"
+)
 }
 \arguments{
 \item{data_type}{Type of data being written. clinicalData for subject level
 data, and referenceData for non-subject level data (i.e. TDMs, Associated
 Persons)}
+
+\item{originator}{originator parameter, defined as "The organization that
+generated the Dataset-JSON file."}
+
+\item{sys}{sourceSystem parameter, defined as "The computer system or
+database management system that is the source of the information in this
+file."}
+
+\item{sys_version}{sourceSystemVersion, defined as "The version of the
+sourceSystem"}
 
 \item{version}{Dataset JSON schema version being used}
 }

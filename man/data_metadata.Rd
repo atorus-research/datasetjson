@@ -4,9 +4,13 @@
 \alias{data_metadata}
 \title{Create the data metadata container for a Dataset JSON object}
 \usage{
-data_metadata(study, metadata_version, metadata_ref)
+data_metadata(study = "NA", metadata_version = "NA", metadata_ref = "NA")
 }
 \arguments{
+\item{metadata_version}{Metadata version OID value}
+
+\item{metadata_ref}{Metadata reference (i.e. path to Define.xml)}
+
 \item{data_type}{Type of data being written. clinicalData for subject level
 data, and referenceData for non-subject level data (i.e. TDMs, Associated
 Persons)}
