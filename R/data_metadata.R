@@ -52,6 +52,15 @@ set_study_oid.data_metadata <- function(x, study) {
   x
 }
 
+#' @export
+#' @noRd
+set_study_oid.datasetjson <- function(x, study) {
+  stopifnot_datasetjson(x)
+  data_type <- get_data_type(x)
+  x[[data_type]][['studyOID']] <- study
+  x
+}
+
 #' @param metadata_version Metadata version OID value
 #' @family Data metadata setters
 #' @rdname data_metadata_setters
@@ -68,6 +77,15 @@ set_metadata_version.data_metadata <- function(x, metadata_version) {
   x
 }
 
+#' @export
+#' @noRd
+set_metadata_version.datasetjson <- function(x, metadata_version) {
+  stopifnot_datasetjson(x)
+  data_type <- get_data_type(x)
+  x[[data_type]][['metaDataVersionOID']] <- metadata_version
+  x
+}
+
 #' @param metadata_ref Metadata reference (i.e. path to Define.xml)
 #' @family Data metadata setters
 #' @rdname data_metadata_setters
@@ -81,5 +99,13 @@ set_metadata_ref <- function(x, metadata_ref) {
 set_metadata_ref.data_metadata <- function(x, metadata_ref) {
   stopifnot_data_metadata(x)
   x[['metaDataRef']] <- metadata_ref
+  x
+}
+
+#' @export
+#' @noRd
+set_metadata_ref.datasetjson <- function(x, metadata_ref) {
+  data_type <- get_data_type(x)
+  x[[data_type]][['metaDataRef']] <- metadata_ref
   x
 }
