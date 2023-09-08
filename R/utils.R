@@ -27,3 +27,14 @@ stopifnot_file_metadata <- function(x) {
     stop("x must be a datasetjson object or file_metadata object", call.=FALSE)
   }
 }
+
+#' Retrieve the data type of a datasetjson object
+#'
+#' @param x A datasetjson object
+#'
+#' @return A character string containing the Datset JSON data type
+#' @noRd
+get_data_type <- function(x) {
+  stopifnot_datasetjson(x)
+  tail(names(ds_json), 1)
+}
