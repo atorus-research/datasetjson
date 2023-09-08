@@ -48,6 +48,11 @@ dataset_json <- function(.data, item_id, name, label, items, dataset_meta,
 #' @noRd
 new_dataset_json <- function(version, item_id, data_type, name, label, items,
                              dataset_meta, file_meta, data_meta, .data) {
+
+  if (!(version %in% c("1.0.0"))) {
+    stop("Unsupported version specified - currently only version 1.0.0 is supported", call.=FALSE)
+  }
+
   # List of version specific generators
   funcs <- list(
     "1.0.0" = new_dataset_json_v1_0_0
