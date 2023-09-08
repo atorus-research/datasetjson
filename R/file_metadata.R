@@ -99,6 +99,7 @@ set_file_oid <- function(x, file_oid) {
 #' @family File Metadata Setters
 #' @rdname file_metadata_setters
 set_data_type <- function(x, data_type = c('clinicalData', 'referenceData')) {
+  stopifnot_file_metadata(x)
   data_type = match.arg(data_type)
 
   # For the clinicalData or referenceData, set the parameter correctly
