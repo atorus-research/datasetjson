@@ -36,5 +36,5 @@ stopifnot_file_metadata <- function(x) {
 #' @noRd
 get_data_type <- function(x) {
   stopifnot_datasetjson(x)
-  tail(names(ds_json), 1)
+  tail(names(x), 1)
 }
