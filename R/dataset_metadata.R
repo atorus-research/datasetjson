@@ -31,6 +31,8 @@ dataset_metadata <- function(item_id, name, label, items, .data) {
     items <- rbind(igds_row, items)
   }
 
+  items_converted <- df_to_list_rows(items)
+
   if (!missing(.data)) {
     records <- nrow(.data)
     # Derive ITEMGROUPDATASEQ and insert it up front in the dataframe
@@ -46,7 +48,7 @@ dataset_metadata <- function(item_id, name, label, items, .data) {
       "records" = records,
       "name" = name,
       "label" = label,
-      "items" = items,
+      "items" = items_converted,
       "itemData" = item_data
     )
   )
@@ -159,6 +161,26 @@ validate_dataset_items <- function(items) {
     err_msg <- paste0(c("Error: Issues found in items data:", msg_prep))
     stop(err_msg, call.=FALSE)
   }
+}
+
+#' Convert an dataframe into a named list of rows without NAs
+#'
+#' The variable attributes are stored as named lists within the output
+#' JSON file, so to write them out the dataframe needs to be a named
+#' list of rows
+#'
+#' @param x A data.frame
+#'
+#' @return List of named lists with single elements
+#' @noRd
+df_to_list_rows <- function(x) {
+  # Split the dataframe rows into individual rows
+  rows <- unname(split(iris_items, seq(nrow(iris_items))))
+  # Convert each row into a named list while removing NAs
+  lapply(rows, function(X) {
+    y <- as.list(X)
+    y[!is.na(y)]
+  })
 }
 
 #' Apply JSON metadata to dataframe as attributes
