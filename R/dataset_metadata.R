@@ -175,7 +175,7 @@ validate_dataset_items <- function(items) {
 #' @noRd
 df_to_list_rows <- function(x) {
   # Split the dataframe rows into individual rows
-  rows <- unname(split(iris_items, seq(nrow(iris_items))))
+  rows <- unname(split(x, seq(nrow(x))))
   # Convert each row into a named list while removing NAs
   lapply(rows, function(X) {
     y <- as.list(X)
