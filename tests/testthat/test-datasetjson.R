@@ -1,6 +1,7 @@
-# Object to use for testing
+# Objects to use for testing
 current_time <- get_datetime()
 ds_json <- dataset_json(iris, "IG.IRIS", "IRIS", "Iris", iris_items)
+iris_items_list <- readRDS(test_path("testdata", "iris_items_list.Rds"))
 
 # This test will verify that everything lands where expected and auto-calculated
 # fields populate properly
@@ -49,7 +50,7 @@ test_that("datasetjson object builds with minimal defaults", {
     iris_items
   )
 
-  expect_equal(ds_json$clinicalData$itemGroupData$IG.IRIS$items, iris_items_test)
+  expect_equal(ds_json$clinicalData$itemGroupData$IG.IRIS$items, iris_items_list)
 
   # Verify that data are attached properly with ITEMGRPUPSEQ attached
   iris_test <- cbind(
