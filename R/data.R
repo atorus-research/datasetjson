@@ -14,3 +14,27 @@
 #'   \item{displayFormat}{Display format supports data visualization of numeric float and date values.}
 #' }
 "iris_items"
+
+#' A List of valid SAS(c) date formats
+#'
+#' Valid SAS(c) date formats pulled from
+#' https://documentation.sas.com/doc/en/vdmmlcdc/8.1/ds2pg/p0bz5detpfj01qn1kz2in7xymkdl.htm
+#'
+#' @format ## `sas_date_formats` A character vector with 45 elements
+"sas_date_formats"
+
+#' A List of valid SAS(c) datetime formats
+#'
+#' Valid SAS(c) datetime formats pulled from
+#' https://documentation.sas.com/doc/en/vdmmlcdc/8.1/ds2pg/p0bz5detpfj01qn1kz2in7xymkdl.htm
+#'
+#' @format ## `sas_datetime_formats` A character vector with 7 elements
+"sas_datetime_formats"
+
+#' A List of valid SAS(c) time formats
+#'
+#' Valid SAS(c) time formats pulled from
+#' https://documentation.sas.com/doc/en/vdmmlcdc/8.1/ds2pg/p0bz5detpfj01qn1kz2in7xymkdl.htm
+#'
+#' @format ## `sas_time_formats` A character vector with 4 elements
+"sas_time_formats"
