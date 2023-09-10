@@ -40,7 +40,7 @@ get_datetime_cols <- function(x) {
 convert_to_sas_datenum <- function(x) {
   col_names <- names(get_date_cols(x))
   # Subtract 10 years in days
-  x[col_names] <- get_date_cols(x) - (365 * 10)
+  x[col_names] <- lapply(get_date_cols(x) - (365 * 10), as.numeric)
   x
 }
 
@@ -56,6 +56,6 @@ convert_to_sas_datenum <- function(x) {
 convert_to_sas_datetimenum <- function(x) {
   col_names <- names(get_datetime_cols(x))
   # Subtract 10 years in seconds
-  x[col_names] <- get_datetime_cols(x) - (365 * 24 * 60 * 60 * 10)
+  x[col_names] <- lapply(get_datetime_cols(x) - (365 * 24 * 60 * 60 * 10), as.numeric)
   x
 }
