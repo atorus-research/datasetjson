@@ -38,3 +38,10 @@
 #'
 #' @format ## `sas_time_formats` A character vector with 4 elements
 "sas_time_formats"
+
+#' Dataset JSON Schema Version 1.0.0
+#'
+#' This object is a character vector holding the schema for Dataset JSON Version 1.0.0
+#'
+#' @format ## `schema_1_0_0` A character vector with 1 element
+"schema_1_0_0"

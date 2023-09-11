@@ -136,3 +136,8 @@ sas_time_formats <- c(
   'TOD.'
 )
 usethis::use_data(sas_time_formats, overwrite = TRUE)
+
+# Dataset JSON Schema V1.0.0 as Character Vector
+schema_file <- test_path("testdata", "dataset.schema.json")
+schema_1_0_0 = readChar(schema_file, file.info(schema_file)$size)
+usethis::use_data(schema_1_0_0, overwrite=TRUE)
