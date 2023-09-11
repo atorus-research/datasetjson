@@ -4,33 +4,6 @@ output: md_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-link <- function(text, url) {
-  return(
-    paste0(
-      "[", text, "]",
-      "(", url, ")"
-    )
-  )
-}
-dyn_link <- function(text,
-                     base_url,
-                     relative_url = "",
-                     # Change to TRUE when admiral adopts multiversion docs
-                     is_multiversion = TRUE,
-                     multiversion_default_ref = "main") {
-  url <- paste(base_url, relative_url, sep = "/")
-  if (is_multiversion) {
-    url <- paste(
-      base_url,
-      Sys.getenv("BRANCH_NAME", multiversion_default_ref),
-      relative_url,
-      sep = "/"
-    )
-  }
-  return(link(text, url))
-}
-
-# Other variables
 ```
 
 <!-- Please do not edit the README.md file as it is auto-generated after PR merges. Only edit the README.Rmd file -->
@@ -41,7 +14,3 @@ dyn_link <- function(text,
 
 <!-- badges: end -->
 
-## Table of Contents
-
-
-## Extension Expectations 

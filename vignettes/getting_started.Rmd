@@ -1,0 +1,68 @@
+---
+title: "Getting Started"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Getting Started}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(datasetjson)
+```
+
+# Using **datasetjson**
+
+**datasetjson** works by allowing you to take a data frame and apply the necessary attributes required for the CDISC Dataset JSON. The goal is to make this experience simple. Before you can write a Dataset JSON file to disk, you first need to build the Dataset JSON object. An example call looks like this:
+
+```{r sample_call, eval=FALSE}
+ds_json <- dataset_json(iris, "IG.IRIS", "IRIS", "Iris", iris_items)
+```
+
+This is the minimum information required to provide to create a `datasetjson` object. 
+
+The parameters here can be described as follows:
+
+- The input data frame `iris`
+- The `item_id`, which can be described as the "Object of Dataset", which is a key value is a unique identifier for the dataset, corresponding to ItemGroupDef/@OID in Define-XML.
+- `name`, which is the dataset name
+- `label`, which is the dataset label, and finally
+- `items`, which is the variable level metadata for your dataset.
+
+The `items` parameter is special here, in that you provide a data frame with the necessary variable metadata. Take a look at the `iris_items` data frame. 
+
+```{r iris_items}
+iris_items
+```
+
+This data frame has 7 columns, 4 of which are strictly required:
+
+| **Variable Name** | **Description**                                                                                                 |
+|-------------------|-----------------------------------------------------------------------------------------------------------------|
+| OID               | Unique identifier for Variable. Must correspond to ItemDef/@OID in Define-XML.                                  |
+| name              | Name for Variable                                                                                               |
+| label             | Label for Variable                                                                                              |
+| type              | Data type for Variable                                                                                          |
+| length            | Length for Variable                                                                                             |
+| keySequence       | Indicates that this item is a key variable in the dataset structure. It also provides an ordering for the keys. |
+| displayFormat     | Display format supports data visualization of numeric float and date values.                                    |
+
+The data within this dataframe ultimate populates the `items` element of the Dataset JSON file. The OID, name, label, and type columns are all required and must be populated for each variable. Note that the type column has a list of allowable values:
+
+- string
+- integer
+- float
+- double
+- decimal
+- boolean
+
+This information must be provided directly by the user. Note that no type conversions of your data are performed by the `datasetjson` package. The displayFormat column inherently refers to display formats used within SAS. 
+
+## Setting Other Data Attributes
