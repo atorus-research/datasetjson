@@ -68,11 +68,6 @@ new_dataset_json <- function(version, item_id, data_type, name, label, items,
 #' @noRd
 new_dataset_json_v1_0_0 <- function(item_id, data_type, name, label, items, dataset_meta, file_meta, data_meta, .data) {
 
-  # Build file metadata
-  if (!missing(data_type)) {
-    file_meta <- set_data_type(file_meta, data_type)
-  }
-
   if (missing(dataset_meta)) {
     if (any(missing(item_id), missing(name), missing(label), missing(items))) {
       stop("If dataset_meta is not provided, then name, label, and items must be provided", call.=FALSE)
