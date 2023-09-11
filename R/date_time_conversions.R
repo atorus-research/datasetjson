@@ -1,3 +1,6 @@
+# This file contains several helpers for reading and writing date / datetime
+# columns from a Dataset JSON file
+
 #' Get the column classes off a data frame
 #'
 #' @param x A data.frame
@@ -93,3 +96,4 @@ get_format_cols <- function(x, formats) {
   # that subset list
   vapply(Filter(function(X) has_format(X, formats), x), function(X) X$name, "")
 }
+
