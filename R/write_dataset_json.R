@@ -23,27 +23,26 @@ write_dataset_json <- function(x, file, pretty=TRUE) {
 
     # Attach the file OID
     x <- set_file_oid(x, tools::file_path_sans_ext(file))
+  } else{
+    x <- set_file_oid(x, "NA")
+  }
 
+  # Create the JSON text
+  js <- jsonlite::toJSON(
+    x,
+    dataframe = "values",
+    na = "null",
+    auto_unbox = TRUE,
+    pretty = pretty)
+
+  # Run the validator
+  jsonvalidate::json_validate(js, schema_1_0_0, engine="ajv", error=TRUE)
+
+  if (!missing(file)) {
     # Write file to disk
-    cat(
-      jsonlite::toJSON(
-        x,
-        dataframe = "values",
-        na = "null",
-        auto_unbox = TRUE,
-        pretty = pretty),
-      "\n", file = path
-      )
+    cat(js, "\n", file = file)
   } else {
-    # Untested
-    cat(
-      jsonlite::toJSON(
-        x,
-        dataframe = "values",
-        na = "null",
-        auto_unbox = TRUE,
-        pretty = pretty),
-      "\n"
-      )
+    # Print to console
+    cat(js, "\n")
   }
 }

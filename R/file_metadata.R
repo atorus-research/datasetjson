@@ -30,8 +30,7 @@ file_metadata <- function(data_type, originator="NA", sys = "NA", sys_version = 
     "asOfDateTime" = character(),
     "originator" = originator,
     "sourceSystem" = sys,
-    "sourceSystemVersion" = sys_version,
-    NULL
+    "sourceSystemVersion" = sys_version
   )
 
   f_meta <- structure(
