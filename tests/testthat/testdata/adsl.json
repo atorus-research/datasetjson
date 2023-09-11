@@ -13,7 +13,7 @@
       "IG.ADSL": {
         "records": 254,
         "name": "ADSL",
-        "label": "Subject-Level Analysis",
+        "label": "Subject-Level Analysis Dataset",
         "items": [
           {
             "OID": "ITEMGROUPDATASEQ",

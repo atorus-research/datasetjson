@@ -26,6 +26,8 @@ Depends: R (>= 3.5)
 Imports:
     jsonlite (>= 1.8.7),
 Suggests:
-    testthat (>= 2.1.0)
+    testthat (>= 2.1.0),
+    knitr,
+    haven
 VignetteBuilder: knitr
 Config/testthat/edition: 3
