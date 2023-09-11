@@ -4,7 +4,6 @@
 #' returns a datasetjson object
 #'
 #' @param file File path on disk
-#' @param version Dataset JSON schema version to validate against
 #'
 #' @return datasetjson object
 #' @export
@@ -12,7 +11,7 @@
 #' @examples
 #'
 #' # TODO:
-read_dataset_json <- function(file, version) {
+read_dataset_json <- function(file) {
   # Validate the input file against the schema
   jsonvalidate::json_validate(file, schema_1_0_0, engine="ajv")
 
