@@ -2,21 +2,23 @@
 % Please edit documentation in R/read_dataset_json.R
 \name{read_dataset_json}
 \alias{read_dataset_json}
-\title{Read dataset-json file with data of one SDTM/ADaM domain into data frame}
+\title{Read a Dataset JSON to datasetjson object}
 \usage{
-read_dataset_json(path, version)
+read_dataset_json(file, version)
 }
 \arguments{
-\item{path}{path to dataset-json file}
+\item{file}{File path on disk}
+
+\item{version}{Dataset JSON schema version to validate against}
 }
 \value{
-data frame with data of dataset-json file
+datasetjson object
 }
 \description{
-Read dataset-json file with data of one SDTM/ADaM domain into data frame.
+This function validated a dataset JSON file on disk against the Dataset JSON schema, and if valid
+returns a datasetjson object
 }
 \examples{
-\dontrun{
-dm <- read_dataset_json("path/to/dm.json")
-}
+
+# TODO:
 }

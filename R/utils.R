@@ -38,3 +38,19 @@ get_data_type <- function(x) {
   stopifnot_datasetjson(x)
   tail(names(x), 1)
 }
+
+#' Helper to set column attributes from items metadata
+#'
+#' @param nm Column name
+#' @param d Input data.frame
+#' @param attr Attribute to set
+#' @param val Named vector holding the list of attributes to set
+#'
+#' @return Column with attribute applied
+#' @noRd
+set_col_attr <- function(nm, d, attr, items) {
+  # Pull out the column
+  x <- d[[nm]]
+  attr(x, attr) <- items[items$name == nm,][[attr]]
+  x
+}
