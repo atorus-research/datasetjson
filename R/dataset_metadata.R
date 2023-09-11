@@ -33,33 +33,31 @@ dataset_metadata <- function(item_id, name, label, items, .data) {
 
   items_converted <- df_to_list_rows(items)
 
-  if (!missing(.data)) {
-    records <- nrow(.data)
-    # Derive ITEMGROUPDATASEQ and insert it up front in the dataframe
-    item_data <- cbind(ITEMGROUPDATASEQ = 1:records, .data)
-  } else {
-    records <- NULL
-    item_data <- NULL
-  }
-
   # Create the container with proper elements
   x <- list(
     list(
-      "records" = records,
+      "records" = NULL,
       "name" = name,
       "label" = label,
       "items" = items_converted,
-      "itemData" = item_data
+      "itemData" = NULL
     )
   )
 
   # Set the Object ID
   names(x) <- item_id
 
-  structure(
+  x <- structure(
     x,
     class = c('dataset_metadata', 'list')
   )
+
+  # Set data if it's provided
+  if (!missing(.data)) {
+    set_item_data(x, .data)
+  }
+
+  x
 }
 
 #' Apply dataframe to itemData attribute
@@ -94,6 +92,10 @@ set_item_data.dataset_metadata <- function(x, .data) {
   records <- nrow(.data)
   # Derive ITEMGROUPDATASEQ and insert it up front in the dataframe
   item_data <- cbind(ITEMGROUPDATASEQ = 1:records, .data)
+
+  # Convert data and date times
+  item_data <- convert_to_sas_datenum(item_data)
+  item_data <- convert_to_sas_datetimenum(item_data)
 
   # Insert into object in proper spots
   x[[1]][['records']] <- records
