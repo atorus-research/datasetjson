@@ -4,12 +4,10 @@
 \alias{read_dataset_json}
 \title{Read a Dataset JSON to datasetjson object}
 \usage{
-read_dataset_json(file, version)
+read_dataset_json(file)
 }
 \arguments{
 \item{file}{File path on disk}
-
-\item{version}{Dataset JSON schema version to validate against}
 }
 \value{
 datasetjson object
