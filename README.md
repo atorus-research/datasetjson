@@ -1,4 +1,6 @@
 
+# datasetjson
+
 <!-- Please do not edit the README.md file as it is auto-generated after PR merges. Only edit the README.Rmd file -->
 <!-- The purpose of this is to enable dynamic links using dyn_link function above to access devel/main admiral homepage respectively -->
 <!-- To test this in your feature branch use code: rmarkdown::render("README.Rmd", output_format ="md_document") -->
@@ -71,10 +73,10 @@ cat(js_text)
 ```
 
     ## {
-    ##   "creationDateTime": "2023-09-12T15:15:34",
+    ##   "creationDateTime": "2023-09-12T19:00:09",
     ##   "datasetJSONVersion": "1.0.0",
     ##   "fileOID": "NA",
-    ##   "asOfDateTime": "2023-09-12T15:15:34",
+    ##   "asOfDateTime": "2023-09-12T19:00:09",
     ##   "originator": "Some Org",
     ##   "sourceSystem": "source system",
     ##   "sourceSystemVersion": "1.0",
@@ -167,7 +169,7 @@ attached as attributes on the data frame itself:
 print(attr(dat, "creationDateTime"))
 ```
 
-    ## [1] "2023-09-12T15:15:34"
+    ## [1] "2023-09-12T19:00:09"
 
 ``` r
 print(attr(dat$Sepal.Length, "OID"))
