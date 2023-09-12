@@ -8,7 +8,14 @@
 #' @export
 #'
 #' @examples
-#' # TODO:
+#' # Write to character object
+#' ds_json <- dataset_json(iris, "IG.IRIS", "IRIS", "Iris", iris_items)
+#' js <- write_dataset_json(ds_json)
+#'
+#' # Write to disk
+#' \dontrun{
+#'   write_dataset_json(ds_json, "path/to/file.json")
+#' }
 write_dataset_json <- function(x, file, pretty=TRUE) {
   stopifnot_datasetjson(x)
 

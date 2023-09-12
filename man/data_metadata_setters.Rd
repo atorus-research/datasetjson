@@ -33,6 +33,9 @@ A datasetjson or data_metadata object
 This set of functions
 }
 \examples{
-# TODO:
+data_meta <- data_metadata()
+data_meta_updated <- set_metadata_ref(data_meta, "some/define.xml")
+data_meta_updated <- set_metadata_version(data_meta_updated, "MDV.MSGv2.0.SDTMIG.3.3.SDTM.1.7")
+data_meta_updated <- set_study_oid(data_meta_updated, "SOMESTUDY")
 }
 \concept{Data metadata setters}

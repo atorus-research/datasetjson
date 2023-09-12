@@ -16,7 +16,21 @@
 #' @export
 #'
 #' @examples
-#' # TODO:
+#' # Create using parameters
+#' file_meta <- file_metadata(
+#'     "clinicalData",
+#'     originator = "Some Org",
+#'     sys = "source system",
+#'     sys_version = "1.0"
+#'   )
+#'
+#' # Set parameters after
+#' file_meta <- file_metadata()
+#'
+#' file_meta_updated <- set_data_type(file_meta, "referenceData")
+#' file_meta_updated <- set_file_oid(file_meta_updated, "/some/path")
+#' file_meta_updated <- set_originator(file_meta_updated, "Some Org")
+#' file_meta_updated <- set_source_system(file_meta_updated, "source system", "1.0")
 file_metadata <- function(data_type, originator="NA", sys = "NA", sys_version = "NA", version = "1.0.0") {
 
   if (!(version %in% c("1.0.0"))) {
@@ -80,7 +94,12 @@ get_datetime <- function() {
 #' @rdname file_metadata_setters
 #'
 #' @examples
-#' # TODO:
+#' file_meta <- file_metadata()
+#'
+#' file_meta_updated <- set_data_type(file_meta, "referenceData")
+#' file_meta_updated <- set_file_oid(file_meta_updated, "/some/path")
+#' file_meta_updated <- set_originator(file_meta_updated, "Some Org")
+#' file_meta_updated <- set_source_system(file_meta_updated, "source system", "1.0")
 set_source_system <- function(x, sys, sys_version) {
   stopifnot_file_metadata(x)
   x[['sourceSystem']] <- sys

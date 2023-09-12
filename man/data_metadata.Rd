@@ -22,5 +22,17 @@ data_metadata object
 Create the data metadata container for a Dataset JSON object
 }
 \examples{
-# TODO:
+# Create object directly
+data_meta <- data_metadata(
+  study = "SOMESTUDY",
+  metadata_version = "MDV.MSGv2.0.SDTMIG.3.3.SDTM.1.7",
+  metadata_ref = "some/define.xml"
+)
+
+# Use setter functions
+data_meta <- data_metadata()
+data_meta_updated <- set_metadata_ref(data_meta, "some/define.xml")
+data_meta_updated <- set_metadata_version(data_meta_updated, "MDV.MSGv2.0.SDTMIG.3.3.SDTM.1.7")
+data_meta_updated <- set_study_oid(data_meta_updated, "SOMESTUDY")
+
 }

@@ -36,5 +36,19 @@ file_metadata object
 Create a file metadata object
 }
 \examples{
-# TODO:
+# Create using parameters
+file_meta <- file_metadata(
+    "clinicalData",
+    originator = "Some Org",
+    sys = "source system",
+    sys_version = "1.0"
+  )
+
+# Set parameters after
+file_meta <- file_metadata()
+
+file_meta_updated <- set_data_type(file_meta, "referenceData")
+file_meta_updated <- set_file_oid(file_meta_updated, "/some/path")
+file_meta_updated <- set_originator(file_meta_updated, "Some Org")
+file_meta_updated <- set_source_system(file_meta_updated, "source system", "1.0")
 }

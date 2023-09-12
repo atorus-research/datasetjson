@@ -9,7 +9,12 @@
 #'
 #' @return dataset_metadata object
 #' @examples
-#' # TODO:
+#' dataset_meta <- dataset_metadata(
+#'   item_id = "IG.IRIS",
+#'   name = "IRIS",
+#'   label = "Iris",
+#'   items = iris_items
+#' )
 dataset_metadata <- function(item_id, name, label, items, .data) {
 
   # Check items before moving any further
@@ -71,10 +76,7 @@ dataset_metadata <- function(item_id, name, label, items, .data) {
 #' @param ... Additional params
 #'
 #' @return Input object with itemData applied
-#' @export
-#'
-#' @examples
-#' # TODO:
+#' @noRd
 set_item_data <- function(x, .data, ...) {
   UseMethod("set_item_data")
 }

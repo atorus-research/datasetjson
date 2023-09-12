@@ -9,8 +9,15 @@
 #' @export
 #'
 #' @examples
+#' # Read from disk
+#' \dontrun{
+#'   dat <- read_dataset_json("path/to/file.json")
+#' }
 #'
-#' # TODO:
+#' # Read from an already imported character vector
+#' ds_json <- dataset_json(iris, "IG.IRIS", "IRIS", "Iris", iris_items)
+#' js <- write_dataset_json(ds_json)
+#' dat <- read_dataset_json(js)
 read_dataset_json <- function(file) {
   # Validate the input file against the schema
   jsonvalidate::json_validate(file, schema_1_0_0, engine="ajv")
