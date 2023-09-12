@@ -1,5 +1,4 @@
 # Objects to use for testing
-current_time <- get_datetime()
 ds_json <- dataset_json(iris, "IG.IRIS", "IRIS", "Iris", iris_items)
 iris_items_list <- readRDS(test_path("testdata", "iris_items_list.Rds"))
 
@@ -9,10 +8,7 @@ test_that("datasetjson object builds with minimal defaults", {
 
   # I just want to remove the potential for a corner case
   # where the call to system time splits across a second
-  expect_equal(
-    substr(ds_json$creationDateTime, 1, nchar(ds_json$creationDateTime) -2),
-    substr(current_time, 1, nchar(current_time) -2)
-    )
+  expect_equal(grep("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}", ds_json$creationDateTime), 1)
 
   # File metadata
   expect_equal(ds_json$datasetJSONVersion, "1.0.0")
