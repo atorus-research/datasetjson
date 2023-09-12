@@ -23,9 +23,8 @@ read_dataset_json <- function(file) {
   valid <- jsonvalidate::json_validate(file, schema_1_0_0, engine="ajv")
 
   if (!valid) {
-    stop(paste(
-      "Dataset JSON file is invalid per the JSON schema.",
-      "Use datasetjson::validate_dataset_json() to see details"),
+    stop(paste0(c("Dataset JSON file is invalid per the JSON schema. ",
+                "Run datasetjson::validate_dataset_json(",substitute(file),") to see details")),
       call.=FALSE)
   }
 

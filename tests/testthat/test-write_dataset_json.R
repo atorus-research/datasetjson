@@ -74,7 +74,6 @@ test_that("write_dataset_json matches the original json", {
   expect_equal(comp, expected)
 
   # ta
-  # dm
   df_name <- "ta"
   df_from_json <- read_dataset_json(test_path(paste0("testdata/", df_name, ".json")))
   df_metadata <- readRDS(test_path("testdata/ta_metadata.Rds"))
@@ -101,4 +100,8 @@ test_that("write_dataset_json matches the original json", {
   expected$creationDateTime <- NULL
 
   expect_equal(comp, expected)
+
+  # Error check
+  ds_json$creationDateTime <- 1
+  expect_error(write_dataset_json(ds_json, json_location), "Dataset JSON file is invalid")
 })
