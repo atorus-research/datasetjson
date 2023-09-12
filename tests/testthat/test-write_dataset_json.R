@@ -73,14 +73,14 @@ test_that("write_dataset_json matches the original json", {
 
   expect_equal(comp, expected)
 
-
-  # # ae
-  df_name <- "ae"
+  # ta
+  # dm
+  df_name <- "ta"
   df_from_json <- read_dataset_json(test_path(paste0("testdata/", df_name, ".json")))
-  df_metadata <- readRDS(test_path("testdata/ae_metadata.Rds"))
+  df_metadata <- readRDS(test_path("testdata/ta_metadata.Rds"))
 
   # create dataset json object
-  ds_json <- dataset_json(df_from_json, "IG.AE", "AE", "Adverse Events", df_metadata)
+  ds_json <- dataset_json(df_from_json, "IG.TA", "TA", "Trial Arms", df_metadata, data_type="referenceData")
   ds_json <- set_test_sdtm_metadata(ds_json)
 
   # write json to disk
@@ -89,7 +89,7 @@ test_that("write_dataset_json matches the original json", {
   write_dataset_json(ds_json, json_location)
 
   comp <- jsonlite::read_json(json_location)
-  expected <- jsonlite::read_json(test_path("testdata/ae.json"))
+  expected <- jsonlite::read_json(test_path("testdata/ta.json"))
 
   # remove fileOID and creationDateTime, this will alway differ
   # remove asOfDateTime, this is not in adsl.json (to confirm if extensible)
@@ -101,5 +101,4 @@ test_that("write_dataset_json matches the original json", {
   expected$creationDateTime <- NULL
 
   expect_equal(comp, expected)
-
 })

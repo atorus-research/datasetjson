@@ -5,7 +5,6 @@
 \title{Create a file metadata object}
 \usage{
 file_metadata(
-  data_type,
   originator = "NA",
   sys = "NA",
   sys_version = "NA",
@@ -13,10 +12,6 @@ file_metadata(
 )
 }
 \arguments{
-\item{data_type}{Type of data being written. clinicalData for subject level
-data, and referenceData for non-subject level data (i.e. TDMs, Associated
-Persons)}
-
 \item{originator}{originator parameter, defined as "The organization that
 generated the Dataset-JSON file."}
 

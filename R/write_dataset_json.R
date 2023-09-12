@@ -43,7 +43,14 @@ write_dataset_json <- function(x, file, pretty=TRUE) {
     pretty = pretty)
 
   # Run the validator
-  jsonvalidate::json_validate(js, schema_1_0_0, engine="ajv", error=TRUE)
+  valid <- jsonvalidate::json_validate(js, schema_1_0_0, engine="ajv")
+
+  if (!valid) {
+    stop(paste(
+      "Dataset JSON file is invalid per the JSON schema.",
+      "Use datasetjson::validate_dataset_json() to see details"),
+      call.=FALSE)
+  }
 
   if (!missing(file)) {
     # Write file to disk

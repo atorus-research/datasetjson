@@ -8,6 +8,7 @@
 #' @param .data Dataframe to be written to Dataset JSON file
 #'
 #' @return dataset_metadata object
+#' @export
 #' @examples
 #' dataset_meta <- dataset_metadata(
 #'   item_id = "IG.IRIS",
