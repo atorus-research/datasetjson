@@ -3,7 +3,7 @@
 #' This function validated a dataset JSON file on disk against the Dataset JSON schema, and if valid
 #' returns a datasetjson object
 #'
-#' @param file File path on disk
+#' @param file File path on disk, or a pre-loaded Dataset JSON file in a single element character string
 #'
 #' @return datasetjson object
 #' @export
@@ -47,6 +47,7 @@ read_dataset_json <- function(file) {
   d[names(d)] <- lapply(items$name, set_col_attr, d, 'label', items)
   d[names(d)] <- lapply(items$name, set_col_attr, d, 'OID', items)
   d[names(d)] <- lapply(items$name, set_col_attr, d, 'length', items)
+  d[names(d)] <- lapply(items$name, set_col_attr, d, 'type', items)
   d[names(d)] <- lapply(items$name, set_col_attr, d, 'keySequence', items)
   d[names(d)] <- lapply(items$name, set_col_attr, d, 'displayFormat', items)
 
