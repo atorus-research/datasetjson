@@ -34,7 +34,7 @@ get_datetime_cols <- function(x) {
 #' Convert a Date object in R to a SAS date origin
 #'
 #' R uses POSIX date origins, and SAS uses a date origin of 1960-01-01, so to
-#' convert you need to subtract 10 years in days
+#' convert you need to add 10 years (plus three leap year days) in days
 #'
 #' @param x A data.frame
 #'
@@ -42,15 +42,15 @@ get_datetime_cols <- function(x) {
 #' @noRd
 convert_to_sas_datenum <- function(x) {
   col_names <- names(get_date_cols(x))
-  # Subtract 10 years in days
-  x[col_names] <- lapply(get_date_cols(x) - (365 * 10), as.numeric)
+  # Add 10 years in days (including 3 leap year days)
+  x[col_names] <- lapply(get_date_cols(x) + (365 * 10) + 3, as.numeric)
   x
 }
 
 #' Convert a POSIXct object in R to a SAS date origin
 #'
 #' R uses POSIX date origins, and SAS uses a date origin of 1960-01-01, so to
-#' convert you need to subtract 10 years in seconds
+#' convert you need to add 10 years (plus three leap year days) in seconds
 #'
 #' @param x A data.frame
 #'
@@ -58,7 +58,8 @@ convert_to_sas_datenum <- function(x) {
 #' @noRd
 convert_to_sas_datetimenum <- function(x) {
   col_names <- names(get_datetime_cols(x))
-  # Subtract 10 years in seconds
-  x[col_names] <- lapply(get_datetime_cols(x) - (365 * 24 * 60 * 60 * 10), as.numeric)
+  # Add 10 years in seconds (including 3 leap year days)
+  x[col_names] <- lapply(get_datetime_cols(x) + (365 * 24 * 60 * 60 * 10) + (3 * 24 * 60 * 60), as.numeric)
+
   x
 }
