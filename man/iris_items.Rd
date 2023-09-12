@@ -13,8 +13,8 @@
 \item{label}{Label for Variable}
 \item{type}{Data type for Variable}
 \item{length}{Length for Variable}
-\item{keySequence}{Indicates that this item is a key variable in the dataset structure. It also provides an ordering for the keys.}
 \item{displayFormat}{Display format supports data visualization of numeric float and date values.}
+\item{keySequence}{Indicates that this item is a key variable in the dataset structure. It also provides an ordering for the keys.}
 }
 }
 }
