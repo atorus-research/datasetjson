@@ -43,6 +43,6 @@ write_dataset_json <- function(x, file, pretty=TRUE) {
     cat(js, "\n", file = file)
   } else {
     # Print to console
-    cat(js, "\n")
+    js
   }
 }
