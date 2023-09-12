@@ -3,5 +3,5 @@
     Code
       e <- validate_dataset_json(test_path("testdata", "ae.json"))
     Output
-      File containes errors!
+      File contains errors!
 
