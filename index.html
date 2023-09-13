@@ -41,7 +41,7 @@
     
     <a class="navbar-brand me-2" href="index.html">datasetjson</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9999</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -88,7 +88,7 @@
 <!-- The purpose of this is to enable dynamic links using dyn_link function above to access devel/main admiral homepage respectively -->
 <!-- To test this in your feature branch use code: rmarkdown::render("README.Rmd", output_format ="md_document") -->
 <!-- badges: start -->
-<!-- badges: end -->
+
 <p>Welcome to <strong>datasetjson</strong>. <strong>datasetjson</strong> is an R package built to read and write <a href="https://www.cdisc.org/dataset-json" class="external-link">CDISC Dataset JSON</a> formatted datasets.</p>
 <p>As always, we welcome your feedback. If you spot a bug, would like to see a new feature, or if any documentation is unclear - submit an issue through GitHub right <a href="https://github.com/atorus-research/datasetjson/issues" class="external-link">here</a>.</p>
 </div>
@@ -129,10 +129,10 @@
 <code class="sourceCode R"><span><span class="va">js_text</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/write_dataset_json.html">write_dataset_json</a></span><span class="op">(</span><span class="va">ds_updated</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="va">js_text</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb6"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="do">## {</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="do">##   "creationDateTime": "2023-09-12T19:00:09",</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="do">##   "creationDateTime": "2023-09-13T13:49:37",</span></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="do">##   "datasetJSONVersion": "1.0.0",</span></span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="do">##   "fileOID": "NA",</span></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="do">##   "asOfDateTime": "2023-09-12T19:00:09",</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="do">##   "asOfDateTime": "2023-09-13T13:49:37",</span></span>
 <span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="do">##   "originator": "Some Org",</span></span>
 <span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="do">##   "sourceSystem": "source system",</span></span>
 <span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="do">##   "sourceSystemVersion": "1.0",</span></span>
@@ -211,7 +211,7 @@
 <p>The data frame that’s returned is enriched with attributes available in the Dataset JSON format. For example, opening the dataframe within the RStudio IDE will present the variable labels. The other variable is attached as attributes on individual columns, and file level metadata is attached as attributes on the data frame itself:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">dat</span>, <span class="st">"creationDateTime"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb10"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] "2023-09-12T19:00:09"</span></span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] "2023-09-13T13:49:37"</span></span></code></pre></div>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">dat</span><span class="op">$</span><span class="va">Sepal.Length</span>, <span class="st">"OID"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb12"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] "IT.IR.Sepal.Length"</span></span></code></pre></div>
@@ -219,6 +219,12 @@
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">dat</span><span class="op">$</span><span class="va">Sepal.Width</span>, <span class="st">"type"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb14"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] "float"</span></span></code></pre></div>
 <p>Note that Dataset JSON is an early CDISC standard and is still subject to change, as as such this package will be updated. Backwards compatibility will be enforced once the standard itself is more stable. Until then, it is not recommended to use this package within production activities.</p>
+<div class="section level2">
+<h2 id="acknowledgements">Acknowledgements<a class="anchor" aria-label="anchor" href="#acknowledgements"></a>
+</h2>
+<p>Thank you to Ben Straub and Eric Simms (GSK) for help and input during the original CDISC Dataset JSON hackathon that motivated this work.</p>
+<p>Thank you to Tilo Blenk (GSK) for suggestions that allowed us to use <strong>jsonlite</strong> exclusively for generation of the final JSON file.</p>
+</div>
 </div>
 
   </main><aside class="col-md-3"><div class="links">
@@ -253,7 +259,14 @@
 </ul>
 </div>
 
-
+<div class="dev-status">
+<h2 data-toc-skip>Dev status</h2>
+<ul class="list-unstyled">
+<li><a href="https://app.codecov.io/gh/atorus-research/datasetjson" class="external-link"><img src="https://img.shields.io/codecov/c/github/atorus-research/datasetjson"></a></li>
+<li><a href="https://github.com/atorus-research/datasetjson/blob/main/LICENSE.md" class="external-link"><img src="https://img.shields.io/badge/License-APACHE2-blue.svg"></a></li>
+<li><a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" class="external-link"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="Lifecycle: experimental"></a></li>
+</ul>
+</div>
 
   </aside>
 </div>
