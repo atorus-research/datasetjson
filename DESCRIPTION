@@ -2,10 +2,21 @@ Package: datasetjson
 Type: Package
 Title: Read and write CDISC Dataset JSON files
 Version: 0.0.0.9999
-Authors@R:
-Description:
+Authors@R: c(
+    person(given = "Mike",
+           family = "Stackhouse",
+           role = c("aut", "cre"),
+           email = "mike.stackhouse@atorusresearch.com",
+           comment = c(ORCID = "0000-0001-6030-723X")),
+    person(given = "Nicholas",
+           family = "Masel",
+           email = "nmasel@its.jnj.com",
+           role = "aut")
+    )
+Description: R package for reading and writing CDISC Dataset JSON files
 License: Apache License (>= 2)
-URL: https://pharmaverse.github.io/admiraltemplate, https://github.com/pharmaverse/admiraltemplate
+URL: https://github.com/atorus-research/datasetjson
+BugReports: https://github.com/atorus-research/datasetjson/issues
 Encoding: UTF-8
 Language: en-US
 LazyData: true
@@ -13,6 +24,12 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
 Depends: R (>= 3.5)
 Imports:
+    jsonlite (>= 1.8.7),
 Suggests:
+    testthat (>= 2.1.0),
+    knitr,
+    haven,
+    rmarkdown,
+    withr
 VignetteBuilder: knitr
 Config/testthat/edition: 3
