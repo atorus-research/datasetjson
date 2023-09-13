@@ -5,7 +5,11 @@
 \alias{schema_1_0_0}
 \title{Dataset JSON Schema Version 1.0.0}
 \format{
-\subsection{\code{schema_1_0_0} A character vector with 1 element}{
+\subsection{\code{schema_1_0_0}}{
+
+\describe{
+A character vector with 1 element
+}
 }
 }
 \usage{

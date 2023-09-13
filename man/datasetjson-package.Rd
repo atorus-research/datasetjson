@@ -6,7 +6,7 @@
 \alias{datasetjson-package}
 \title{datasetjson: Read and write CDISC Dataset JSON files}
 \description{
-R package for reading and writing CDISC Dataset JSON files
+R package for reading and writing CDISC Dataset JSON files.
 }
 \seealso{
 Useful links:

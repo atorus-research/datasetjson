@@ -85,7 +85,7 @@ set_item_data <- function(x, .data, ...) {
 #' @noRd
 #' @export
 #' @method set_item_data dataset_metadata
-set_item_data.dataset_metadata <- function(x, .data) {
+set_item_data.dataset_metadata <- function(x, .data, ...) {
   stopifnot_dataset_metadata(x)
 
   if (!inherits(.data, "data.frame")) {

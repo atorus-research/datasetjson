@@ -20,7 +20,10 @@
 #' Valid SAS(c) date formats pulled from
 #' https://documentation.sas.com/doc/en/vdmmlcdc/8.1/ds2pg/p0bz5detpfj01qn1kz2in7xymkdl.htm
 #'
-#' @format ## `sas_date_formats` A character vector with 45 elements
+#' @format ## `sas_date_formats`
+#' \describe{
+#'   A character vector with 45 elements
+#' }
 "sas_date_formats"
 
 #' A List of valid SAS(c) datetime formats
@@ -28,7 +31,10 @@
 #' Valid SAS(c) datetime formats pulled from
 #' https://documentation.sas.com/doc/en/vdmmlcdc/8.1/ds2pg/p0bz5detpfj01qn1kz2in7xymkdl.htm
 #'
-#' @format ## `sas_datetime_formats` A character vector with 7 elements
+#' @format ## `sas_datetime_formats`
+#' \describe{
+#'   A character vector with 7 elements
+#' }
 "sas_datetime_formats"
 
 #' A List of valid SAS(c) time formats
@@ -36,12 +42,18 @@
 #' Valid SAS(c) time formats pulled from
 #' https://documentation.sas.com/doc/en/vdmmlcdc/8.1/ds2pg/p0bz5detpfj01qn1kz2in7xymkdl.htm
 #'
-#' @format ## `sas_time_formats` A character vector with 4 elements
+#' @format ## `sas_time_formats`
+#' \describe{
+#'   A character vector with 4 elements
+#' }
 "sas_time_formats"
 
 #' Dataset JSON Schema Version 1.0.0
 #'
 #' This object is a character vector holding the schema for Dataset JSON Version 1.0.0
 #'
-#' @format ## `schema_1_0_0` A character vector with 1 element
+#' @format ## `schema_1_0_0`
+#' \describe{
+#'   A character vector with 1 element
+#' }
 "schema_1_0_0"

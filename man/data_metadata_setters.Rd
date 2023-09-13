@@ -9,7 +9,7 @@
 \usage{
 set_study_oid(x, study, ...)
 
-\method{set_study_oid}{data_metadata}(x, study)
+\method{set_study_oid}{data_metadata}(x, study, ...)
 
 set_metadata_version(x, metadata_version, ...)
 
@@ -20,7 +20,7 @@ set_metadata_ref(x, metadata_ref)
 
 \item{study}{Study OID value}
 
-\item{...}{}
+\item{...}{Additional parameters}
 
 \item{metadata_version}{Metadata version OID value}
 

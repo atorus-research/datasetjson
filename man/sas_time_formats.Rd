@@ -5,7 +5,11 @@
 \alias{sas_time_formats}
 \title{A List of valid SAS(c) time formats}
 \format{
-\subsection{\code{sas_time_formats} A character vector with 4 elements}{
+\subsection{\code{sas_time_formats}}{
+
+\describe{
+A character vector with 4 elements
+}
 }
 }
 \usage{
