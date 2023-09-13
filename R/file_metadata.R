@@ -1,8 +1,5 @@
 #' Create a file metadata object
 #'
-#' @param data_type Type of data being written. clinicalData for subject level
-#'   data, and referenceData for non-subject level data (i.e. TDMs, Associated
-#'   Persons)
 #' @param originator originator parameter, defined as "The organization that
 #'   generated the Dataset-JSON file."
 #' @param sys sourceSystem parameter, defined as "The computer system or
@@ -16,8 +13,22 @@
 #' @export
 #'
 #' @examples
-#' # TODO:
-file_metadata <- function(data_type, originator="NA", sys = "NA", sys_version = "NA", version = "1.0.0") {
+#' # Create using parameters
+#' file_meta <- file_metadata(
+#'     "clinicalData",
+#'     originator = "Some Org",
+#'     sys = "source system",
+#'     sys_version = "1.0"
+#'   )
+#'
+#' # Set parameters after
+#' file_meta <- file_metadata()
+#'
+#' file_meta_updated <- set_data_type(file_meta, "referenceData")
+#' file_meta_updated <- set_file_oid(file_meta_updated, "/some/path")
+#' file_meta_updated <- set_originator(file_meta_updated, "Some Org")
+#' file_meta_updated <- set_source_system(file_meta_updated, "source system", "1.0")
+file_metadata <- function(originator="NA", sys = "NA", sys_version = "NA", version = "1.0.0") {
 
   if (!(version %in% c("1.0.0"))) {
     stop("Unsupported version specified - currently only version 1.0.0 is supported", call.=FALSE)
@@ -33,17 +44,10 @@ file_metadata <- function(data_type, originator="NA", sys = "NA", sys_version = 
     "sourceSystemVersion" = sys_version
   )
 
-  f_meta <- structure(
+  structure(
     x,
     class = c("file_metadata", "list")
   )
-
-  # For the clinicalData or referenceData, set the parameter correctly
-  if (!missing(data_type)) {
-    f_meta <- set_data_type(f_meta, data_type)
-  }
-
-  f_meta
 }
 
 #' Create an ISO8601 formatted datetime of the current time
@@ -80,7 +84,12 @@ get_datetime <- function() {
 #' @rdname file_metadata_setters
 #'
 #' @examples
-#' # TODO:
+#' file_meta <- file_metadata()
+#'
+#' file_meta_updated <- set_data_type(file_meta, "referenceData")
+#' file_meta_updated <- set_file_oid(file_meta_updated, "/some/path")
+#' file_meta_updated <- set_originator(file_meta_updated, "Some Org")
+#' file_meta_updated <- set_source_system(file_meta_updated, "source system", "1.0")
 set_source_system <- function(x, sys, sys_version) {
   stopifnot_file_metadata(x)
   x[['sourceSystem']] <- sys
@@ -110,7 +119,7 @@ set_file_oid <- function(x, file_oid) {
 #' @family File Metadata Setters
 #' @rdname file_metadata_setters
 set_data_type <- function(x, data_type = c('clinicalData', 'referenceData')) {
-  stopifnot_file_metadata(x)
+  stopifnot_datasetjson(x)
   data_type = match.arg(data_type)
 
   # For the clinicalData or referenceData, set the parameter correctly

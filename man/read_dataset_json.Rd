@@ -7,7 +7,7 @@
 read_dataset_json(file)
 }
 \arguments{
-\item{file}{File path on disk}
+\item{file}{File path on disk, or a pre-loaded Dataset JSON file in a single element character string}
 }
 \value{
 datasetjson object
@@ -17,6 +17,13 @@ This function validated a dataset JSON file on disk against the Dataset JSON sch
 returns a datasetjson object
 }
 \examples{
+# Read from disk
+\dontrun{
+  dat <- read_dataset_json("path/to/file.json")
+}
 
-# TODO:
+# Read from an already imported character vector
+ds_json <- dataset_json(iris, "IG.IRIS", "IRIS", "Iris", iris_items)
+js <- write_dataset_json(ds_json)
+dat <- read_dataset_json(js)
 }

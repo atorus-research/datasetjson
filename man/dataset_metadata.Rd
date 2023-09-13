@@ -25,5 +25,10 @@ dataset_metadata object
 Generate an individual element that fills the itemGroupData field
 }
 \examples{
-# TODO:
+dataset_meta <- dataset_metadata(
+  item_id = "IG.IRIS",
+  name = "IRIS",
+  label = "Iris",
+  items = iris_items
+)
 }

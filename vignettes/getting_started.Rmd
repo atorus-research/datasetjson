@@ -1,0 +1,177 @@
+---
+title: "Getting Started"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Getting Started}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(datasetjson)
+```
+
+# Using **datasetjson**
+
+**datasetjson** works by allowing you to take a data frame and apply the necessary attributes required for the CDISC Dataset JSON. The goal is to make this experience simple. Before you can write a Dataset JSON file to disk, you first need to build the Dataset JSON object. An example call looks like this:
+
+```{r sample_call}
+ds_json <- dataset_json(iris[1:5, ], "IG.IRIS", "IRIS", "Iris", iris_items)
+```
+
+This is the minimum information required to provide to create a `datasetjson` object. 
+
+The parameters here can be described as follows:
+
+- The input data frame `iris`
+- The `item_id`, which can be described as the "Object of Dataset", which is a key value is a unique identifier for the dataset, corresponding to ItemGroupDef/@OID in Define-XML.
+- `name`, which is the dataset name
+- `label`, which is the dataset label, and finally
+- `items`, which is the variable level metadata for your dataset.
+
+The `items` parameter is special here, in that you provide a data frame with the necessary variable metadata. Take a look at the `iris_items` data frame. 
+
+```{r iris_items}
+iris_items
+```
+
+This data frame has 7 columns, 4 of which are strictly required. This is defined by the [CDISC Dataset JSON Specification](https://www.cdisc.org/dataset-json).
+
+| **﻿Attribute** | **Requirement** | **Description**                                                                                                                |
+|---------------|-----------------|--------------------------------------------------------------------------------------------------------------------------------|
+| OID           | Required        | OID of a variable (must correspond to the variable OID in the Define-XML file)                                                 |
+| name          | Required        | Variable name                                                                                                                  |
+| label         | Required        | Variable description                                                                                                           |
+| type          | Required        | Type of the variable. Allowed values: "string", "integer", "decimal", "float", "double", "boolean". See ODM types for details. |
+| length        | Optional        | Variable length                                                                                                                |
+| displayFormat | Optional        | Display format supports data visualization of numeric float and date values.Â                                                  |
+| keySequence   | Optional        | Indicates that this item is a key variable in the dataset structure. It also provides an ordering for the keys.                |
+
+The data within this dataframe ultimate populates the `items` element of the Dataset JSON file. The OID, name, label, and type columns are all required and must be populated for each variable. Note that the type column has a list of allowable values:
+
+- `string`
+- `integer`
+- `float`
+- `double`
+- `decimal`
+- `boolean`
+
+This information must be provided directly by the user. Note that no type conversions of your data are performed by the `datasetjson` package. The displayFormat column inherently refers to display formats used within SAS. 
+
+## Setting Other Data Attributes
+
+The Dataset JSON specification has a number of other attributes available that are beyond normal ones present in an R data frame. These can be applied using a variety of setter functions directly to the dataset JSON object.
+
+```{r setters}
+ds_updated <- ds_json |>
+  set_data_type("referenceData") |>
+  set_file_oid("/some/path") |>
+  set_metadata_ref("some/define.xml") |>
+  set_metadata_version("MDV.MSGv2.0.SDTMIG.3.3.SDTM.1.7") |>
+  set_originator("Some Org") |>
+  set_source_system("source system", "1.0") |>
+  set_study_oid("SOMESTUDY")
+```
+
+In a practical setting, applying these attributes during the creation a dataset JSON file would be tedious, and present a challenge if the fields update - because the text would have to be updated in each program individually. For this reason, the **datasetjson** package allows you to use pre-built objects to create a `datasetjson` object.
+
+```{r prebuilds}
+file_meta <- file_metadata(
+  originator = "Some Org",
+  sys = "source system",
+  sys_version = "1.0"
+)
+
+data_meta <- data_metadata(
+  study = "SOMESTUDY",
+  metadata_version = "MDV.MSGv2.0.SDTMIG.3.3.SDTM.1.7",
+  metadata_ref = "some/define.xml"
+)
+
+dataset_meta <- dataset_metadata(
+  item_id = "IG.IRIS",
+  name = "IRIS",
+  label = "Iris",
+  items = iris_items
+)
+
+ds_json_from_meta <- dataset_json(
+  iris,
+  dataset_meta = dataset_meta,
+  file_meta = file_meta,
+  data_meta = data_meta
+)
+```
+
+Or more practically, just `file_meta` and `data_meta` could be provided, and the `dataset_metadata` could be provided directly to `dataset_json`.
+
+```{r prebuilds_2}
+file_meta <- file_metadata(
+  originator = "Some Org",
+  sys = "source system",
+  sys_version = "1.0"
+)
+
+data_meta <- data_metadata(
+  study = "SOMESTUDY",
+  metadata_version = "MDV.MSGv2.0.SDTMIG.3.3.SDTM.1.7",
+  metadata_ref = "some/define.xml"
+)
+
+
+ds_json_from_meta <- dataset_json(
+  iris,
+  item_id = "IG.IRIS",
+  name = "IRIS",
+  label = "Iris",
+  items = iris_items,
+  file_meta = file_meta,
+  data_meta = data_meta
+)
+```
+
+## Writing and Reading
+
+The `datasetjson` object allows you to collect the information needed to generate a Dataset JSON file, but to write the dataset out need to use the `write_dataset_json()` file. Once the Dataset JSON object is available, all you need is that object name and a file path.
+
+```{r write, eval=FALSE}
+write_dataset_json(ds_updated, file="iris.json")
+```
+
+The `write_dataset_json()` also has the option to return the JSON output as a character string.
+
+```{r write_char}
+js <- write_dataset_json(ds_updated)
+cat(js)
+```
+
+Similarly, to read a Dataset JSON object, you can use the function `read_dataset_json()`. This function will return a dataframe to you, ready to use. To read, provide a file path.
+
+```{r read, eval=FALSE}
+read_dataset_json("path/to/file")
+```
+
+You can also provide single element character vector of the JSON text already read in.
+
+```{r read_char}
+dat <- read_dataset_json(js)
+```
+
+The data frame that's read in carries a number of attributes. For example, opening the dataframe within the RStudio IDE will present the variable labels. All data available within the Dataset JSON file is ultimately attached to the imported data frame.
+
+```{r attributes}
+attributes(dat)
+```
+
+For variable level metadata, the attributes are applied directly to the columns.
+
+```{r col_attributes}
+attributes(dat$Species)
+```

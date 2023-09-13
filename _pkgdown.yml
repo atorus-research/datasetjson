@@ -1,67 +1,52 @@
-url: https://pharmaverse.github.io/admiraltemplate
+url: https://atorus-research.github.io/datasetjson
+destination: docs
 
 template:
   bootstrap: 5
+  bslib:
+    bg: "#FFFFFF"
+    fg: "#1D252D"
+    primary: "#1D252D"
   params:
-    bootswatch: flatly
+    bootswatch: yeti
+    ganalytics: UA-165685385-2
+  opengraph:
+    twitter:
+      creator: "@AtorusR"
+      card: summary_large_image
+search:
+  exclude: ['news/index.html']
 repo:
   url:
-    home: https://github.com/pharmaverse/admiraltemplate
-    source: https://github.com/pharmaverse/admiraltemplate/blob/main/
-    issue: https://github.com/pharmaverse/admiraltemplate/issues/
-    user: https://github.com/
+    home: https://github.com/atorus-research/datasetjson
+    source: https://github.com/atorus-research/datasetjson/blob/main/
+    issue: https://github.com/atorus-research/datasetjson/issues/
+    user: https://github.com/atorus-research
 news:
   cran_dates: true
 reference:
-
-- title: Derivations for Adding Variables
-- subtitle: ADXX-specific
-  desc: Derivation Functions helpful for building the ADXX dataset
+- title: Objects
+  desc: Relevant objects within datasetjson
 - contents:
-  - has_keyword("der_adxx")
-
-- title: Derivations for Adding Parameters
-- subtitle: ADXX-specific
-  desc: Parameter Derivation Functions helpful for building the ADXX dataset
+  - dataset_json
+  - file_metadata
+  - data_metadata
+  - dataset_metadata
+- title: Setter functions
+  desc: Setter functions to add attributes
 - contents:
-  - has_keyword("der_prm_adxx")
-
-- title: Advanced Functions
-- subtitle: Pre-Defined Source Objects
-  desc: Source objects defined by {admiraltemplate}
+  - starts_with("set")
+- title: Read, Write, and Validate
+  desc: Functions to read, write, and validate Dataset JSON files
 - contents:
-  - has_keyword("source_specifications")
-
-- title: Utility Functions
-- subtitle: Utilities for Formatting Observations
+  - read_dataset_json
+  - write_dataset_json
+  - validate_dataset_json
+- title: Data Objects
+  desc: Data objects stored in the datasetjson package
 - contents:
-  - has_keyword('utils_fmt')
-
-- subtitle: Utilities for Dataset Checking
-- contents:
-  - has_keyword('utils_ds_chk')
-
-- subtitle: Utilities for Filtering Observations
-- contents:
-  - has_keyword('utils_fil')
-
-- title: Example Datasets
-  desc: You can run `admiral::use_ad_template()` to produce additional datasets
-- contents:
-  - has_keyword('datasets')
-
-navbar:
-  structure:
-    left: [getstarted, reference, articles, news]
-  components:
-    getstarted:
-      text: Get Started
-      href: articles/admiraltemplate.html
-    reference:
-      text: Reference
-      href: reference/index.html
-    articles:
-      text: User Guides
-      menu:
-      - text: Creating ADXX
-        href: articles/adxx.html
+  - iris_items
+  - sas_date_formats
+  - sas_datetime_formats
+  - sas_time_formats
+  - schema_1_0_0

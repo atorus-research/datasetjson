@@ -54,6 +54,42 @@ specific
 Create the base object used to write a Dataset JSON file.
 }
 \examples{
-TODO: Re-look at this to allow providing the sections all separately.
-# The file logicially splits into the file metadata, data metadata, and dataset metadata
+# Create a basic object
+ds_json <- dataset_json(iris, "IG.IRIS", "IRIS", "Iris", iris_items)
+
+# Attach attributes directly
+ds_json_updated <- set_data_type(ds_json, "referenceData")
+ds_json_updated <- set_file_oid(ds_json_updated, "/some/path")
+ds_json_updated <- set_metadata_ref(ds_json_updated, "some/define.xml")
+ds_json_updated <- set_metadata_version(ds_json_updated, "MDV.MSGv2.0.SDTMIG.3.3.SDTM.1.7")
+ds_json_updated <- set_originator(ds_json_updated, "Some Org")
+ds_json_updated <- set_source_system(ds_json_updated, "source system", "1.0")
+ds_json_updated <- set_study_oid(ds_json_updated, "SOMESTUDY")
+
+# Create independent objects for metadata sections first
+file_meta <- file_metadata(
+  originator = "Some Org",
+  sys = "source system",
+  sys_version = "1.0"
+)
+
+data_meta <- data_metadata(
+  study = "SOMESTUDY",
+  metadata_version = "MDV.MSGv2.0.SDTMIG.3.3.SDTM.1.7",
+  metadata_ref = "some/define.xml"
+)
+
+dataset_meta <- dataset_metadata(
+  item_id = "IG.IRIS",
+  name = "IRIS",
+  label = "Iris",
+  items = iris_items
+)
+
+ds_json_from_meta <- dataset_json(
+  iris,
+  dataset_meta = dataset_meta,
+  file_meta = file_meta,
+  data_meta = data_meta
+  )
 }

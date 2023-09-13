@@ -41,6 +41,11 @@ Set information about the source system used to generate the Dataset JSON
 object.
 }
 \examples{
-# TODO:
+file_meta <- file_metadata()
+
+file_meta_updated <- set_data_type(file_meta, "referenceData")
+file_meta_updated <- set_file_oid(file_meta_updated, "/some/path")
+file_meta_updated <- set_originator(file_meta_updated, "Some Org")
+file_meta_updated <- set_source_system(file_meta_updated, "source system", "1.0")
 }
 \concept{File Metadata Setters}

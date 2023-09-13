@@ -5,7 +5,6 @@
 \title{Create a file metadata object}
 \usage{
 file_metadata(
-  data_type,
   originator = "NA",
   sys = "NA",
   sys_version = "NA",
@@ -13,10 +12,6 @@ file_metadata(
 )
 }
 \arguments{
-\item{data_type}{Type of data being written. clinicalData for subject level
-data, and referenceData for non-subject level data (i.e. TDMs, Associated
-Persons)}
-
 \item{originator}{originator parameter, defined as "The organization that
 generated the Dataset-JSON file."}
 
@@ -36,5 +31,19 @@ file_metadata object
 Create a file metadata object
 }
 \examples{
-# TODO:
+# Create using parameters
+file_meta <- file_metadata(
+    "clinicalData",
+    originator = "Some Org",
+    sys = "source system",
+    sys_version = "1.0"
+  )
+
+# Set parameters after
+file_meta <- file_metadata()
+
+file_meta_updated <- set_data_type(file_meta, "referenceData")
+file_meta_updated <- set_file_oid(file_meta_updated, "/some/path")
+file_meta_updated <- set_originator(file_meta_updated, "Some Org")
+file_meta_updated <- set_source_system(file_meta_updated, "source system", "1.0")
 }

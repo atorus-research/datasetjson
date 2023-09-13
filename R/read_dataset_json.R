@@ -3,17 +3,30 @@
 #' This function validated a dataset JSON file on disk against the Dataset JSON schema, and if valid
 #' returns a datasetjson object
 #'
-#' @param file File path on disk
+#' @param file File path on disk, or a pre-loaded Dataset JSON file in a single element character string
 #'
 #' @return datasetjson object
 #' @export
 #'
 #' @examples
+#' # Read from disk
+#' \dontrun{
+#'   dat <- read_dataset_json("path/to/file.json")
+#' }
 #'
-#' # TODO:
+#' # Read from an already imported character vector
+#' ds_json <- dataset_json(iris, "IG.IRIS", "IRIS", "Iris", iris_items)
+#' js <- write_dataset_json(ds_json)
+#' dat <- read_dataset_json(js)
 read_dataset_json <- function(file) {
   # Validate the input file against the schema
-  jsonvalidate::json_validate(file, schema_1_0_0, engine="ajv")
+  valid <- jsonvalidate::json_validate(file, schema_1_0_0, engine="ajv")
+
+  if (!valid) {
+    stop(paste0(c("Dataset JSON file is invalid per the JSON schema. ",
+                "Run datasetjson::validate_dataset_json(",substitute(file),") to see details")),
+      call.=FALSE)
+  }
 
   # Read the file and convert to datasetjson object
   ds_json <- jsonlite::fromJSON(file)
@@ -47,6 +60,7 @@ read_dataset_json <- function(file) {
   d[names(d)] <- lapply(items$name, set_col_attr, d, 'label', items)
   d[names(d)] <- lapply(items$name, set_col_attr, d, 'OID', items)
   d[names(d)] <- lapply(items$name, set_col_attr, d, 'length', items)
+  d[names(d)] <- lapply(items$name, set_col_attr, d, 'type', items)
   d[names(d)] <- lapply(items$name, set_col_attr, d, 'keySequence', items)
   d[names(d)] <- lapply(items$name, set_col_attr, d, 'displayFormat', items)
 
