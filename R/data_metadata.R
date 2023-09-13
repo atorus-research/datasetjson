@@ -1,8 +1,6 @@
 #' Create the data metadata container for a Dataset JSON object
 #'
-#' @param data_type Type of data being written. clinicalData for subject level
-#'   data, and referenceData for non-subject level data (i.e. TDMs, Associated
-#'   Persons)
+#' @param study Study OID value
 #' @param metadata_version Metadata version OID value
 #' @param metadata_ref Metadata reference (i.e. path to Define.xml)
 #'
@@ -43,8 +41,7 @@ data_metadata <- function(study = "NA", metadata_version = "NA", metadata_ref = 
 #' This set of functions
 #' @param x data metadata or datasetjson object
 #' @param study Study OID value
-#'
-#' @param ...
+#' @param ... Additional parameters
 #'
 #' @return A datasetjson or data_metadata object
 #' @export
@@ -64,7 +61,7 @@ set_study_oid <- function(x, study, ...) {
 #' @family Data metadata setters
 #' @rdname data_metadata_setters
 #' @export
-set_study_oid.data_metadata <- function(x, study) {
+set_study_oid.data_metadata <- function(x, study, ...) {
   stopifnot_data_metadata(x)
   x[['studyOID']] <- study
   x
@@ -72,7 +69,7 @@ set_study_oid.data_metadata <- function(x, study) {
 
 #' @export
 #' @noRd
-set_study_oid.datasetjson <- function(x, study) {
+set_study_oid.datasetjson <- function(x, study, ...) {
   stopifnot_datasetjson(x)
   data_type <- get_data_type(x)
   x[[data_type]][['studyOID']] <- study
@@ -89,7 +86,7 @@ set_metadata_version <- function(x, metadata_version, ...) {
 
 #' @export
 #' @noRd
-set_metadata_version.data_metadata <- function(x, metadata_version) {
+set_metadata_version.data_metadata <- function(x, metadata_version, ...) {
   stopifnot_data_metadata(x)
   x[['metaDataVersionOID']] <- metadata_version
   x
@@ -97,7 +94,7 @@ set_metadata_version.data_metadata <- function(x, metadata_version) {
 
 #' @export
 #' @noRd
-set_metadata_version.datasetjson <- function(x, metadata_version) {
+set_metadata_version.datasetjson <- function(x, metadata_version, ...) {
   stopifnot_datasetjson(x)
   data_type <- get_data_type(x)
   x[[data_type]][['metaDataVersionOID']] <- metadata_version

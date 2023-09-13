@@ -85,7 +85,7 @@ set_item_data <- function(x, .data, ...) {
 #' @noRd
 #' @export
 #' @method set_item_data dataset_metadata
-set_item_data.dataset_metadata <- function(x, .data) {
+set_item_data.dataset_metadata <- function(x, .data, ...) {
   stopifnot_dataset_metadata(x)
 
   if (!inherits(.data, "data.frame")) {
@@ -186,40 +186,4 @@ df_to_list_rows <- function(x) {
     y <- as.list(X)
     y[!is.na(y)]
   })
-}
-
-#' Apply JSON metadata to dataframe as attributes
-#'
-#' This function takes supplied metadata and applies it to a dataframe as
-#' corresponding attributes
-#'
-#' @param .data A Dataframe
-#' @param metadata A list containing Dataset JSON dataset object metadata
-#'
-#' @return dataframe
-#' @examples
-#' # TODO:
-#' @noRd
-apply_dataset_metadata <- function(.data, metadata) {
-  # TODO: Set records, name, and label to the dataframe as a whole
-
-  # TODO: Set OID, name, label, type, length, and format, and keySequence as
-  # necessary to each variable
-  TRUE
-}
-
-#' Gather Dataset JSON metadata from a dataframe which has Dataset JSON metadata
-#' applied
-#'
-#' This function will gather the attributes from a data frame which has Dataset
-#' JSON metadata applied.
-#'
-#' @param .data A dataframe with Dataset JSON attributes applied
-#'
-#' @return A list of Dataset dataset object JSON metadata
-#' @noRd
-gather_dataset_metadata <- function(.data) {
-
-  # Retrieve the necessary metadata off of a data frame that pertains to a dataset JSON object
-  TRUE
 }

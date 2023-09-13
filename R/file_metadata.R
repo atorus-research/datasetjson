@@ -15,7 +15,6 @@
 #' @examples
 #' # Create using parameters
 #' file_meta <- file_metadata(
-#'     "clinicalData",
 #'     originator = "Some Org",
 #'     sys = "source system",
 #'     sys_version = "1.0"
@@ -24,8 +23,7 @@
 #' # Set parameters after
 #' file_meta <- file_metadata()
 #'
-#' file_meta_updated <- set_data_type(file_meta, "referenceData")
-#' file_meta_updated <- set_file_oid(file_meta_updated, "/some/path")
+#' file_meta_updated <- set_file_oid(file_meta, "/some/path")
 #' file_meta_updated <- set_originator(file_meta_updated, "Some Org")
 #' file_meta_updated <- set_source_system(file_meta_updated, "source system", "1.0")
 file_metadata <- function(originator="NA", sys = "NA", sys_version = "NA", version = "1.0.0") {
@@ -76,7 +74,9 @@ get_datetime <- function() {
 #'   generated the Dataset-JSON file."
 #' @param file_oid fileOID parameter, defined as "A unique identifier for this
 #'   file."
-#' @param data_type
+#' @param data_type Type of data being written. clinicalData for subject level
+#'   data, and referenceData for non-subject level data (i.e. TDMs, Associated
+#'   Persons)
 #'
 #' @return datasetjson or file_metadata object
 #' @export
@@ -86,8 +86,7 @@ get_datetime <- function() {
 #' @examples
 #' file_meta <- file_metadata()
 #'
-#' file_meta_updated <- set_data_type(file_meta, "referenceData")
-#' file_meta_updated <- set_file_oid(file_meta_updated, "/some/path")
+#' file_meta_updated <- set_file_oid(file_meta, "/some/path")
 #' file_meta_updated <- set_originator(file_meta_updated, "Some Org")
 #' file_meta_updated <- set_source_system(file_meta_updated, "source system", "1.0")
 set_source_system <- function(x, sys, sys_version) {

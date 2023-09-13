@@ -5,7 +5,11 @@
 \alias{sas_datetime_formats}
 \title{A List of valid SAS(c) datetime formats}
 \format{
-\subsection{\code{sas_datetime_formats} A character vector with 7 elements}{
+\subsection{\code{sas_datetime_formats}}{
+
+\describe{
+A character vector with 7 elements
+}
 }
 }
 \usage{
