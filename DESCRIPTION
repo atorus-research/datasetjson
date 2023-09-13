@@ -1,6 +1,6 @@
 Package: datasetjson
 Type: Package
-Title: Read and write CDISC Dataset JSON files
+Title: Read and Write CDISC Dataset JSON Files
 Version: 0.0.1
 Authors@R: c(
     person(given = "Mike",
