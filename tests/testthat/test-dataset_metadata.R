@@ -51,4 +51,16 @@ test_that("items validator generates messages as expected", {
   ))
 })
 
+test_that("dataset_metadata generates messages as expected", {
+  expect_error(
+    dataset_metadata(
+      item_id = "IG.IRIS",
+      name = "IRIS",
+      label = "Iris",
+      items = iris_items_test,
+      .data = as.matrix(iris)
+      ), ".data must be a data.frame"
+  )
+})
+
 

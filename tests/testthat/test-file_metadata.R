@@ -38,3 +38,11 @@ test_that("Setters work on file_metadata objects", {
   expect_equal(file_meta_updated$sourceSystem, "source system")
   expect_equal(file_meta_updated$sourceSystemVersion, "1.0")
 })
+
+# Error checking
+test_that("Errors are thrown properly", {
+  expect_error(
+    file_metadata(version = "2.0.0"),
+    "Unsupported version specified - currently only version 1.0.0 is supported"
+  )
+})

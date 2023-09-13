@@ -89,6 +89,11 @@ test_that("Errors are thrown properly", {
     )
 
   expect_error(
+    dataset_json(iris, item_id = "IG.IRIS", name = "IRIS", items = iris_items),
+    "If dataset_meta is not provided, then name, label, and items must be provided"
+  )
+
+  expect_error(
     dataset_json(iris, "IG.IRIS", "IRIS", "Iris", iris_items, version="2"),
     regexp = "Unsupported version specified"
   )
