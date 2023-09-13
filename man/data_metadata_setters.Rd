@@ -2,14 +2,11 @@
 % Please edit documentation in R/data_metadata.R
 \name{set_study_oid}
 \alias{set_study_oid}
-\alias{set_study_oid.data_metadata}
 \alias{set_metadata_version}
 \alias{set_metadata_ref}
 \title{Set data metadata parameters}
 \usage{
 set_study_oid(x, study, ...)
-
-\method{set_study_oid}{data_metadata}(x, study, ...)
 
 set_metadata_version(x, metadata_version, ...)
 

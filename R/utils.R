@@ -11,14 +11,14 @@ stopifnot_datasetjson <- function(x) {
 }
 
 stopifnot_dataset_metadata <- function(x) {
-  if (!inherits(x, "dataset_metadata")) {
-    stop("Input must be a dataset_metadata object", call.=FALSE)
+  if (!(inherits(x, "datasetjson") | inherits(x, "dataset_metadata"))) {
+    stop("Input must be a datasetjson or dataset_metadata object", call.=FALSE)
   }
 }
 
 stopifnot_data_metadata <- function(x) {
-  if (!inherits(x, "data_metadata")) {
-    stop("Input must be a data_metadata object", call.=FALSE)
+  if (!(inherits(x, "datasetjson") | inherits(x, "data_metadata"))) {
+    stop("Input must be a datasetjson or data_metadata object", call.=FALSE)
   }
 }
 

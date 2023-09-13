@@ -14,7 +14,9 @@ library(datasetjson)
 <!-- To test this in your feature branch use code: rmarkdown::render("README.Rmd", output_format ="md_document") -->
 
 <!-- badges: start -->
-
+[<img src="https://img.shields.io/codecov/c/github/atorus-research/datasetjson">](https://app.codecov.io/gh/atorus-research/datasetjson)
+[<img src="https://img.shields.io/badge/License-APACHE2-blue.svg">](https://github.com/atorus-research/datasetjson/blob/main/LICENSE.md)
+[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 <!-- badges: end -->
 
 Welcome to **datasetjson**. **datasetjson** is an R package built to read and write [CDISC Dataset JSON](https://www.cdisc.org/dataset-json) formatted datasets. 
@@ -84,3 +86,9 @@ print(attr(dat$Sepal.Length, "OID"))
 print(attr(dat$Sepal.Width, "type"))
 ```
 Note that Dataset JSON is an early CDISC standard and is still subject to change, as as such this package will be updated. Backwards compatibility will be enforced once the standard itself is more stable. Until then, it is not recommended to use this package within production activities. 
+
+## Acknowledgements
+
+Thank you to Ben Straub and Eric Simms (GSK) for help and input during the original CDISC Dataset JSON hackathon that motivated this work.
+
+Thank you to Tilo Blenk (GSK) for suggestions that allowed us to use **jsonlite** exclusively for generation of the final JSON file.

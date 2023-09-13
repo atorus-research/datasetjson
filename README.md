@@ -5,6 +5,11 @@
 <!-- The purpose of this is to enable dynamic links using dyn_link function above to access devel/main admiral homepage respectively -->
 <!-- To test this in your feature branch use code: rmarkdown::render("README.Rmd", output_format ="md_document") -->
 <!-- badges: start -->
+
+[<img src="https://img.shields.io/codecov/c/github/atorus-research/datasetjson">](https://app.codecov.io/gh/atorus-research/datasetjson)
+[<img src="https://img.shields.io/badge/License-APACHE2-blue.svg">](https://github.com/atorus-research/datasetjson/blob/main/LICENSE.md)
+[![Lifecycle:
+experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 <!-- badges: end -->
 
 Welcome to **datasetjson**. **datasetjson** is an R package built to
@@ -73,10 +78,10 @@ cat(js_text)
 ```
 
     ## {
-    ##   "creationDateTime": "2023-09-12T19:00:09",
+    ##   "creationDateTime": "2023-09-13T13:49:37",
     ##   "datasetJSONVersion": "1.0.0",
     ##   "fileOID": "NA",
-    ##   "asOfDateTime": "2023-09-12T19:00:09",
+    ##   "asOfDateTime": "2023-09-13T13:49:37",
     ##   "originator": "Some Org",
     ##   "sourceSystem": "source system",
     ##   "sourceSystemVersion": "1.0",
@@ -169,7 +174,7 @@ attached as attributes on the data frame itself:
 print(attr(dat, "creationDateTime"))
 ```
 
-    ## [1] "2023-09-12T19:00:09"
+    ## [1] "2023-09-13T13:49:37"
 
 ``` r
 print(attr(dat$Sepal.Length, "OID"))
@@ -188,3 +193,11 @@ to change, as as such this package will be updated. Backwards
 compatibility will be enforced once the standard itself is more stable.
 Until then, it is not recommended to use this package within production
 activities.
+
+## Acknowledgements
+
+Thank you to Ben Straub and Eric Simms (GSK) for help and input during
+the original CDISC Dataset JSON hackathon that motivated this work.
+
+Thank you to Tilo Blenk (GSK) for suggestions that allowed us to use
+**jsonlite** exclusively for generation of the final JSON file.

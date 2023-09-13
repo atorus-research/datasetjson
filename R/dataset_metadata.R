@@ -79,13 +79,6 @@ dataset_metadata <- function(item_id, name, label, items, .data) {
 #' @return Input object with itemData applied
 #' @noRd
 set_item_data <- function(x, .data, ...) {
-  UseMethod("set_item_data")
-}
-
-#' @noRd
-#' @export
-#' @method set_item_data dataset_metadata
-set_item_data.dataset_metadata <- function(x, .data, ...) {
   stopifnot_dataset_metadata(x)
 
   if (!inherits(.data, "data.frame")) {
