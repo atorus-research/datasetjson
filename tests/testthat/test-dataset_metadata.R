@@ -62,5 +62,3 @@ test_that("dataset_metadata generates messages as expected", {
       ), ".data must be a data.frame"
   )
 })
-
-
