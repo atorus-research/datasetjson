@@ -13,6 +13,9 @@ write_dataset_json(x, file, pretty = TRUE)
 
 \item{pretty}{If TRUE, write with readable formatting}
 }
+\value{
+NULL when file written to disk, otherwise character string
+}
 \description{
 Write out a Dataset JSON file
 }

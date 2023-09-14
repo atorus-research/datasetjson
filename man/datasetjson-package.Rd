@@ -4,9 +4,9 @@
 \name{datasetjson-package}
 \alias{datasetjson}
 \alias{datasetjson-package}
-\title{datasetjson: Read and write CDISC Dataset JSON files}
+\title{datasetjson: Read and Write CDISC Dataset JSON Files}
 \description{
-R package for reading and writing CDISC Dataset JSON files.
+Read, construct and write CDISC (Clinical Data Interchange Standards Consortium) Dataset JSON (JavaScript Object Notation) files, while validating per the Dataset JSON schema file, as described in CDISC (2023) \url{https://www.cdisc.org/dataset-json}.
 }
 \seealso{
 Useful links:
