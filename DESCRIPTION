@@ -13,7 +13,7 @@ Authors@R: c(
            email = "nmasel@its.jnj.com",
            role = "aut")
     )
-Description: R package for reading and writing CDISC Dataset JSON files.
+Description: Read, construct and write CDISC (Clinical Data Interchange Standards Consortium) Dataset JSON (JavaScript Object Notation) files, while validating per the Dataset JSON schema file, as described in CDISC (2023) <https://www.cdisc.org/dataset-json>.
 URL: https://github.com/atorus-research/datasetjson
 BugReports: https://github.com/atorus-research/datasetjson/issues
 Encoding: UTF-8
