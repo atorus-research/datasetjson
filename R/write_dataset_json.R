@@ -4,7 +4,7 @@
 #' @param file File path to save Dataset JSON file
 #' @param pretty If TRUE, write with readable formatting
 #'
-#' @return NULL
+#' @return NULL when file written to disk, otherwise character string
 #' @export
 #'
 #' @examples
