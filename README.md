@@ -27,7 +27,7 @@ You can install **datasetjson** with:
 
 ``` r
 # Install from CRAN:
-# install.packages("datasetjson") # Will be updated once accepted to CRAN! 
+install.packages("datasetjson")
 
 # Or install the development version:
 devtools::install_github("https://github.com/atorus-research/datasetjson.git", ref="dev")
@@ -78,10 +78,10 @@ cat(js_text)
 ```
 
     ## {
-    ##   "creationDateTime": "2023-09-13T13:49:37",
+    ##   "creationDateTime": "2023-09-15T17:57:31",
     ##   "datasetJSONVersion": "1.0.0",
     ##   "fileOID": "NA",
-    ##   "asOfDateTime": "2023-09-13T13:49:37",
+    ##   "asOfDateTime": "2023-09-15T17:57:31",
     ##   "originator": "Some Org",
     ##   "sourceSystem": "source system",
     ##   "sourceSystemVersion": "1.0",
@@ -174,7 +174,7 @@ attached as attributes on the data frame itself:
 print(attr(dat, "creationDateTime"))
 ```
 
-    ## [1] "2023-09-13T13:49:37"
+    ## [1] "2023-09-15T17:57:31"
 
 ``` r
 print(attr(dat$Sepal.Length, "OID"))
