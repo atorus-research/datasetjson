@@ -29,7 +29,7 @@ You can install **datasetjson** with:
 
 ```{r install, eval=FALSE}
 # Install from CRAN:
-# install.packages("datasetjson") # Will be updated once accepted to CRAN! 
+install.packages("datasetjson")
 
 # Or install the development version:
 devtools::install_github("https://github.com/atorus-research/datasetjson.git", ref="dev")
