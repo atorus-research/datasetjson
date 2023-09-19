@@ -7,20 +7,22 @@
 validate_dataset_json(x)
 }
 \arguments{
-\item{x}{Path to a Dataset JSON file or a character vector holding JSON text}
+\item{x}{File path or URL of a Dataset JSON file, or a character vector
+holding JSON text}
 }
 \value{
 A data frame
 }
 \description{
-This function calls \code{jsonvalidate::json_validate()} directly, with the parameters
-necessary to retrieve the error information of an invalid JSON file per the
-Dataset JSON schema.
+This function calls \code{jsonvalidate::json_validate()} directly, with the
+parameters necessary to retrieve the error information of an invalid JSON
+file per the Dataset JSON schema.
 }
 \examples{
 
 \dontrun{
   validate_dataset_json('path/to/file.json')
+  validate_dataset_json('https://www.somesite.com/file.json')
 }
 
 ds_json <- dataset_json(iris, "IG.IRIS", "IRIS", "Iris", iris_items)

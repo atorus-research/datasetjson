@@ -1,10 +1,11 @@
 #' Validate a Dataset JSON file
 #'
-#' This function calls `jsonvalidate::json_validate()` directly, with the parameters
-#' necessary to retrieve the error information of an invalid JSON file per the
-#' Dataset JSON schema.
+#' This function calls `jsonvalidate::json_validate()` directly, with the
+#' parameters necessary to retrieve the error information of an invalid JSON
+#' file per the Dataset JSON schema.
 #'
-#' @param x Path to a Dataset JSON file or a character vector holding JSON text
+#' @param x File path or URL of a Dataset JSON file, or a character vector
+#'   holding JSON text
 #'
 #' @return A data frame
 #' @export
@@ -13,6 +14,7 @@
 #'
 #' \dontrun{
 #'   validate_dataset_json('path/to/file.json')
+#'   validate_dataset_json('https://www.somesite.com/file.json')
 #' }
 #'
 #' ds_json <- dataset_json(iris, "IG.IRIS", "IRIS", "Iris", iris_items)
@@ -20,7 +22,14 @@
 #'
 #' validate_dataset_json(js)
 validate_dataset_json <- function(x) {
-  v <- jsonvalidate::json_validate(x, schema_1_0_0, engine="ajv", verbose=TRUE)
+  # If contents are a URL then pull out the content
+  if (path_is_url(x)) {
+    js <- read_from_url(x)
+  } else {
+    js <- x
+  }
+
+  v <- jsonvalidate::json_validate(js, schema_1_0_0, engine="ajv", verbose=TRUE)
   if (!v) {
     warning("File contains errors!")
     return(attr(v, 'errors'))

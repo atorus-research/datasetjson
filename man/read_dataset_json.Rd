@@ -7,19 +7,21 @@
 read_dataset_json(file)
 }
 \arguments{
-\item{file}{File path on disk, or a pre-loaded Dataset JSON file in a single element character string}
+\item{file}{File path or URL of a Dataset JSON file}
 }
 \value{
 datasetjson object
 }
 \description{
-This function validated a dataset JSON file on disk against the Dataset JSON schema, and if valid
-returns a datasetjson object
+This function validates a dataset JSON file against the Dataset JSON schema,
+and if valid returns a datasetjson object. The Dataset JSON file can be
+either a file path on disk of a URL which contains the Dataset JSON file.
 }
 \examples{
 # Read from disk
 \dontrun{
   dat <- read_dataset_json("path/to/file.json")
+  dat <- dataset_json('https://www.somesite.com/file.json')
 }
 
 # Read from an already imported character vector

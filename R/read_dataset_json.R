@@ -1,9 +1,10 @@
 #' Read a Dataset JSON to datasetjson object
 #'
-#' This function validated a dataset JSON file on disk against the Dataset JSON schema, and if valid
-#' returns a datasetjson object
+#' This function validates a dataset JSON file against the Dataset JSON schema,
+#' and if valid returns a datasetjson object. The Dataset JSON file can be
+#' either a file path on disk of a URL which contains the Dataset JSON file.
 #'
-#' @param file File path on disk, or a pre-loaded Dataset JSON file in a single element character string
+#' @param file File path or URL of a Dataset JSON file
 #'
 #' @return datasetjson object
 #' @export
@@ -12,6 +13,7 @@
 #' # Read from disk
 #' \dontrun{
 #'   dat <- read_dataset_json("path/to/file.json")
+#'   dat <- dataset_json('https://www.somesite.com/file.json')
 #' }
 #'
 #' # Read from an already imported character vector
@@ -19,8 +21,15 @@
 #' js <- write_dataset_json(ds_json)
 #' dat <- read_dataset_json(js)
 read_dataset_json <- function(file) {
+
+  if (path_is_url(file)) {
+    file_contents <- read_from_url(file)
+  } else {
+    file_contents <- readLines(file)
+  }
+
   # Validate the input file against the schema
-  valid <- jsonvalidate::json_validate(file, schema_1_0_0, engine="ajv")
+  valid <- jsonvalidate::json_validate(file_contents, schema = schema_1_0_0, engine="ajv")
 
   if (!valid) {
     stop(paste0(c("Dataset JSON file is invalid per the JSON schema. ",
@@ -29,7 +38,7 @@ read_dataset_json <- function(file) {
   }
 
   # Read the file and convert to datasetjson object
-  ds_json <- jsonlite::fromJSON(file)
+  ds_json <- jsonlite::fromJSON(file_contents)
 
   # Pull the object out with a lot of assumptions because the format has already
   # been validated
