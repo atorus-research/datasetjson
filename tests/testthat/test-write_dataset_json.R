@@ -34,7 +34,7 @@ test_that("write_dataset_json matches the original json", {
   comp <- jsonlite::read_json(json_location)
   expected <- jsonlite::read_json(test_path("testdata/adsl.json"))
 
-  # remove fileOID and creationDateTime, this will alway differ
+  # remove fileOID and creationDateTime, this will always differ
   # remove asOfDateTime, this is not in adsl.json (to confirm if extensible)
   comp$fileOID <- NULL
   expected$fileOID <- NULL
@@ -102,7 +102,7 @@ test_that("write_dataset_json matches the original json", {
   expect_equal(comp, expected)
 
   # Error check
-  ds_json$creationDateTime <- 1
+  ds_json$asOfDateTime<- 1
   expect_error(write_dataset_json(ds_json, json_location), "Dataset JSON file is invalid")
 })
 
