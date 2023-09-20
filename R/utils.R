@@ -74,9 +74,18 @@ get_null_inds <- function(x) {
 #' @return A Dataset JSON object
 #' @noRd
 remove_nulls <- function(x) {
+
   # Specifically target the data metadata
-  x[[get_data_type(x)]] <- x[[get_data_type(x)]][-get_null_inds(x[[get_data_type(x)]])]
+  dm_nulls <- get_null_inds(x[[get_data_type(x)]])
+  if (length(dm_nulls) > 0) {
+    x[[get_data_type(x)]] <- x[[get_data_type(x)]][-dm_nulls]
+  }
+
   # Top level
-  x <- x[-get_null_inds(x)]
+  fm_nulls <- get_null_inds(x)
+  if (length(fm_nulls) > 0) {
+    x <- x[-fm_nulls]
+  }
+
   x
 }
