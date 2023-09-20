@@ -54,3 +54,29 @@ set_col_attr <- function(nm, d, attr, items) {
   attr(x, attr) <- items[items$name == nm,][[attr]]
   x
 }
+
+#' Get the index of nulls in a list
+#'
+#' @param x A list
+#'
+#' @return Integer vector of indices
+#' @noRd
+get_null_inds <- function(x) {
+  which(vapply(x, is.null, FUN.VALUE = TRUE))
+}
+
+#' Remove nulls from a Dataset JSON object
+#'
+#' Only targets the file and data metadata to pull off optional elements
+#'
+#' @param x A Dataset JSON object
+#'
+#' @return A Dataset JSON object
+#' @noRd
+remove_nulls <- function(x) {
+  # Specifically target the data metadata
+  x[[get_data_type(x)]] <- x[[get_data_type(x)]][-get_null_inds(x[[get_data_type(x)]])]
+  # Top level
+  x <- x[-get_null_inds(x)]
+  x
+}

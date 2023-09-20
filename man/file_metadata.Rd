@@ -5,9 +5,10 @@
 \title{Create a file metadata object}
 \usage{
 file_metadata(
-  originator = "NA",
-  sys = "NA",
-  sys_version = "NA",
+  originator = NULL,
+  sys = NULL,
+  sys_version = NULL,
+  file_oid = NULL,
   version = "1.0.0"
 )
 }
@@ -21,6 +22,9 @@ file."}
 
 \item{sys_version}{sourceSystemVersion, defined as "The version of the
 sourceSystem"}
+
+\item{file_oid}{fileOID parameter, defined as "A unique identifier for this
+file."}
 
 \item{version}{Dataset JSON schema version being used}
 }
