@@ -73,15 +73,14 @@ write_dataset_json(ds_updated, file = "./iris.json")
 Or if you don’t provide a file path, the JSON text will return directly.
 
 ``` r
-js_text <- write_dataset_json(ds_updated)
+js_text <- write_dataset_json(ds_updated, pretty=TRUE)
 cat(js_text)
 ```
 
     ## {
-    ##   "creationDateTime": "2023-09-15T17:57:31",
+    ##   "creationDateTime": "2023-09-20T17:38:17",
     ##   "datasetJSONVersion": "1.0.0",
-    ##   "fileOID": "NA",
-    ##   "asOfDateTime": "2023-09-15T17:57:31",
+    ##   "fileOID": "/some/path",
     ##   "originator": "Some Org",
     ##   "sourceSystem": "source system",
     ##   "sourceSystemVersion": "1.0",
@@ -174,7 +173,7 @@ attached as attributes on the data frame itself:
 print(attr(dat, "creationDateTime"))
 ```
 
-    ## [1] "2023-09-15T17:57:31"
+    ## [1] "2023-09-20T17:38:17"
 
 ``` r
 print(attr(dat$Sepal.Length, "OID"))

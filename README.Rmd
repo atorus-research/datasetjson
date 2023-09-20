@@ -67,7 +67,7 @@ write_dataset_json(ds_updated, file = "./iris.json")
 Or if you don't provide a file path, the JSON text will return directly. 
 
 ```{r write_print}
-js_text <- write_dataset_json(ds_updated)
+js_text <- write_dataset_json(ds_updated, pretty=TRUE)
 cat(js_text)
 ```
 
