@@ -38,7 +38,7 @@ file_metadata <- function(originator=NULL, sys = NULL, sys_version = NULL, file_
     "creationDateTime"= character(),
     "datasetJSONVersion"= version,
     "fileOID" = file_oid,
-    "asOfDateTime" = NULL,
+    "asOfDateTime" = NULL, # Not sure we want this to exist?
     "originator" = originator,
     "sourceSystem" = sys,
     "sourceSystemVersion" = sys_version
