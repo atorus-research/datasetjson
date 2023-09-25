@@ -1,9 +1,6 @@
 
-# datasetjson
+# **datasetjson** <img src="man/figures/logo.svg" align="right" alt="" width="120" />
 
-<!-- Please do not edit the README.md file as it is auto-generated after PR merges. Only edit the README.Rmd file -->
-<!-- The purpose of this is to enable dynamic links using dyn_link function above to access devel/main admiral homepage respectively -->
-<!-- To test this in your feature branch use code: rmarkdown::render("README.Rmd", output_format ="md_document") -->
 <!-- badges: start -->
 
 [<img src="https://img.shields.io/codecov/c/github/atorus-research/datasetjson">](https://app.codecov.io/gh/atorus-research/datasetjson)
@@ -78,7 +75,7 @@ cat(js_text)
 ```
 
     ## {
-    ##   "creationDateTime": "2023-09-20T17:38:17",
+    ##   "creationDateTime": "2023-09-25T12:20:23",
     ##   "datasetJSONVersion": "1.0.0",
     ##   "fileOID": "/some/path",
     ##   "originator": "Some Org",
@@ -173,7 +170,7 @@ attached as attributes on the data frame itself:
 print(attr(dat, "creationDateTime"))
 ```
 
-    ## [1] "2023-09-20T17:38:17"
+    ## [1] "2023-09-25T12:20:23"
 
 ``` r
 print(attr(dat$Sepal.Length, "OID"))
@@ -192,6 +189,8 @@ to change, as as such this package will be updated. Backwards
 compatibility will be enforced once the standard itself is more stable.
 Until then, it is not recommended to use this package within production
 activities.
+
+# [<img src="man/figures/cdisc.png" alt="" width="120" />](https://www.cdisc.org/)
 
 ## Acknowledgements
 
