@@ -13,6 +13,7 @@
 #' # Read from disk
 #' \dontrun{
 #'   dat <- read_dataset_json("path/to/file.json")
+#'  # Read file from URL
 #'   dat <- dataset_json('https://www.somesite.com/file.json')
 #' }
 #'
