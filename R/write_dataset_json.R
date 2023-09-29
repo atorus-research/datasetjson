@@ -19,7 +19,7 @@
 write_dataset_json <- function(x, file, pretty=FALSE) {
   stopifnot_datasetjson(x)
 
-  # Populate the as-of datetime
+  # Populate the creation datetime
   x[['creationDateTime']] <- get_datetime()
 
   x <- remove_nulls(x)
