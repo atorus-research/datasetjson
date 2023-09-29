@@ -1,4 +1,4 @@
-# datasetjson 0.0.1.9000
+# datasetjson 0.1.0
 
 - Capability to read and validate Dataset JSON files from URLs has been added (#8)
 - Remove autoset of fileOID using output path (#3)
