@@ -7,11 +7,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library(datasetjson)
 ```
 
-# datasetjson
-
-<!-- Please do not edit the README.md file as it is auto-generated after PR merges. Only edit the README.Rmd file -->
-<!-- The purpose of this is to enable dynamic links using dyn_link function above to access devel/main admiral homepage respectively -->
-<!-- To test this in your feature branch use code: rmarkdown::render("README.Rmd", output_format ="md_document") -->
+# **datasetjson** <img src="man/figures/logo.svg" align="right" alt="" width="120" />
 
 <!-- badges: start -->
 [<img src="https://img.shields.io/codecov/c/github/atorus-research/datasetjson">](https://app.codecov.io/gh/atorus-research/datasetjson)
@@ -67,7 +63,7 @@ write_dataset_json(ds_updated, file = "./iris.json")
 Or if you don't provide a file path, the JSON text will return directly. 
 
 ```{r write_print}
-js_text <- write_dataset_json(ds_updated)
+js_text <- write_dataset_json(ds_updated, pretty=TRUE)
 cat(js_text)
 ```
 
@@ -86,6 +82,8 @@ print(attr(dat$Sepal.Length, "OID"))
 print(attr(dat$Sepal.Width, "type"))
 ```
 Note that Dataset JSON is an early CDISC standard and is still subject to change, as as such this package will be updated. Backwards compatibility will be enforced once the standard itself is more stable. Until then, it is not recommended to use this package within production activities. 
+
+# [<img src="man/figures/cdisc.png" alt="" width="120" />](https://www.cdisc.org/)
 
 ## Acknowledgements
 

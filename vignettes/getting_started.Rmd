@@ -148,7 +148,7 @@ write_dataset_json(ds_updated, file="iris.json")
 The `write_dataset_json()` also has the option to return the JSON output as a character string.
 
 ```{r write_char}
-js <- write_dataset_json(ds_updated)
+js <- write_dataset_json(ds_updated, pretty=TRUE)
 cat(js)
 ```
 

@@ -21,7 +21,7 @@
 #' data_meta_updated <- set_metadata_version(data_meta_updated, "MDV.MSGv2.0.SDTMIG.3.3.SDTM.1.7")
 #' data_meta_updated <- set_study_oid(data_meta_updated, "SOMESTUDY")
 #'
-data_metadata <- function(study = "NA", metadata_version = "NA", metadata_ref = "NA") {
+data_metadata <- function(study = NULL, metadata_version = NULL, metadata_ref = NULL) {
 
   x <- list(
     studyOID = study,

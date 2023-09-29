@@ -2,11 +2,11 @@ test_that("Default file_metadata object produces correctly", {
   file_meta <- file_metadata()
 
   expect_equal(file_meta$datasetJSONVersion, "1.0.0")
-  expect_equal(file_meta$fileOID, character())
-  expect_equal(file_meta$asOfDateTime, character())
-  expect_equal(file_meta$originator, "NA")
-  expect_equal(file_meta$sourceSystem, "NA")
-  expect_equal(file_meta$sourceSystemVersion, "NA")
+  expect_null(file_meta$fileOID, character())
+  expect_null(file_meta$asOfDateTime)
+  expect_null(file_meta$originator)
+  expect_null(file_meta$sourceSystem)
+  expect_null(file_meta$sourceSystemVersion)
 })
 
 test_that("Parameters pass through on file_metadata call", {

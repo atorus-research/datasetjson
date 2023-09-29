@@ -4,7 +4,7 @@
 \alias{data_metadata}
 \title{Create the data metadata container for a Dataset JSON object}
 \usage{
-data_metadata(study = "NA", metadata_version = "NA", metadata_ref = "NA")
+data_metadata(study = NULL, metadata_version = NULL, metadata_ref = NULL)
 }
 \arguments{
 \item{study}{Study OID value}

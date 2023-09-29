@@ -1,9 +1,9 @@
 data_meta <- data_metadata()
 
 test_that("Default data_metadata object produces correctly", {
-  expect_equal(data_meta$studyOID, "NA")
-  expect_equal(data_meta$metaDataVersionOID, "NA")
-  expect_equal(data_meta$metaDataRef, "NA")
+  expect_null(data_meta$studyOID)
+  expect_null(data_meta$metaDataVersionOID)
+  expect_null(data_meta$metaDataRef)
 })
 
 test_that("data_metadata setters work properly", {

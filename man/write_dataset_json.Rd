@@ -4,7 +4,7 @@
 \alias{write_dataset_json}
 \title{Write out a Dataset JSON file}
 \usage{
-write_dataset_json(x, file, pretty = TRUE)
+write_dataset_json(x, file, pretty = FALSE)
 }
 \arguments{
 \item{x}{datasetjson object}
