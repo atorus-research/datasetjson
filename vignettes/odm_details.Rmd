@@ -1,0 +1,33 @@
+---
+title: "Notes on ODM V2"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Notes on ODM V2}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+Dataset JSON inherently pulls some standards from the [ODM v2.0](https://wiki.cdisc.org/display/ODM2/ODM+v2.0+Specification) (Operational Data Model). From [CDISC](https://www.cdisc.org/standards/data-exchange/odm-xml/odm-v2-0):
+
+> The Operational Data Model (ODM) is a vendor-neutral, platform-independent data exchange format, intended primarily for interchange and archival of clinical study data pertaining to individual subjects, aggregated collections of subjects, and integrated research studies. The model includes the clinical data along with its associated metadata, administrative data, reference data, and audit information. All information that needs to be shared among different software systems during the setup, operation, analysis, submission, and archiving of a study are included in the model.
+
+Without having a background in ODM, some fields within the Dataset JSON file may be hard to understand without the ODM references available. This vignette provides some quick defintions that may prove useful.
+
+## fileOID
+
+> FileOIDs should be universally unique if at all possible. One way to ensure this is to prefix every FileOID with an internet domain name owned by the creator of the ODM file or database (followed by a forward slash, "/"). For example, FileOID="BestPharmaceuticals.com/Study5894/1" might be a good way to denote the first file in a series for study 5894 from Best Pharmaceuticals.
+ 
+[*Reference link*](https://wiki.cdisc.org/display/ODM2/Single+Files+and+Collections)
+
+## asOfDateTime and creationDateTime
+
+> The creationDateTime attribute indicates when the ODM document was created. In contrast, the asOfDateTime attribute tells when the document content was accurate by specifying the date/time at which the source database was queried to create the ODM document. This is of particular importance when a series of files is used to give an evolving view of a changing database.
+
+[*Reference link*](https://wiki.cdisc.org/display/ODM2/Single+Files+and+Collections)

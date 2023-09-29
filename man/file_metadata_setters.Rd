@@ -5,7 +5,7 @@
 \alias{set_originator}
 \alias{set_file_oid}
 \alias{set_data_type}
-\title{Set source system information}
+\title{File Metadata Setters}
 \usage{
 set_source_system(x, sys, sys_version)
 
@@ -39,8 +39,17 @@ Persons)}
 datasetjson or file_metadata object
 }
 \description{
-Set information about the source system used to generate the Dataset JSON
-object.
+Set information about the file and source system used to generate the Dataset
+JSON object.
+}
+\details{
+The fileOID parameter should be structured following description outlined in
+the ODM V2.0 specification. "FileOIDs should be universally unique if at all
+possible. One way to ensure this is to prefix every FileOID with an internet
+domain name owned by the creator of the ODM file or database (followed by a
+forward slash, "/"). For example,
+FileOID="BestPharmaceuticals.com/Study5894/1" might be a good way to denote
+the first file in a series for study 5894 from Best Pharmaceuticals."
 }
 \examples{
 file_meta <- file_metadata()

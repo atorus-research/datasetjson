@@ -16,22 +16,19 @@
 #' \dontrun{
 #'   write_dataset_json(ds_json, "path/to/file.json")
 #' }
-write_dataset_json <- function(x, file, pretty=TRUE) {
+write_dataset_json <- function(x, file, pretty=FALSE) {
   stopifnot_datasetjson(x)
 
-  # Populate the as-of datetime
-  x[['asOfDateTime']] <- get_datetime()
+  # Populate the creation datetime
+  x[['creationDateTime']] <- get_datetime()
+
+  x <- remove_nulls(x)
 
   if (!missing(file)) {
     # Make sure the output path exists
     if(!dir.exists(dirname(file))) {
       stop("Folder supplied to `file` does not exist", call.=FALSE)
     }
-
-    # Attach the file OID
-    x <- set_file_oid(x, tools::file_path_sans_ext(file))
-  } else{
-    x <- set_file_oid(x, "NA")
   }
 
   # Create the JSON text

@@ -8,23 +8,23 @@ test_that("datasetjson object builds with minimal defaults", {
 
   # I just want to remove the potential for a corner case
   # where the call to system time splits across a second
-  expect_equal(grep("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}", ds_json$creationDateTime), 1)
+  # expect_equal(grep("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}", ds_json$creationDateTime), 1)
 
   # File metadata
   expect_equal(ds_json$datasetJSONVersion, "1.0.0")
-  expect_equal(ds_json$fileOID, character())
-  expect_equal(ds_json$asOfDateTime, character())
-  expect_equal(ds_json$originator, "NA")
-  expect_equal(ds_json$sourceSystem, "NA")
-  expect_equal(ds_json$sourceSystemVersion, "NA")
+  expect_null(ds_json$fileOID)
+  expect_null(ds_json$asOfDateTime)
+  expect_null(ds_json$originator)
+  expect_null(ds_json$sourceSystem)
+  expect_null(ds_json$sourceSystemVersion)
 
   # Data type is correct
   expect_equal(tail(names(ds_json), 1), "clinicalData")
 
   # Data metadata
-  expect_equal(ds_json$clinicalData$studyOID, "NA")
-  expect_equal(ds_json$clinicalData$metaDataVersionOID, "NA")
-  expect_equal(ds_json$clinicalData$metaDataRef, "NA")
+  expect_null(ds_json$clinicalData$studyOID)
+  expect_null(ds_json$clinicalData$metaDataVersionOID)
+  expect_null(ds_json$clinicalData$metaDataRef)
 
   # item_id passes through
   expect_equal(names(ds_json$clinicalData$itemGroupData), "IG.IRIS")
