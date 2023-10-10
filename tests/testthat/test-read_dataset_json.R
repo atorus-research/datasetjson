@@ -60,3 +60,12 @@ test_that("Dataset JSON can be read from a URL", {
 
   expect_equal(from_disk, from_url)
 })
+
+test_that("Dataset JSON can be read from imported string", {
+  ds_json <- dataset_json(iris[1:5, ], "IG.IRIS", "IRIS", "Iris", iris_items)
+  js <- write_dataset_json(ds_json, pretty=TRUE)
+  expect_silent(dat <- read_dataset_json(js))
+  x <- iris
+  x[5] <- as.character(x[[5]])
+  expect_equal(x[1:5, ], dat, ignore_attr=TRUE)
+})
