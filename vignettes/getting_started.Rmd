@@ -44,7 +44,7 @@ iris_items
 
 This data frame has 7 columns, 4 of which are strictly required. This is defined by the [CDISC Dataset JSON Specification](https://www.cdisc.org/dataset-json).
 
-| **﻿Attribute** | **Requirement** | **Description**                                                                                                                |
+| **Attribute** | **Requirement** | **Description**                                                                                                                |
 |---------------|-----------------|--------------------------------------------------------------------------------------------------------------------------------|
 | OID           | Required        | OID of a variable (must correspond to the variable OID in the Define-XML file)                                                 |
 | name          | Required        | Variable name                                                                                                                  |

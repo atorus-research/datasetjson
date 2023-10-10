@@ -24,9 +24,14 @@
 read_dataset_json <- function(file) {
 
   if (path_is_url(file)) {
+    # Url?
     file_contents <- read_from_url(file)
-  } else {
+  } else if (file.exists(file)) {
+    # File on disk?
     file_contents <- readLines(file)
+  } else {
+    # Direct file contents?
+    file_contents <- file
   }
 
   # Validate the input file against the schema
