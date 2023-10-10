@@ -19,6 +19,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Getting Started">
 <meta property="og:description" content="datasetjson">
+<meta property="og:image" content="https://atorus-research.github.io/datasetjson/logo.svg">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:creator" content="@AtorusR">
 <meta name="twitter:site" content="@AtorusR">
@@ -41,7 +42,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">datasetjson</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -57,6 +58,7 @@
   <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/getting_started.html">Getting Started</a>
+    <a class="dropdown-item" href="../articles/odm_details.html">Notes on ODM V2</a>
   </div>
 </li>
 <li class="nav-item">
@@ -86,7 +88,7 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="" class="logo" alt=""><h1>Getting Started</h1>
+      <img src="../logo.svg" class="logo" alt=""><h1>Getting Started</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/atorus-research/datasetjson/blob/main/vignettes/getting_started.Rmd" class="external-link"><code>vignettes/getting_started.Rmd</code></a></small>
@@ -151,7 +153,7 @@ Dataset JSON Specification</a>.</p>
 <col width="80%">
 </colgroup>
 <thead><tr class="header">
-<th><strong>﻿Attribute</strong></th>
+<th><strong>Attribute</strong></th>
 <th><strong>Requirement</strong></th>
 <th><strong>Description</strong></th>
 </tr></thead>
@@ -302,13 +304,12 @@ and a file path.</p>
 <p>The <code><a href="../reference/write_dataset_json.html">write_dataset_json()</a></code> also has the option to return
 the JSON output as a character string.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">js</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/write_dataset_json.html">write_dataset_json</a></span><span class="op">(</span><span class="va">ds_updated</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">js</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/write_dataset_json.html">write_dataset_json</a></span><span class="op">(</span><span class="va">ds_updated</span>, pretty<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="va">js</span><span class="op">)</span></span>
 <span><span class="co">#&gt; {</span></span>
-<span><span class="co">#&gt;   "creationDateTime": "2023-09-18T14:17:50",</span></span>
+<span><span class="co">#&gt;   "creationDateTime": "2023-10-10T21:30:55",</span></span>
 <span><span class="co">#&gt;   "datasetJSONVersion": "1.0.0",</span></span>
-<span><span class="co">#&gt;   "fileOID": "NA",</span></span>
-<span><span class="co">#&gt;   "asOfDateTime": "2023-09-18T14:17:50",</span></span>
+<span><span class="co">#&gt;   "fileOID": "/some/path",</span></span>
 <span><span class="co">#&gt;   "originator": "Some Org",</span></span>
 <span><span class="co">#&gt;   "sourceSystem": "source system",</span></span>
 <span><span class="co">#&gt;   "sourceSystemVersion": "1.0",</span></span>
@@ -399,16 +400,13 @@ ultimately attached to the imported data frame.</p>
 <span><span class="co">#&gt; [1] 1 2 3 4 5</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $creationDateTime</span></span>
-<span><span class="co">#&gt; [1] "2023-09-18T14:17:50"</span></span>
+<span><span class="co">#&gt; [1] "2023-10-10T21:30:55"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $datasetJSONVersion</span></span>
 <span><span class="co">#&gt; [1] "1.0.0"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $fileOID</span></span>
-<span><span class="co">#&gt; [1] "NA"</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $asOfDateTime</span></span>
-<span><span class="co">#&gt; [1] "2023-09-18T14:17:50"</span></span>
+<span><span class="co">#&gt; [1] "/some/path"</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $originator</span></span>
 <span><span class="co">#&gt; [1] "Some Org"</span></span>
