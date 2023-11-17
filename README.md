@@ -75,7 +75,7 @@ cat(js_text)
 ```
 
     ## {
-    ##   "creationDateTime": "2023-09-25T12:20:23",
+    ##   "creationDateTime": "2023-11-17T13:23:08",
     ##   "datasetJSONVersion": "1.0.0",
     ##   "fileOID": "/some/path",
     ##   "originator": "Some Org",
@@ -170,7 +170,7 @@ attached as attributes on the data frame itself:
 print(attr(dat, "creationDateTime"))
 ```
 
-    ## [1] "2023-09-25T12:20:23"
+    ## [1] "2023-11-17T13:23:08"
 
 ``` r
 print(attr(dat$Sepal.Length, "OID"))
@@ -196,6 +196,3 @@ activities.
 
 Thank you to Ben Straub and Eric Simms (GSK) for help and input during
 the original CDISC Dataset JSON hackathon that motivated this work.
-
-Thank you to Tilo Blenk (GSK) for suggestions that allowed us to use
-**jsonlite** exclusively for generation of the final JSON file.
