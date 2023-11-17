@@ -131,7 +131,7 @@
 <code class="sourceCode R"><span><span class="va">js_text</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/write_dataset_json.html">write_dataset_json</a></span><span class="op">(</span><span class="va">ds_updated</span>, pretty<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="va">js_text</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb6"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="do">## {</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="do">##   "creationDateTime": "2023-09-25T12:20:23",</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="do">##   "creationDateTime": "2023-11-17T13:23:08",</span></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="do">##   "datasetJSONVersion": "1.0.0",</span></span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="do">##   "fileOID": "/some/path",</span></span>
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="do">##   "originator": "Some Org",</span></span>
@@ -212,7 +212,7 @@
 <p>The data frame that’s returned is enriched with attributes available in the Dataset JSON format. For example, opening the dataframe within the RStudio IDE will present the variable labels. The other variable is attached as attributes on individual columns, and file level metadata is attached as attributes on the data frame itself:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">dat</span>, <span class="st">"creationDateTime"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb10"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] "2023-09-25T12:20:23"</span></span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] "2023-11-17T13:23:08"</span></span></code></pre></div>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">dat</span><span class="op">$</span><span class="va">Sepal.Length</span>, <span class="st">"OID"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb12"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] "IT.IR.Sepal.Length"</span></span></code></pre></div>
@@ -229,7 +229,6 @@
 <h2 id="acknowledgements">Acknowledgements<a class="anchor" aria-label="anchor" href="#acknowledgements"></a>
 </h2>
 <p>Thank you to Ben Straub and Eric Simms (GSK) for help and input during the original CDISC Dataset JSON hackathon that motivated this work.</p>
-<p>Thank you to Tilo Blenk (GSK) for suggestions that allowed us to use <strong>jsonlite</strong> exclusively for generation of the final JSON file.</p>
 </div>
 </div>
 
