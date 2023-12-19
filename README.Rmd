@@ -88,5 +88,3 @@ Note that Dataset JSON is an early CDISC standard and is still subject to change
 ## Acknowledgements
 
 Thank you to Ben Straub and Eric Simms (GSK) for help and input during the original CDISC Dataset JSON hackathon that motivated this work.
-
-Thank you to Tilo Blenk (GSK) for suggestions that allowed us to use **jsonlite** exclusively for generation of the final JSON file.
