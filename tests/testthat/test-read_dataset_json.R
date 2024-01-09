@@ -43,7 +43,6 @@ test_that("read_dataset_json matches xpt", {
   expect_equal(comp_attr[["label"]], comp_expected[["label"]])
 
   # # ae
-  expect_error(read_dataset_json(test_path("testdata", "ae.json")), "Dataset JSON file is invalid")
   expect_warning(e <- validate_dataset_json(test_path("testdata", "ae.json")), "File contains errors!")
 
   # Simple crosscheck of the number of errors without verifying the whole dataframe

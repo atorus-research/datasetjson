@@ -100,10 +100,6 @@ test_that("write_dataset_json matches the original json", {
   expected$creationDateTime <- NULL
 
   expect_equal(comp, expected)
-
-  # Error check
-  ds_json$asOfDateTime<- 1
-  expect_error(write_dataset_json(ds_json, json_location), "Dataset JSON file is invalid")
 })
 
 test_that("write_dataset_json errors are thrown properly", {

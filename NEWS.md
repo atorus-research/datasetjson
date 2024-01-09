@@ -1,3 +1,8 @@
+# datasetjson 0.2.0
+
+- Remove schema validation on read and write (#26)
+- Address CRAN issues (#29)
+
 # datasetjson 0.1.0
 
 -   Capability to read and validate Dataset JSON files from URLs has been added (#8)
