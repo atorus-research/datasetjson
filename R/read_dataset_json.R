@@ -34,15 +34,6 @@ read_dataset_json <- function(file) {
     file_contents <- file
   }
 
-  # Validate the input file against the schema
-  valid <- jsonvalidate::json_validate(file_contents, schema = schema_1_0_0, engine="ajv")
-
-  if (!valid) {
-    stop(paste0(c("Dataset JSON file is invalid per the JSON schema. ",
-                "Run datasetjson::validate_dataset_json(",substitute(file),") to see details")),
-      call.=FALSE)
-  }
-
   # Read the file and convert to datasetjson object
   ds_json <- jsonlite::fromJSON(file_contents)
 
