@@ -35,7 +35,12 @@ read_dataset_json <- function(file) {
   }
 
   # Read the file and convert to datasetjson object
-  ds_json <- jsonlite::fromJSON(file_contents)
+  ds_json <- yyjsonr::read_json_str(
+    paste0(file_contents, collapse=""),
+    yyjsonr::opts_read_json(
+      promote_num_to_string = TRUE
+    )
+  )
 
   # Pull the object out with a lot of assumptions because the format has already
   # been validated
