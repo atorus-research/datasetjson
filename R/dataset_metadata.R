@@ -95,7 +95,7 @@ set_item_data <- function(x, .data, ...) {
 
   # Insert into object in proper spots
   x[[1]][['records']] <- records
-  x[[1]][['itemData']] <- item_data
+  x[[1]][['itemData']] <- unname(item_data)
   x
 }
 

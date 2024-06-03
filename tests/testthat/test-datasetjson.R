@@ -49,10 +49,10 @@ test_that("datasetjson object builds with minimal defaults", {
   expect_equal(ds_json$clinicalData$itemGroupData$IG.IRIS$items, iris_items_list)
 
   # Verify that data are attached properly with ITEMGRPUPSEQ attached
-  iris_test <- cbind(
+  iris_test <- unname(cbind(
     ITEMGROUPDATASEQ = 1:nrow(iris),
     iris
-  )
+  ))
 
   expect_equal(ds_json$clinicalData$itemGroupData$IG.IRIS$itemData, iris_test)
 })
