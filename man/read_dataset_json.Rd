@@ -21,6 +21,7 @@ either a file path on disk of a URL which contains the Dataset JSON file.
 # Read from disk
 \dontrun{
   dat <- read_dataset_json("path/to/file.json")
+ # Read file from URL
   dat <- dataset_json('https://www.somesite.com/file.json')
 }
 
