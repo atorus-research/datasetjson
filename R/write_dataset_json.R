@@ -32,18 +32,23 @@ write_dataset_json <- function(x, file, pretty=FALSE) {
   }
 
   # Create the JSON text
-  js <- jsonlite::toJSON(
-    x,
-    dataframe = "values",
-    na = "null",
+  json_opts <- yyjsonr::opts_write_json(
+    pretty = pretty,
     auto_unbox = TRUE,
-    pretty = pretty)
+  )
 
   if (!missing(file)) {
     # Write file to disk
-    cat(js, "\n", file = file)
+    yyjsonr::write_json_file(
+      x,
+      filename = file,
+      opts = json_opts
+    )
   } else {
     # Print to console
-    js
+    yyjsonr::write_json_str(
+      x,
+      opts = json_opts
+    )
   }
 }
