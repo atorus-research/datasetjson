@@ -48,7 +48,6 @@ read_dataset_json <- function(file) {
     )
   }
 
-  # Read the file and convert to datasetjson object
 
 
   # Pull the object out with a lot of assumptions because the format has already
