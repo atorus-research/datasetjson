@@ -23,19 +23,32 @@
 #' dat <- read_dataset_json(js)
 read_dataset_json <- function(file) {
 
+  json_opts <- yyjsonr::opts_read_json(
+    promote_num_to_string = TRUE
+  )
+
   if (path_is_url(file)) {
     # Url?
     file_contents <- read_from_url(file)
+    ds_json <- yyjsonr::read_json_str(
+      file_contents,
+      opts = json_opts
+    )
   } else if (file.exists(file)) {
     # File on disk?
-    file_contents <- readLines(file)
+    ds_json <- yyjsonr::read_json_file(
+      file,
+      opts = json_opts
+    )
   } else {
     # Direct file contents?
-    file_contents <- file
+    ds_json <- yyjsonr::read_json_str(
+      file,
+      opts = json_opts
+    )
   }
 
-  # Read the file and convert to datasetjson object
-  ds_json <- jsonlite::fromJSON(file_contents)
+
 
   # Pull the object out with a lot of assumptions because the format has already
   # been validated
