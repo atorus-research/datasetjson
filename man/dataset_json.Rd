@@ -6,45 +6,47 @@
 \usage{
 dataset_json(
   .data,
-  item_id,
-  name,
-  label,
-  items,
-  dataset_meta,
-  version = "1.0.0",
-  data_type = c("clinicalData", "referenceData"),
-  file_meta = file_metadata(),
-  data_meta = data_metadata()
+  file_oid = NULL,
+  originator = NULL,
+  sys = NULL,
+  sys_version = NULL,
+  study = NULL,
+  metadata_version = NULL,
+  metadata_ref = NULL,
+  item_oid = NULL,
+  name = NULL,
+  dataset_label = NULL,
+  version = "1.1.0"
 )
 }
 \arguments{
 \item{.data}{Input data to contain within the Dataset JSON file. Written to
 the itemData parameter.}
 
-\item{item_id}{ID used to label dataset with the itemGroupData parameter.
+\item{file_oid}{fileOID parameter, defined as "A unique identifier for this
+file."}
+
+\item{originator}{originator parameter, defined as "The organization that
+generated the Dataset-JSON file."}
+
+\item{sys}{sourceSystem parameter, defined as "The computer system or
+database management system that is the source of the information in this
+file."}
+
+\item{sys_version}{sourceSystemVersion, defined as "The version of the
+sourceSystem"}
+
+\item{study}{Study OID value}
+
+\item{metadata_version}{Metadata version OID value}
+
+\item{metadata_ref}{Metadata reference (i.e. path to Define.xml)}
+
+\item{item_oid}{ID used to label dataset with the itemGroupData parameter.
 Defined as "Object of Datasets. Key value is a unique identifier for
 Dataset, corresponding to ItemGroupDef/@OID in Define-XML."}
 
-\item{name}{Dataset name}
-
-\item{label}{Dataset Label}
-
-\item{items}{Variable metadata}
-
-\item{dataset_meta}{A dataset_metadata object holding pre-specified
-dataset metadata.}
-
-\item{version}{Version of Dataset JSON schema to follow.}
-
-\item{data_type}{Type of data being written. clinicalData for subject level
-data, and referenceData for non-subject level data (i.e. TDMs, Associated
-Persons)}
-
-\item{file_meta}{A file_metadata object holding pre-specified file
-metadata}
-
-\item{data_meta}{A data_metadata object holding pre-specified data
-metadata}
+\item{version}{The DatasetJSON version to use. Currently only 1.1.0 is supported.}
 }
 \value{
 dataset_json object pertaining to the specific Dataset JSON version
@@ -53,9 +55,26 @@ specific
 \description{
 Create the base object used to write a Dataset JSON file.
 }
+\details{
+Note that DatasetJSON is on version 1.1.0. Based off findings from the pilot,
+version 1.1.0 reflects feedback from the user community. Support for 1.0.0 has
+been deprecated.
+}
 \examples{
 # Create a basic object
-ds_json <- dataset_json(iris, "IG.IRIS", "IRIS", "Iris", iris_items)
+ds_json <- dataset_json(
+  iris, 
+  file_oid = "/some/path"
+  originator = "Some Org", 
+  sys = "source system", 
+  sys_version = "1.0", 
+  study = "SOMESTUDY",
+  metadata_version = "MDV.MSGv2.0.SDTMIG.3.3.SDTM.1.7",
+  metadata_ref = "some/define.xml",
+  item_oid = "IG.IRIS",
+  name = "IRIS",
+  dataset_label = "Iris"
+)
 
 # Attach attributes directly
 ds_json_updated <- set_data_type(ds_json, "referenceData")
@@ -65,31 +84,7 @@ ds_json_updated <- set_metadata_version(ds_json_updated, "MDV.MSGv2.0.SDTMIG.3.3
 ds_json_updated <- set_originator(ds_json_updated, "Some Org")
 ds_json_updated <- set_source_system(ds_json_updated, "source system", "1.0")
 ds_json_updated <- set_study_oid(ds_json_updated, "SOMESTUDY")
-
-# Create independent objects for metadata sections first
-file_meta <- file_metadata(
-  originator = "Some Org",
-  sys = "source system",
-  sys_version = "1.0"
-)
-
-data_meta <- data_metadata(
-  study = "SOMESTUDY",
-  metadata_version = "MDV.MSGv2.0.SDTMIG.3.3.SDTM.1.7",
-  metadata_ref = "some/define.xml"
-)
-
-dataset_meta <- dataset_metadata(
-  item_id = "IG.IRIS",
-  name = "IRIS",
-  label = "Iris",
-  items = iris_items
-)
-
-ds_json_from_meta <- dataset_json(
-  iris,
-  dataset_meta = dataset_meta,
-  file_meta = file_meta,
-  data_meta = data_meta
-  )
+ds_json_updated <- set_item_oid(ds_json_updated, "IG.IRIS")
+ds_json_updated <- set_dataset_name(ds_json_updated, "IRIS")
+ds_json_updated <- set_dataseT_label(ds_json_updated, "Iris")
 }
