@@ -59,6 +59,9 @@ Dataset, corresponding to ItemGroupDef/@OID in Define-XML."}
 \item{name}{Dataset name}
 
 \item{dataset_label}{Dataset Label}
+
+\item{ref_data}{Boolean value that is set to "true" when the dataset contains
+reference data (not subject data). The default value is "false".}
 }
 \value{
 datasetjson object

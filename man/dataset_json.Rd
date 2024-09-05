@@ -16,6 +16,7 @@ dataset_json(
   item_oid = NULL,
   name = NULL,
   dataset_label = NULL,
+  ref_data = FALSE,
   version = "1.1.0"
 )
 }
@@ -45,6 +46,9 @@ sourceSystem"}
 \item{item_oid}{ID used to label dataset with the itemGroupData parameter.
 Defined as "Object of Datasets. Key value is a unique identifier for
 Dataset, corresponding to ItemGroupDef/@OID in Define-XML."}
+
+\item{ref_data}{Boolean value that is set to "true" when the dataset contains
+reference data (not subject data). The default value is "false".}
 
 \item{version}{The DatasetJSON version to use. Currently only 1.1.0 is supported.}
 }
@@ -86,5 +90,5 @@ ds_json_updated <- set_source_system(ds_json_updated, "source system", "1.0")
 ds_json_updated <- set_study_oid(ds_json_updated, "SOMESTUDY")
 ds_json_updated <- set_item_oid(ds_json_updated, "IG.IRIS")
 ds_json_updated <- set_dataset_name(ds_json_updated, "IRIS")
-ds_json_updated <- set_dataseT_label(ds_json_updated, "Iris")
+ds_json_updated <- set_dataset_label(ds_json_updated, "Iris")
 }

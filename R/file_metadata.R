@@ -29,6 +29,8 @@
 #' @param item_oid ID used to label dataset with the itemGroupData parameter.
 #'   Defined as "Object of Datasets. Key value is a unique identifier for
 #'   Dataset, corresponding to ItemGroupDef/@OID in Define-XML."
+#' @param ref_data Boolean value that is set to "true" when the dataset contains 
+#'   reference data (not subject data). The default value is "false". 
 #' @param name Dataset name
 #' @param dataset_label Dataset Label
 #'
@@ -50,6 +52,12 @@
 #' ds_json <- set_dataset_label(ds_json, "Iris")
 set_source_system <- function(x, sys, sys_version) {
   stopifnot_datasetjson(x)
+  if (!is.character(sys)) {
+    stop("`sys` must be a character")
+  }
+  if (!is.character(sys_version)) {
+    stop("`sys_version` must be a character")
+  }
   attr(x, 'sourceSystem') <- list(
     "name" = sys,
     "version" = sys_version
@@ -62,6 +70,9 @@ set_source_system <- function(x, sys, sys_version) {
 #' @rdname dataset_metadata_setters
 set_originator <- function(x, originator) {
   stopifnot_datasetjson(x)
+  if (!is.character(originator)) {
+    stop("`originator` must be a character")
+  }
   attr(x, 'originator') <- originator
   x
 }
@@ -71,6 +82,9 @@ set_originator <- function(x, originator) {
 #' @rdname dataset_metadata_setters
 set_file_oid <- function(x, file_oid) {
   stopifnot_datasetjson(x)
+  if (!is.character(file_oid)) {
+    stop("`file_oid` must be a character")
+  }
   attr(x, 'fileOID') <- file_oid
   x
 }
@@ -80,6 +94,9 @@ set_file_oid <- function(x, file_oid) {
 #' @rdname dataset_metadata_setters
 set_study_oid <- function(x, study) {
   stopifnot_datasetjson(x)
+  if (!is.character(study)) {
+    stop("`study` must be a character")
+  }
   attr(x, 'studyOID') <- study
   x
 }
@@ -89,6 +106,9 @@ set_study_oid <- function(x, study) {
 #' @rdname dataset_metadata_setters
 set_metadata_version <- function(x, metadata_version) {
   stopifnot_datasetjson(x)
+  if (!is.character(metadata_version)) {
+    stop("`metadata_version` must be a character")
+  }
   attr(x, 'metaDataVersionOID') <- metadata_version
   x
 }
@@ -98,6 +118,9 @@ set_metadata_version <- function(x, metadata_version) {
 #' @rdname dataset_metadata_setters
 set_metadata_ref <- function(x, metadata_ref) {
   stopifnot_datasetjson(x)
+  if (!is.character(metadata_ref)) {
+    stop("`metadata_ref` must be a character")
+  }
   attr(x, 'metaDataRef') <- metadata_ref
   x
 }
@@ -107,6 +130,9 @@ set_metadata_ref <- function(x, metadata_ref) {
 #' @rdname dataset_metadata_setters
 set_item_oid <- function(x, item_oid) {
   stopifnot_datasetjson(x)
+  if (!is.character(item_oid)) {
+    stop("`item_oid` must be a character")
+  }
   attr(x, "itemGroupOID") <- item_oid
 }
 
@@ -115,6 +141,9 @@ set_item_oid <- function(x, item_oid) {
 #' @rdname dataset_metadata_setters
 set_dataset_name <- function(x, name) {
   stopifnot_datasetjson(x)
+  if (!is.character(name)) {
+    stop("`name` must be a character")
+  }
   attr(x, 'name') <- name
 }
 
@@ -123,6 +152,9 @@ set_dataset_name <- function(x, name) {
 #' @rdname dataset_metadata_setters
 set_dataset_label <- function(x, dataset_label) {
   stopifnot_datasetjson(x)
+  if (!is.character(dataset_labelx)) {
+    stop("`dataset_label` must be a character")
+  }
   attr(x, 'label') <- dataset_label
 }
 
@@ -138,11 +170,13 @@ set_dataset_label <- function(x, dataset_label) {
 #' @examples
 #' ds_json <- dataset_json(iris)
 #' ds_json <- set_as_reference_data(ds_json)
-set_as_reference_data <- function(x) {
+set_reference_data <- function(x, is_refdata) {
   stopifnot_datasetjson(x)
-  attr(x, 'isReferenceData') <- TRUE
+  if (!is.logical(is_refdata)) {
+    stop("`is_refdata` must be a boolean")
+  }
+  attr(x, 'isReferenceData') <- is_refdata
 }
-
 
 #' Create an ISO8601 formatted datetime of the current time
 #'
