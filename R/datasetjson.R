@@ -65,7 +65,7 @@
 #'   data_meta = data_meta
 #'   )
 dataset_json <- function(.data, item_id, name, label, items, dataset_meta,
-                         version="1.0.0", data_type = c('clinicalData', 'referenceData'),
+                         version="1.1.0", data_type = c('clinicalData', 'referenceData'),
                          file_meta = file_metadata(),
                          data_meta = data_metadata()
                          ) {
@@ -85,24 +85,24 @@ dataset_json <- function(.data, item_id, name, label, items, dataset_meta,
 new_dataset_json <- function(version, item_id, data_type, name, label, items,
                              dataset_meta, file_meta, data_meta, .data) {
 
-  if (!(version %in% c("1.0.0"))) {
-    stop("Unsupported version specified - currently only version 1.0.0 is supported", call.=FALSE)
+  if (!(version %in% c("1.1.0"))) {
+    stop("Unsupported version specified - currently only version 1.1.0 is supported", call.=FALSE)
   }
 
   # List of version specific generators
   funcs <- list(
-    "1.0.0" = new_dataset_json_v1_0_0
+    "1.1.0" = new_dataset_json_v1_1_0
   )
 
   # Extract the function and call it to return the base structure
   funcs[[version]](item_id, data_type, name, label, items, dataset_meta, file_meta, data_meta, .data)
 }
 
-#' Dataset JSON v1.0.0 Generator
+#' Dataset JSON v1.1.0 Generator
 #'
-#' @return datasetjson_v1_0_0 object
+#' @return datasetjson_v1_1_0 object
 #' @noRd
-new_dataset_json_v1_0_0 <- function(item_id, data_type, name, label, items, dataset_meta, file_meta, data_meta, .data) {
+new_dataset_json_v1_1_0 <- function(item_id, data_type, name, label, items, dataset_meta, file_meta, data_meta, .data) {
 
   if (missing(dataset_meta)) {
     if (any(missing(item_id), missing(name), missing(label), missing(items))) {
@@ -123,6 +123,6 @@ new_dataset_json_v1_0_0 <- function(item_id, data_type, name, label, items, data
 
   structure(
     ds_json,
-    class = c("datasetjson_v1_0_0", "datasetjson", "list")
+    class = c("datasetjson_v1_1_0", "datasetjson", "list")
   )
 }

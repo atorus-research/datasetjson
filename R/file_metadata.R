@@ -1,69 +1,6 @@
-#' Create a file metadata object
+#' Dataset Metadata Setters
 #'
-#' @param originator originator parameter, defined as "The organization that
-#'   generated the Dataset-JSON file."
-#' @param sys sourceSystem parameter, defined as "The computer system or
-#'   database management system that is the source of the information in this
-#'   file."
-#' @param sys_version sourceSystemVersion, defined as "The version of the
-#'   sourceSystem"
-#' @param file_oid fileOID parameter, defined as "A unique identifier for this
-#'   file."
-#' @param version Dataset JSON schema version being used
-#'
-#' @return file_metadata object
-#' @export
-#'
-#' @examples
-#' # Create using parameters
-#' file_meta <- file_metadata(
-#'     originator = "Some Org",
-#'     sys = "source system",
-#'     sys_version = "1.0"
-#'   )
-#'
-#' # Set parameters after
-#' file_meta <- file_metadata()
-#'
-#' file_meta_updated <- set_file_oid(file_meta, "/some/path")
-#' file_meta_updated <- set_originator(file_meta_updated, "Some Org")
-#' file_meta_updated <- set_source_system(file_meta_updated, "source system", "1.0")
-file_metadata <- function(originator=NULL, sys = NULL, sys_version = NULL, file_oid = NULL, version = "1.0.0") {
-
-  if (!(version %in% c("1.0.0"))) {
-    stop("Unsupported version specified - currently only version 1.0.0 is supported", call.=FALSE)
-  }
-
-  x <- list(
-    "creationDateTime"= character(),
-    "datasetJSONVersion"= version,
-    "fileOID" = file_oid,
-    "asOfDateTime" = NULL, # Not sure we want this to exist?
-    "originator" = originator,
-    "sourceSystem" = sys,
-    "sourceSystemVersion" = sys_version
-  )
-
-  structure(
-    x,
-    class = c("file_metadata", "list")
-  )
-}
-
-#' Create an ISO8601 formatted datetime of the current time
-#'
-#' This is used to create the creationDateTime and asOfDateTime attributes of
-#' the Dataset JSON object, called at the appropriate time for each attribute
-#'
-#' @return ISO8601 formatted datetime
-#' @noRd
-get_datetime <- function() {
-  format(Sys.time(), "%Y-%m-%dT%H:%M:%S")
-}
-
-#' File Metadata Setters
-#'
-#' Set information about the file and source system used to generate the Dataset
+#' Set information about the file, source system, study, and dataset used to generate the Dataset
 #' JSON object.
 #'
 #' @details
@@ -86,54 +23,180 @@ get_datetime <- function() {
 #'   generated the Dataset-JSON file."
 #' @param file_oid fileOID parameter, defined as "A unique identifier for this
 #'   file."
-#' @param data_type Type of data being written. clinicalData for subject level
-#'   data, and referenceData for non-subject level data (i.e. TDMs, Associated
-#'   Persons)
+#' @param study Study OID value
+#' @param metadata_version Metadata version OID value
+#' @param metadata_ref Metadata reference (i.e. path to Define.xml)
+#' @param item_oid ID used to label dataset with the itemGroupData parameter.
+#'   Defined as "Object of Datasets. Key value is a unique identifier for
+#'   Dataset, corresponding to ItemGroupDef/@OID in Define-XML."
+#' @param name Dataset name
+#' @param dataset_label Dataset Label
 #'
-#' @return datasetjson or file_metadata object
+#' @return datasetjson object
 #' @export
-#' @family File Metadata Setters
-#' @rdname file_metadata_setters
+#' @family Dataset Metadata Setters
+#' @rdname dataset_metadata_setters
 #'
 #' @examples
-#' file_meta <- file_metadata()
+#' ds_json <- dataset_json(iris)
+#' 
+#' ds_json <- set_dataset_metadata(
+#'   iris, 
+#'   file_oid = "/some/path"
+#'   originator = "Some Org", 
+#'   sys = "source system", 
+#'   sys_version = "1.0", 
+#'   study = "SOMESTUDY",
+#'   metadata_version = "MDV.MSGv2.0.SDTMIG.3.3.SDTM.1.7",
+#'   metadata_ref = "some/define.xml",
+#'   item_oid = "IG.IRIS",
+#'   name = "IRIS",
+#'   dataset_label = "Iris"
+#' )
 #'
-#' file_meta_updated <- set_file_oid(file_meta, "/some/path")
-#' file_meta_updated <- set_originator(file_meta_updated, "Some Org")
-#' file_meta_updated <- set_source_system(file_meta_updated, "source system", "1.0")
-set_source_system <- function(x, sys, sys_version) {
-  stopifnot_file_metadata(x)
-  x[['sourceSystem']] <- sys
-  x[['sourceSystemVersion']] <- sys_version
-  x
-}
-
-#' @export
-#' @family File Metadata Setters
-#' @rdname file_metadata_setters
-set_originator <- function(x, originator) {
-  stopifnot_file_metadata(x)
-  x[['originator']] <- originator
-  x
-}
-
-#' @export
-#' @family File Metadata Setters
-#' @rdname file_metadata_setters
-set_file_oid <- function(x, file_oid) {
-  stopifnot_file_metadata(x)
-  x[['fileOID']] <- file_oid
-  x
-}
-
-#' @export
-#' @family File Metadata Setters
-#' @rdname file_metadata_setters
-set_data_type <- function(x, data_type = c('clinicalData', 'referenceData')) {
+#' # Individual Elements
+#' ds_json <- dataset_json(iris)
+#' ds_json <- set_file_oid(ds_json, "/some/path")
+#' ds_json <- set_study_oid(ds_json, "SOMESTUDY")
+#' ds_json <- set_originator(ds_json, "Some Org")
+#' ds_json <- set_source_system(ds_json, "source system", "1.0")
+#' ds_json <- set_metadata_ref(ds_json, "some/define.xml")
+#' ds_json <- set_metadata_version(ds_json, "MDV.MSGv2.0.SDTMIG.3.3.SDTM.1.7")
+#' ds_json <- set_item_oid(ds_json, "IG.IRIS")
+#' ds_json <- set_dataset_name(ds_json, "IRIS")
+#' ds_json <- set_dataseT_label(ds_json, "Iris")
+set_dataset_metadata <- function(x, file_oid = NULL, originator=NULL, sys = NULL, 
+                                 sys_version = NULL, study=NULL, metadata_version=NULL,
+                                 metadata_ref=NULL, item_oid=NULL, name = NULL, 
+                                 dataset_label=NULL) {
   stopifnot_datasetjson(x)
-  data_type = match.arg(data_type)
 
-  # For the clinicalData or referenceData, set the parameter correctly
-  names(x) <- c(names(x[1:7]), data_type)
+  if (!is.null(sys) && !is.null(sys_version)) {
+    attr(x, 'sourceSystem') <- list(
+      "name" = sys,
+      "version" = sys_version
+    )
+  }
+
+  attr(x, 'fileOID') <- file_oid
+  attr(x, 'originator') <- originator
+  attr(x, 'studyOID') <- study
+  attr(x, 'metaDataVersionOID') <- metadata_version
+  attr(x, 'metaDataRef') <- metadata_ref
+  attr(x, "itemGroupOID") <- item_oid
+  attr(x, 'records') <- nrow(x)
+  attr(x, 'name') <- name
+  attr(x, 'label') <- dataset_label
+  attr('isReferenceData') <- FALSE
   x
+}
+
+#' @export
+#' @family Dataset Metadata Setters
+#' @rdname dataset_metadata_setters
+set_source_system <- function(x, sys, sys_version) {
+  stopifnot_datasetjson(x)
+  attr(x, 'sourceSystem') <- list(
+    "name" = sys,
+    "version" = sys_version
+  )
+  x
+}
+
+#' @export
+#' @family Dataset Metadata Setters
+#' @rdname dataset_metadata_setters
+set_originator <- function(x, originator) {
+  stopifnot_datasetjson(x)
+  attr(x, 'originator') <- originator
+  x
+}
+
+#' @export
+#' @family Dataset Metadata Setters
+#' @rdname dataset_metadata_setters
+set_file_oid <- function(x, file_oid) {
+  stopifnot_datasetjson(x)
+  attr(x, 'fileOID') <- file_oid
+  x
+}
+
+#' @export
+#' @family Dataset Metadata Setters
+#' @rdname dataset_metadata_setters
+set_study_oid <- function(x, study) {
+  stopifnot_datasetjson(x)
+  attr(x, 'studyOID') <- study
+  x
+}
+
+#' @export
+#' @family Dataset Metadata Setters
+#' @rdname dataset_metadata_setters
+set_metadata_version <- function(x, metadata_version) {
+  stopifnot_datasetjson(x)
+  attr(x, 'metaDataVersionOID') <- metadata_version
+  x
+}
+
+#' @export
+#' @family Dataset Metadata Setters
+#' @rdname dataset_metadata_setters
+set_metadata_ref <- function(x, metadata_ref) {
+  stopifnot_datasetjson(x)
+  attr(x, 'metaDataRef') <- metadata_ref
+  x
+}
+
+#' @export
+#' @family Dataset Metadata Setters
+#' @rdname dataset_metadata_setters
+set_item_oid <- function(x, item_oid) {
+  stopifnot_datasetjson(x)
+  attr(x, "itemGroupOID") <- item_oid
+}
+
+#' @export
+#' @family Dataset Metadata Setters
+#' @rdname dataset_metadata_setters
+set_dataset_name <- function(x, name) {
+  stopifnot_datasetjson(x)
+  attr(x, 'name') <- name
+}
+
+#' @export
+#' @family Dataset Metadata Setters
+#' @rdname dataset_metadata_setters
+set_dataset_label <- function(x, dataset_label) {
+  stopifnot_datasetjson(x)
+  attr(x, 'label') <- dataset_label
+}
+
+#' Declare as reference data
+#' 
+#' Sets DatasetJSON file to have the isReferenceData attribute set to TRUE
+#' 
+#' @param x datasetjson object
+#' 
+#' @return datasetjson object
+#' @export
+#' 
+#' @examples
+#' ds_json <- dataset_json(iris)
+#' ds_json <- set_as_reference_data(ds_json)
+set_as_reference_data <- function(x) {
+  stopifnot_datasetjson(x)
+  attr(x, 'isReferenceData') <- TRUE
+}
+
+
+#' Create an ISO8601 formatted datetime of the current time
+#'
+#' This is used to create the creationDateTime and asOfDateTime attributes of
+#' the Dataset JSON object, called at the appropriate time for each attribute
+#'
+#' @return ISO8601 formatted datetime
+#' @noRd
+get_datetime <- function() {
+  format(Sys.time(), "%Y-%m-%dT%H:%M:%S")
 }

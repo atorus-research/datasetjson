@@ -48,9 +48,9 @@
 #' }
 "sas_time_formats"
 
-#' Dataset JSON Schema Version 1.0.0
+#' Dataset JSON Schema Version 1.1.0
 #'
-#' This object is a character vector holding the schema for Dataset JSON Version 1.0.0
+#' This object is a character vector holding the schema for Dataset JSON Version 1.1.0
 #'
 #' @format ## `schema_1_0_0`
 #' \describe{
