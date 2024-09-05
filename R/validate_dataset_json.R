@@ -29,12 +29,12 @@ validate_dataset_json <- function(x) {
     js <- x
   }
 
-  v <- jsonvalidate::json_validate(js, schema_1_0_0, engine="ajv", verbose=TRUE)
+  v <- jsonvalidate::json_validate(js, schema_1_1_0, engine="ajv", verbose=TRUE)
   if (!v) {
     warning("File contains errors!")
     return(attr(v, 'errors'))
   } else {
-    message("File is valid per the Dataset JSON v1.0.0 schema\n")
+    message("File is valid per the Dataset JSON v1.1.0 schema\n")
     data.frame(
       instancePath = character(),
       schemaPath = character(),
