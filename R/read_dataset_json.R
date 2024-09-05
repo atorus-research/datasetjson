@@ -75,7 +75,7 @@ read_dataset_json <- function(file) {
 
   d <- d[,-1] # get rid of ITEMGROUPDATASEQ column
 
-  ds_json <- dataset_json(
+  ds_attr <- dataset_json(
     d,
     file_oid = ds_json$fileOID,
     originator = ds_json$originator,
@@ -97,8 +97,8 @@ read_dataset_json <- function(file) {
     warning("The number of rows in the data does not match the number of records recorded in the metadata.")
   }
 
-  attr(ds_json, 'records') <- ds_json$records
-  attr(ds_json, 'columns') <- ds_json$columns
+  attr(ds_attr, 'records') <- ds_json$records
+  attr(ds_attr, 'columns') <- ds_json$columns
 
-  ds_json
+  ds_attr
 }
