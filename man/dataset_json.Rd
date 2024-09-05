@@ -7,6 +7,7 @@
 dataset_json(
   .data,
   file_oid = NULL,
+  last_modified = NULL,
   originator = NULL,
   sys = NULL,
   sys_version = NULL,
@@ -16,6 +17,7 @@ dataset_json(
   item_oid = NULL,
   name = NULL,
   dataset_label = NULL,
+  ref_data = FALSE,
   version = "1.1.0"
 )
 }
@@ -46,6 +48,9 @@ sourceSystem"}
 Defined as "Object of Datasets. Key value is a unique identifier for
 Dataset, corresponding to ItemGroupDef/@OID in Define-XML."}
 
+\item{ref_data}{Boolean value that is set to "true" when the dataset contains
+reference data (not subject data). The default value is "false".}
+
 \item{version}{The DatasetJSON version to use. Currently only 1.1.0 is supported.}
 }
 \value{
@@ -64,7 +69,8 @@ been deprecated.
 # Create a basic object
 ds_json <- dataset_json(
   iris, 
-  file_oid = "/some/path"
+  file_oid = "/some/path",
+  last_modified = "2023-02-15T10:23:15",
   originator = "Some Org", 
   sys = "source system", 
   sys_version = "1.0", 
@@ -79,6 +85,7 @@ ds_json <- dataset_json(
 # Attach attributes directly
 ds_json_updated <- set_data_type(ds_json, "referenceData")
 ds_json_updated <- set_file_oid(ds_json_updated, "/some/path")
+ds_json_updates <- set_last_modified(ds_json_updates, "2023-02-15T10:23:15")
 ds_json_updated <- set_metadata_ref(ds_json_updated, "some/define.xml")
 ds_json_updated <- set_metadata_version(ds_json_updated, "MDV.MSGv2.0.SDTMIG.3.3.SDTM.1.7")
 ds_json_updated <- set_originator(ds_json_updated, "Some Org")
@@ -86,5 +93,5 @@ ds_json_updated <- set_source_system(ds_json_updated, "source system", "1.0")
 ds_json_updated <- set_study_oid(ds_json_updated, "SOMESTUDY")
 ds_json_updated <- set_item_oid(ds_json_updated, "IG.IRIS")
 ds_json_updated <- set_dataset_name(ds_json_updated, "IRIS")
-ds_json_updated <- set_dataseT_label(ds_json_updated, "Iris")
+ds_json_updated <- set_dataset_label(ds_json_updated, "Iris")
 }

@@ -10,6 +10,8 @@
 \alias{set_item_oid}
 \alias{set_dataset_name}
 \alias{set_dataset_label}
+\alias{set_reference_data}
+\alias{set_last_modified}
 \title{Dataset Metadata Setters}
 \usage{
 set_source_system(x, sys, sys_version)
@@ -29,6 +31,10 @@ set_item_oid(x, item_oid)
 set_dataset_name(x, name)
 
 set_dataset_label(x, dataset_label)
+
+set_reference_data(x, is_refdata)
+
+set_last_modified(x, last_modified)
 }
 \arguments{
 \item{x}{datasetjson object}
@@ -59,6 +65,9 @@ Dataset, corresponding to ItemGroupDef/@OID in Define-XML."}
 \item{name}{Dataset name}
 
 \item{dataset_label}{Dataset Label}
+
+\item{ref_data}{Boolean value that is set to "true" when the dataset contains
+reference data (not subject data). The default value is "false".}
 }
 \value{
 datasetjson object
