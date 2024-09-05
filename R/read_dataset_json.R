@@ -70,27 +70,35 @@ read_dataset_json <- function(file) {
   d[date_cols] <- lapply(d[date_cols], as.Date)
   d[datetime_cols] <- lapply(d[datetime_cols], as.POSIXct)
 
-  # Apply variable attributes
+  # Apply variable labels
   d[names(d)] <- lapply(items$name, set_col_attr, d, 'label', items)
-  d[names(d)] <- lapply(items$name, set_col_attr, d, 'itemOID', items)
-  d[names(d)] <- lapply(items$name, set_col_attr, d, 'length', items)
-  d[names(d)] <- lapply(items$name, set_col_attr, d, 'dataType', items)
-  d[names(d)] <- lapply(items$name, set_col_attr, d, 'targetDataType', items)
-  d[names(d)] <- lapply(items$name, set_col_attr, d, 'keySequence', items)
-  d[names(d)] <- lapply(items$name, set_col_attr, d, 'displayFormat', items)
 
   d <- d[,-1] # get rid of ITEMGROUPDATASEQ column
 
-  # Apply file and data level attributes
-  attr(d, 'datasetJSONCreationDateTime') <- ds_json$creationDateTime
-  attr(d, 'datasetJSONVersion') <- ds_json$datasetJSONVersion
-  attr(d, 'fileOID') <- ds_json$fileOID
-  attr(d, 'dbLastModifiedDateTime') <- ds_json$asOfDateTime
-  attr(d, 'originator') <- ds_json$originator
-  attr(d, 'sourceSystem') <- ds_json$sourceSystem
-  attr(d, 'name') <- ds_json[["name"]]
-  attr(d, 'records') <- ds_json[["records"]]
-  attr(d, 'label') <- ds_json[["label"]]
+  ds_json <- dataset_json(
+    d,
+    file_oid = ds_json$fileOID,
+    originator = ds_json$originator,
+    sys = ds_json$sourceSystem$name,
+    sys_version = ds_json$sourceSystem$version,
+    study = ds_json$studyOID,
+    metadata_version = ds_json$metaDataVersionOID,
+    metadata_ref = ds_json$metaDataRef,
+    item_oid = ds_json$itemGroupOID,
+    name = ds_json$name,
+    dataset_label = ds_json$label,
+    ref_data = ds_json$isReferenceData,
+    last_modified = ds_json$dbLastModifiedDateTime,
+    version = ds_json$datasetJSONVersion
+  )
 
-  d
+  # Apply records and column attribute
+  if(ds_json$records != nrow(d)) {
+    warning("The number of rows in the data does not match the number of records recorded in the metadata.")
+  }
+
+  attr(ds_json, 'records') <- ds_json$records
+  attr(ds_json, 'columns') <- ds_json$columns
+
+  ds_json
 }
