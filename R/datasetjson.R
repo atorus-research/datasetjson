@@ -57,7 +57,7 @@
 #' ds_json_updated <- set_study_oid(ds_json_updated, "SOMESTUDY")
 #' ds_json_updated <- set_item_oid(ds_json_updated, "IG.IRIS")
 #' ds_json_updated <- set_dataset_name(ds_json_updated, "IRIS")
-#' ds_json_updated <- set_dataseT_label(ds_json_updated, "Iris")
+#' ds_json_updated <- set_dataset_label(ds_json_updated, "Iris")
 dataset_json <- function(.data, file_oid = NULL, originator=NULL, sys=NULL, 
                           sys_version = NULL, study=NULL, metadata_version=NULL,
                           metadata_ref=NULL, item_oid=NULL, name=NULL, 
