@@ -158,24 +158,26 @@ set_dataset_label <- function(x, dataset_label) {
   attr(x, 'label') <- dataset_label
 }
 
-#' Declare as reference data
-#' 
-#' Sets DatasetJSON file to have the isReferenceData attribute set to TRUE
-#' 
-#' @param x datasetjson object
-#' 
-#' @return datasetjson object
 #' @export
-#' 
-#' @examples
-#' ds_json <- dataset_json(iris)
-#' ds_json <- set_as_reference_data(ds_json)
+#' @family Dataset Metadata Setters
+#' @rdname dataset_metadata_setters
 set_reference_data <- function(x, is_refdata) {
   stopifnot_datasetjson(x)
   if (!is.logical(is_refdata)) {
     stop("`is_refdata` must be a boolean")
   }
   attr(x, 'isReferenceData') <- is_refdata
+}
+
+#' @export
+#' @family Dataset Metadata Setters
+#' @rdname dataset_metadata_setters
+set_last_modified <- function(x, last_modified) {
+  stopifnot_datasetjson(x)
+  if (!is.character(last_modified)) {
+    stop("`last_modified` must be a character")
+  }
+  attr(x, 'dbLastModifiedDateTime') <- last_modified
 }
 
 #' Create an ISO8601 formatted datetime of the current time

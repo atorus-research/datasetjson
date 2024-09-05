@@ -7,6 +7,7 @@
 dataset_json(
   .data,
   file_oid = NULL,
+  last_modified = NULL,
   originator = NULL,
   sys = NULL,
   sys_version = NULL,
@@ -68,7 +69,8 @@ been deprecated.
 # Create a basic object
 ds_json <- dataset_json(
   iris, 
-  file_oid = "/some/path"
+  file_oid = "/some/path",
+  last_modified = "2023-02-15T10:23:15",
   originator = "Some Org", 
   sys = "source system", 
   sys_version = "1.0", 
@@ -83,6 +85,7 @@ ds_json <- dataset_json(
 # Attach attributes directly
 ds_json_updated <- set_data_type(ds_json, "referenceData")
 ds_json_updated <- set_file_oid(ds_json_updated, "/some/path")
+ds_json_updates <- set_last_modified(ds_json_updates, "2023-02-15T10:23:15")
 ds_json_updated <- set_metadata_ref(ds_json_updated, "some/define.xml")
 ds_json_updated <- set_metadata_version(ds_json_updated, "MDV.MSGv2.0.SDTMIG.3.3.SDTM.1.7")
 ds_json_updated <- set_originator(ds_json_updated, "Some Org")
