@@ -48,19 +48,16 @@ read_dataset_json <- function(file) {
     )
   }
 
-
-
-  # Pull the object out with a lot of assumptions because the format has already
-  # been validated
-  dtype <- ifelse("clinicalData" %in% names(ds_json), "clinicalData", "referenceData")
-  d <- as.data.frame(ds_json[[dtype]]$itemGroupData[[1]]$itemData)
-  items <- ds_json[[dtype]]$itemGroupData[[1]]$items
+  # Pull the data and items
+  d <- as.data.frame(ds_json$rows)
+  items <- ds_json$columns
 
   # Start setting attributes
   colnames(d) <- items$name
 
   # Process type conversions
-  tt <- items$type
+  tt <- items$dataType
+  tdt <- items$targetDataType
   int_cols <- tt == "integer"
   dbl_cols <- tt %in% c("float", "double", "decimal")
   bool_cols <- tt == "boolean"
@@ -68,39 +65,32 @@ read_dataset_json <- function(file) {
   d[dbl_cols] <- lapply(d[dbl_cols], as.double)
   d[bool_cols] <- lapply(d[bool_cols], as.logical)
 
-  # Grab date and datetime column info
-  fmts <- items$displayFormat
-  date_cols <- fmts %in% sas_date_formats
-  datetime_cols <- fmts %in% sas_datetime_formats
-  d[date_cols] <- lapply(d[date_cols], as.Date, origin="1960-01-01")
-  d[datetime_cols] <- lapply(d[datetime_cols], as.POSIXct, origin="1960-01-01")
+  date_cols <- tt %in% c("date") & tdt %in% "integer"
+  datetime_cols <- tt %in% c("datetime", "time") & tdt %in% "integer"
+  d[date_cols] <- lapply(d[date_cols], as.Date)
+  d[datetime_cols] <- lapply(d[datetime_cols], as.POSIXct)
 
-  # Apply variable labels
+  # Apply variable attributes
   d[names(d)] <- lapply(items$name, set_col_attr, d, 'label', items)
-  d[names(d)] <- lapply(items$name, set_col_attr, d, 'OID', items)
+  d[names(d)] <- lapply(items$name, set_col_attr, d, 'itemOID', items)
   d[names(d)] <- lapply(items$name, set_col_attr, d, 'length', items)
-  d[names(d)] <- lapply(items$name, set_col_attr, d, 'type', items)
+  d[names(d)] <- lapply(items$name, set_col_attr, d, 'dataType', items)
+  d[names(d)] <- lapply(items$name, set_col_attr, d, 'targetDataType', items)
   d[names(d)] <- lapply(items$name, set_col_attr, d, 'keySequence', items)
   d[names(d)] <- lapply(items$name, set_col_attr, d, 'displayFormat', items)
 
   d <- d[,-1] # get rid of ITEMGROUPDATASEQ column
 
   # Apply file and data level attributes
-  attr(d, 'creationDateTime') <- ds_json$creationDateTime
+  attr(d, 'datasetJSONCreationDateTime') <- ds_json$creationDateTime
   attr(d, 'datasetJSONVersion') <- ds_json$datasetJSONVersion
   attr(d, 'fileOID') <- ds_json$fileOID
-  attr(d, 'asOfDateTime') <- ds_json$asOfDateTime
+  attr(d, 'dbLastModifiedDateTime') <- ds_json$asOfDateTime
   attr(d, 'originator') <- ds_json$originator
   attr(d, 'sourceSystem') <- ds_json$sourceSystem
-  attr(d, 'sourceSystemVersion') <- ds_json$sourceSystemVersion
-  attr(d, 'name') <-ds_json[[dtype]]$itemGroupData[[1]]$name
-  attr(d, 'records') <-ds_json[[dtype]]$itemGroupData[[1]]$records
-  attr(d, 'label') <-ds_json[[dtype]]$itemGroupData[[1]]$label
+  attr(d, 'name') <- ds_json[["name"]]
+  attr(d, 'records') <- ds_json[["records"]]
+  attr(d, 'label') <- ds_json[["label"]]
 
-  # Still save the name of the element storing the dataset metadata
-  ds_json[[dtype]]$itemGroupData <- names(ds_json[[dtype]]$itemGroupData)
-
-  # Store the data metadata still within it's own list
-  attr(d, dtype) <- ds_json[[dtype]]
   d
 }
