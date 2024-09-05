@@ -39,23 +39,6 @@
 #'
 #' @examples
 #' ds_json <- dataset_json(iris)
-#' 
-#' ds_json <- set_dataset_metadata(
-#'   iris, 
-#'   file_oid = "/some/path"
-#'   originator = "Some Org", 
-#'   sys = "source system", 
-#'   sys_version = "1.0", 
-#'   study = "SOMESTUDY",
-#'   metadata_version = "MDV.MSGv2.0.SDTMIG.3.3.SDTM.1.7",
-#'   metadata_ref = "some/define.xml",
-#'   item_oid = "IG.IRIS",
-#'   name = "IRIS",
-#'   dataset_label = "Iris"
-#' )
-#'
-#' # Individual Elements
-#' ds_json <- dataset_json(iris)
 #' ds_json <- set_file_oid(ds_json, "/some/path")
 #' ds_json <- set_study_oid(ds_json, "SOMESTUDY")
 #' ds_json <- set_originator(ds_json, "Some Org")
@@ -64,36 +47,7 @@
 #' ds_json <- set_metadata_version(ds_json, "MDV.MSGv2.0.SDTMIG.3.3.SDTM.1.7")
 #' ds_json <- set_item_oid(ds_json, "IG.IRIS")
 #' ds_json <- set_dataset_name(ds_json, "IRIS")
-#' ds_json <- set_dataseT_label(ds_json, "Iris")
-set_dataset_metadata <- function(x, file_oid = NULL, originator=NULL, sys = NULL, 
-                                 sys_version = NULL, study=NULL, metadata_version=NULL,
-                                 metadata_ref=NULL, item_oid=NULL, name = NULL, 
-                                 dataset_label=NULL) {
-  stopifnot_datasetjson(x)
-
-  if (!is.null(sys) && !is.null(sys_version)) {
-    attr(x, 'sourceSystem') <- list(
-      "name" = sys,
-      "version" = sys_version
-    )
-  }
-
-  attr(x, 'fileOID') <- file_oid
-  attr(x, 'originator') <- originator
-  attr(x, 'studyOID') <- study
-  attr(x, 'metaDataVersionOID') <- metadata_version
-  attr(x, 'metaDataRef') <- metadata_ref
-  attr(x, "itemGroupOID") <- item_oid
-  attr(x, 'records') <- nrow(x)
-  attr(x, 'name') <- name
-  attr(x, 'label') <- dataset_label
-  attr('isReferenceData') <- FALSE
-  x
-}
-
-#' @export
-#' @family Dataset Metadata Setters
-#' @rdname dataset_metadata_setters
+#' ds_json <- set_dataset_label(ds_json, "Iris")
 set_source_system <- function(x, sys, sys_version) {
   stopifnot_datasetjson(x)
   attr(x, 'sourceSystem') <- list(

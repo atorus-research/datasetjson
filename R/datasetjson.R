@@ -2,24 +2,30 @@
 #'
 #' Create the base object used to write a Dataset JSON file.
 #'
+#' @details
+#' 
+#' Note that DatasetJSON is on version 1.1.0. Based off findings from the pilot, 
+#' version 1.1.0 reflects feedback from the user community. Support for 1.0.0 has 
+#' been deprecated.
+#' 
 #' @param .data Input data to contain within the Dataset JSON file. Written to
 #'   the itemData parameter.
-#' @param item_id ID used to label dataset with the itemGroupData parameter.
+#' @param sys sourceSystem parameter, defined as "The computer system or
+#'   database management system that is the source of the information in this
+#'   file."
+#' @param sys_version sourceSystemVersion, defined as "The version of the
+#'   sourceSystem"
+#' @param originator originator parameter, defined as "The organization that
+#'   generated the Dataset-JSON file."
+#' @param file_oid fileOID parameter, defined as "A unique identifier for this
+#'   file."
+#' @param study Study OID value
+#' @param metadata_version Metadata version OID value
+#' @param metadata_ref Metadata reference (i.e. path to Define.xml)
+#' @param item_oid ID used to label dataset with the itemGroupData parameter.
 #'   Defined as "Object of Datasets. Key value is a unique identifier for
 #'   Dataset, corresponding to ItemGroupDef/@OID in Define-XML."
-#' @param name Dataset name
-#' @param label Dataset Label
-#' @param items Variable metadata
-#' @param dataset_meta A dataset_metadata object holding pre-specified
-#'   dataset metadata.
-#' @param version Version of Dataset JSON schema to follow.
-#' @param data_type Type of data being written. clinicalData for subject level
-#'   data, and referenceData for non-subject level data (i.e. TDMs, Associated
-#'   Persons)
-#' @param file_meta A file_metadata object holding pre-specified file
-#'   metadata
-#' @param data_meta A data_metadata object holding pre-specified data
-#'   metadata
+#' @param version The DatasetJSON version to use. Currently only 1.1.0 is supported.
 #'
 #' @return dataset_json object pertaining to the specific Dataset JSON version
 #'   specific
@@ -27,7 +33,19 @@
 #'
 #' @examples
 #' # Create a basic object
-#' ds_json <- dataset_json(iris, "IG.IRIS", "IRIS", "Iris", iris_items)
+#' ds_json <- dataset_json(
+#'   iris, 
+#'   file_oid = "/some/path"
+#'   originator = "Some Org", 
+#'   sys = "source system", 
+#'   sys_version = "1.0", 
+#'   study = "SOMESTUDY",
+#'   metadata_version = "MDV.MSGv2.0.SDTMIG.3.3.SDTM.1.7",
+#'   metadata_ref = "some/define.xml",
+#'   item_oid = "IG.IRIS",
+#'   name = "IRIS",
+#'   dataset_label = "Iris"
+#' )
 #'
 #' # Attach attributes directly
 #' ds_json_updated <- set_data_type(ds_json, "referenceData")
@@ -37,40 +55,15 @@
 #' ds_json_updated <- set_originator(ds_json_updated, "Some Org")
 #' ds_json_updated <- set_source_system(ds_json_updated, "source system", "1.0")
 #' ds_json_updated <- set_study_oid(ds_json_updated, "SOMESTUDY")
-#'
-#' # Create independent objects for metadata sections first
-#' file_meta <- file_metadata(
-#'   originator = "Some Org",
-#'   sys = "source system",
-#'   sys_version = "1.0"
-#' )
-#'
-#' data_meta <- data_metadata(
-#'   study = "SOMESTUDY",
-#'   metadata_version = "MDV.MSGv2.0.SDTMIG.3.3.SDTM.1.7",
-#'   metadata_ref = "some/define.xml"
-#' )
-#'
-#' dataset_meta <- dataset_metadata(
-#'   item_id = "IG.IRIS",
-#'   name = "IRIS",
-#'   label = "Iris",
-#'   items = iris_items
-#' )
-#'
-#' ds_json_from_meta <- dataset_json(
-#'   iris,
-#'   dataset_meta = dataset_meta,
-#'   file_meta = file_meta,
-#'   data_meta = data_meta
-#'   )
-dataset_json <- function(.data, item_id, name, label, items, dataset_meta,
-                         version="1.1.0", data_type = c('clinicalData', 'referenceData'),
-                         file_meta = file_metadata(),
-                         data_meta = data_metadata()
-                         ) {
-  data_type = match.arg(data_type)
-  new_dataset_json(version, item_id, data_type, name, label, items, dataset_meta, file_meta, data_meta, .data)
+#' ds_json_updated <- set_item_oid(ds_json_updated, "IG.IRIS")
+#' ds_json_updated <- set_dataset_name(ds_json_updated, "IRIS")
+#' ds_json_updated <- set_dataseT_label(ds_json_updated, "Iris")
+dataset_json <- function(.data, file_oid = NULL, originator=NULL, sys=NULL, 
+                          sys_version = NULL, study=NULL, metadata_version=NULL,
+                          metadata_ref=NULL, item_oid=NULL, name=NULL, 
+                          dataset_label=NULL, version="1.1.0") {
+  new_dataset_json(.data, file_oid, originator, sys, sys_version, study, metadata_version,
+                   metadata_ref, item_oid, name, dataset_label, version)
 }
 
 #' Create a base Dataset JSON Container
@@ -82,8 +75,9 @@ dataset_json <- function(.data, item_id, name, label, items, dataset_meta,
 #' @return datasetjson object
 #'
 #' @noRd
-new_dataset_json <- function(version, item_id, data_type, name, label, items,
-                             dataset_meta, file_meta, data_meta, .data) {
+new_dataset_json <- function(.data, file_oid, originator, sys, sys_version, study, 
+                             metadata_version, metadata_ref, item_oid, name, dataset_label,
+                             version) {
 
   if (!(version %in% c("1.1.0"))) {
     stop("Unsupported version specified - currently only version 1.1.0 is supported", call.=FALSE)
@@ -95,34 +89,41 @@ new_dataset_json <- function(version, item_id, data_type, name, label, items,
   )
 
   # Extract the function and call it to return the base structure
-  funcs[[version]](item_id, data_type, name, label, items, dataset_meta, file_meta, data_meta, .data)
+  funcs[[version]](.data, file_oid, originator, sys, sys_version, study, 
+                   metadata_version, metadata_ref, item_oid, name, dataset_label)
 }
 
 #' Dataset JSON v1.1.0 Generator
 #'
 #' @return datasetjson_v1_1_0 object
 #' @noRd
-new_dataset_json_v1_1_0 <- function(item_id, data_type, name, label, items, dataset_meta, file_meta, data_meta, .data) {
+new_dataset_json_v1_1_0 <- function(.data, file_oid, originator, sys, sys_version, study, 
+                                    metadata_version, metadata_ref, item_oid, name, dataset_label) {
 
-  if (missing(dataset_meta)) {
-    if (any(missing(item_id), missing(name), missing(label), missing(items))) {
-      stop("If dataset_meta is not provided, then name, label, and items must be provided", call.=FALSE)
-    }
-
-    # Create the dataset metadata with provided info
-    dataset_meta <- dataset_metadata(item_id, name, label, items)
+  if (!inherits(.data, 'data.frame')) {
+    stop("datasetjson objects must inherit from a data.frame", call.=FALSE)
   }
 
-  # Attach .data into dataset_meta
-  dataset_meta <- set_item_data(dataset_meta, .data)
+  if (!is.null(sys) && !is.null(sys_version)) {
+    attr(.data, 'sourceSystem') <- list(
+      "name" = sys,
+      "version" = sys_version
+    )
+  }
 
-  # Combine file_meta, data_meta, and dataset_meta together
-  ds_json <- file_meta
-  ds_json[[data_type]] <- data_meta
-  ds_json[[data_type]][['itemGroupData']] <- dataset_meta
-
+  attr(.data, 'fileOID') <- file_oid
+  attr(.data, 'originator') <- originator
+  attr(.data, 'studyOID') <- study
+  attr(.data, 'metaDataVersionOID') <- metadata_version
+  attr(.data, 'metaDataRef') <- metadata_ref
+  attr(.data, "itemGroupOID") <- item_oid
+  attr(.data, 'records') <- nrow(x)
+  attr(.data, 'name') <- name
+  attr(.data, 'label') <- dataset_label
+  attr(.data, 'isReferenceData') <- FALSE
+  
   structure(
-    ds_json,
-    class = c("datasetjson_v1_1_0", "datasetjson", "list")
+    .data,
+    class = c("datasetjson_v1_1_0", "datasetjson", "data.frame")
   )
 }
