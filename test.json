@@ -1,0 +1,19 @@
+{
+  "datasetJSONCreationDateTime": "2024-09-16T15:58:26",
+  "datasetJSONVersion": "1.1.0",
+  "fileOID": "/some/path",
+  "dbLastModifiedDateTime": "2023-02-15T10:23:15",
+  "originator": "Some Org",
+  "sourceSystem": {
+    "name": "source system",
+    "version": "1.0"
+  },
+  "studyOID": "SOMESTUDY",
+  "metaDataVersionOID": "MDV.MSGv2.0.SDTMIG.3.3.SDTM.1.7",
+  "metaDataRef": "some/define.xml",
+  "itemGroupOID": "IG.IRIS",
+  "isReferenceData": false,
+  "records": 5,
+  "name": "IRIS",
+  "label": "Iris"
+}

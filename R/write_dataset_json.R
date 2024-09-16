@@ -3,6 +3,8 @@
 #' @param x datasetjson object
 #' @param file File path to save Dataset JSON file
 #' @param pretty If TRUE, write with readable formatting
+#' @param items Variable metadata
+#' @param type JSON or NDJSON, if NDJSON variable names are left on rows for streaming
 #'
 #' @return NULL when file written to disk, otherwise character string
 #' @export
@@ -10,19 +12,51 @@
 #' @examples
 #' # Write to character object
 #' ds_json <- dataset_json(iris, "IG.IRIS", "IRIS", "Iris", iris_items)
-#' js <- write_dataset_json(ds_json)
+#' js <- write_dataset_json(ds_json, iris_items)
 #'
 #' # Write to disk
 #' \dontrun{
 #'   write_dataset_json(ds_json, "path/to/file.json")
 #' }
-write_dataset_json <- function(x, file, pretty=FALSE) {
+write_dataset_json <- function(x, file, pretty=FALSE, items, type="JSON") {
   stopifnot_datasetjson(x)
 
   # Populate the creation datetime
-  x[['creationDateTime']] <- get_datetime()
+  attr(x, 'datasetJSONCreationDateTime') <- get_datetime()
 
-  x <- remove_nulls(x)
+  # Store number of records
+  attr(x, 'records') <- nrow(x)
+
+  # Pull attributes into a list and order
+  temp <- attributes(x)[c(
+    "datasetJSONCreationDateTime",
+    "datasetJSONVersion",
+    "fileOID",
+    "dbLastModifiedDateTime",
+    "originator",
+    "sourceSystem",
+    "studyOID",
+    "metaDataVersionOID",
+    "metaDataRef",
+    "itemGroupOID",
+    "isReferenceData",
+    "records",
+    "name",
+    "label")
+    ]
+
+  # add ITEMGROUPDATASEQ to data
+  records <- nrow(x)
+  x <- cbind(ITEMGROUPDATASEQ = 1:records, x)
+
+  # add variable metadata and data
+  temp$columns <- variable_metadata(items)
+  temp$rows <- x
+
+  # Leave the names for NSJSON, remove for JSON
+  if (type == "JSON") {
+    names(temp$rows) <- NULL
+  }
 
   if (!missing(file)) {
     # Make sure the output path exists
@@ -40,14 +74,14 @@ write_dataset_json <- function(x, file, pretty=FALSE) {
   if (!missing(file)) {
     # Write file to disk
     yyjsonr::write_json_file(
-      x,
+      temp,
       filename = file,
       opts = json_opts
     )
   } else {
     # Print to console
     yyjsonr::write_json_str(
-      x,
+      temp,
       opts = json_opts
     )
   }

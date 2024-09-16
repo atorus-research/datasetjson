@@ -43,10 +43,10 @@ test_that("read_dataset_json matches xpt", {
   expect_equal(comp_attr[["label"]], comp_expected[["label"]])
 
   # # ae
-  expect_warning(e <- validate_dataset_json(test_path("testdata", "ae.json")), "File contains errors!")
+  expect_warning(e <- validate_dataset_json(test_path("testdata", "invalid_dm.json")), "File contains errors!")
 
   # Simple crosscheck of the number of errors without verifying the whole dataframe
-  expect_equal(nrow(e), 87)
+  expect_equal(nrow(e), 1)
 
 })
 
@@ -61,8 +61,22 @@ test_that("Dataset JSON can be read from a URL", {
 })
 
 test_that("Dataset JSON can be read from imported string", {
-  ds_json <- dataset_json(iris[1:5, ], "IG.IRIS", "IRIS", "Iris", iris_items)
-  js <- write_dataset_json(ds_json, pretty=TRUE)
+  # ds_json <- dataset_json(iris[1:5, ], "IG.IRIS", "IRIS", "Iris", iris_items)
+  ds_json <- dataset_json(
+    iris[1:5, ],
+    file_oid = "/some/path",
+    last_modified = "2023-02-15T10:23:15",
+    originator = "Some Org",
+    sys = "source system",
+    sys_version = "1.0",
+    study = "SOMESTUDY",
+    metadata_version = "MDV.MSGv2.0.SDTMIG.3.3.SDTM.1.7",
+    metadata_ref = "some/define.xml",
+    item_oid = "IG.IRIS",
+    name = "IRIS",
+    dataset_label = "Iris"
+  )
+  js <- write_dataset_json(ds_json, pretty=TRUE, items=iris_items)
   expect_silent(dat <- read_dataset_json(js))
   x <- iris
   x[5] <- as.character(x[[5]])
