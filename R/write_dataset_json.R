@@ -24,7 +24,8 @@ write_dataset_json <- function(x, file, pretty=FALSE, items) {
   attr(x, 'datasetJSONCreationDateTime') <- get_datetime()
 
   # Store number of records
-  attr(x, 'records') <- nrow(x)
+  records <- nrow(x)
+  attr(x, 'records') <- records
 
   # Pull attributes into a list and order
   temp <- attributes(x)[c(
@@ -45,7 +46,6 @@ write_dataset_json <- function(x, file, pretty=FALSE, items) {
     ]
 
   # add ITEMGROUPDATASEQ to data
-  records <- nrow(x)
   x <- cbind(ITEMGROUPDATASEQ = 1:records, x)
 
   # add variable metadata and data
