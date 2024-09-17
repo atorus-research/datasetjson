@@ -4,7 +4,6 @@
 #' @param file File path to save Dataset JSON file
 #' @param pretty If TRUE, write with readable formatting
 #' @param items Variable metadata
-#' @param type JSON or NDJSON, if NDJSON variable names are left on rows for streaming
 #'
 #' @return NULL when file written to disk, otherwise character string
 #' @export
@@ -18,7 +17,7 @@
 #' \dontrun{
 #'   write_dataset_json(ds_json, "path/to/file.json")
 #' }
-write_dataset_json <- function(x, file, pretty=FALSE, items, type="JSON") {
+write_dataset_json <- function(x, file, pretty=FALSE, items) {
   stopifnot_datasetjson(x)
 
   # Populate the creation datetime
@@ -51,12 +50,7 @@ write_dataset_json <- function(x, file, pretty=FALSE, items, type="JSON") {
 
   # add variable metadata and data
   temp$columns <- variable_metadata(items)
-  temp$rows <- x
-
-  # Leave the names for NSJSON, remove for JSON
-  if (type == "JSON") {
-    names(temp$rows) <- NULL
-  }
+  temp$rows <- unname(x)
 
   if (!missing(file)) {
     # Make sure the output path exists
