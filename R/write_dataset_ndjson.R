@@ -94,7 +94,8 @@ write_dataset_ndjson <- function(x, file, pretty=FALSE, items) {
     # Write file to disk
     cat(metadata_ndjson, data_ndjson, file = file, sep = "\n")
   } else {
-    # Print to console
-    paste(metadata_ndjson, data_ndjson, sep = "\n")
+    # Return string
+    y = capture.output(cat(metadata_ndjson, data_ndjson, sep = "\n"))
+    paste0(y, collapse = '\n')
   }
 }
