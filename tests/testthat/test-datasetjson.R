@@ -1,5 +1,18 @@
 # Objects to use for testing
-ds_json <- dataset_json(iris, "IG.IRIS", "IRIS", "Iris", iris_items)
+ds_json <- dataset_json(
+  iris,
+  # file_oid = "/some/path",
+  # last_modified = "2023-02-15T10:23:15",
+  # originator = "Some Org",
+  # sys = "source system",
+  # sys_version = "1.0",
+  # study = "SOMESTUDY",
+  # metadata_version = "MDV.MSGv2.0.SDTMIG.3.3.SDTM.1.7",
+  # metadata_ref = "some/define.xml",
+  item_oid = "IG.IRIS",
+  name = "IRIS",
+  dataset_label = "Iris"
+)
 iris_items_list <- readRDS(test_path("testdata", "iris_items_list.Rds"))
 
 # This test will verify that everything lands where expected and auto-calculated
@@ -11,40 +24,31 @@ test_that("datasetjson object builds with minimal defaults", {
   # expect_equal(grep("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}", ds_json$creationDateTime), 1)
 
   # File metadata
-  expect_equal(ds_json$datasetJSONVersion, "1.0.0")
-  expect_null(ds_json$fileOID)
-  expect_null(ds_json$asOfDateTime)
-  expect_null(ds_json$originator)
-  expect_null(ds_json$sourceSystem)
-  expect_null(ds_json$sourceSystemVersion)
+  expect_equal(attr(ds_json, "datasetJSONVersion"), "1.1.0")
+  expect_null(attr(ds_json, "fileOID"))
+  expect_null(attr(ds_json, "dbLastModifiedDateTime"))
+  expect_null(attr(ds_json, "originator"))
+  expect_null(attr(ds_json, "sourceSystem"))
+  expect_null(attr(ds_json, "studyOID"))
+  expect_null(attr(ds_json, "metaDataVersionOID"))
+  expect_null(attr(ds_json, "metaDataRef"))
+  expect_equal(attr(ds_json, "itemGroupOID"), "IG.IRIS")
+  expect_equal(attr(ds_json, "name"), "IRIS")
+  expect_equal(attr(ds_json, "label"), "Iris")
 
-  # Data type is correct
-  expect_equal(tail(names(ds_json), 1), "clinicalData")
-
-  # Data metadata
-  expect_null(ds_json$clinicalData$studyOID)
-  expect_null(ds_json$clinicalData$metaDataVersionOID)
-  expect_null(ds_json$clinicalData$metaDataRef)
-
-  # item_id passes through
-  expect_equal(names(ds_json$clinicalData$itemGroupData), "IG.IRIS")
-
-  # Dataset metadata
-  expect_equal(ds_json$clinicalData$itemGroupData$IG.IRIS$records, nrow(iris))
-  expect_equal(ds_json$clinicalData$itemGroupData$IG.IRIS$name, "IRIS")
-  expect_equal(ds_json$clinicalData$itemGroupData$IG.IRIS$label, "Iris")
 
   # Verify that ITEMGROUPSEQ is attached properly
-  iris_items_test <- rbind(
-    data.frame(OID  = "ITEMGROUPDATASEQ",
-               name = "ITEMGROUPDATASEQ",
-               label = "Record Identifier",
-               type = "integer",
-               length = NA_integer_,
-               keySequence = NA_integer_,
-               displayFormat = NA_character_),
-    iris_items
-  )
+  # iris_items_test <- rbind(
+  #   data.frame(itemOID  = "ITEMGROUPDATASEQ",
+  #              name = "ITEMGROUPDATASEQ",
+  #              label = "Record Identifier",
+  #              dataType = "integer",
+  #              targetDataType  = NA_character_,
+  #              length = NA_integer_,
+  #              keySequence = NA_integer_,
+  #              displayFormat = NA_character_),
+  #   iris_items
+  # )
 
   expect_equal(ds_json$clinicalData$itemGroupData$IG.IRIS$items, iris_items_list)
 
