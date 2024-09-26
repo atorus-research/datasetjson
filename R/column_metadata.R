@@ -78,12 +78,12 @@ validate_dataset_columns <- function(items) {
 }
 
 
-set_column_metadata <- function(x, columns) {
+set_column_metadata <- function(columns) {
   # Check items before moving any further
   validate_dataset_columns(columns)
 
   # Attach in the variable metadata
-  if (!("ITEMGROUPDATASEQ" %in% columns$OID)) {
+  if (!("ITEMGROUPDATASEQ" %in% columns$itemOID)) {
     igds_row <- data.frame(
       itemOID = "ITEMGROUPDATASEQ",
       name = "ITEMGROUPDATASEQ",
