@@ -43,10 +43,10 @@ validate_dataset_columns <- function(items) {
   # Check that dataType values are within the permissible list
   err_dataType_vars <- character()
   if ('dataType' %in% names(items)) {
-    bad_dataType <- !(items$type %in% c("string", "integer", "float", "double", "decimal", "boolean",
+    bad_dataType <- !(items$dataType %in% c("string", "integer", "float", "double", "decimal", "boolean",
                                      "datetime", "date", "time", "URI"))
     bad_dataType_vars <- items$name[bad_dataType]
-    bad_dataType_vals <- items$type[bad_dataType]
+    bad_dataType_vals <- items$dataType[bad_dataType]
     err_dataType_vars <- sprintf(
       paste("Variable %s has an invalid dataType value of %s.",
             "Must be one of string, integer, float, double, decimal, boolean, datetime, date, time, URI"),
@@ -54,12 +54,13 @@ validate_dataset_columns <- function(items) {
     )
   }
 
-  # Check that targetDataType values are within the permissible list
+  # Check that targetDataType values are within the permissible list, which includes NA
+  # since this is optional
   err_targetDataType_vars <- character()
   if ('targetDataType' %in% names(items)) {
-    bad_targetDataType <- !(items$type %in% c("integer", "decimal"))
+    bad_targetDataType <- !(items$targetDataType %in% c("integer", "decimal", NA))
     bad_targetDataType_vars <- items$name[bad_targetDataType]
-    bad_targetDataType_vals <- items$type[bad_targetDataType]
+    bad_targetDataType_vals <- items$targetDataType[bad_targetDataType]
     err_targetDataType_vars <- sprintf(
       paste("Variable %s has an invalid targetDataType value of %s.",
             "Must be integer or decimal"),

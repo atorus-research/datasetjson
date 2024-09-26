@@ -1,4 +1,6 @@
 # Objects to use for testing
+iris_metadata <- readRDS(test_path("testdata", "iris_metadata.Rds"))
+
 ds_json <- dataset_json(
   iris,
   # file_oid = "/some/path",
@@ -11,8 +13,10 @@ ds_json <- dataset_json(
   # metadata_ref = "some/define.xml",
   item_oid = "IG.IRIS",
   name = "IRIS",
-  dataset_label = "Iris"
+  dataset_label = "Iris",
+  columns = iris_metadata
 )
+
 iris_items_list <- readRDS(test_path("testdata", "iris_items_list.Rds"))
 
 # This test will verify that everything lands where expected and auto-calculated
@@ -23,7 +27,8 @@ test_that("datasetjson object builds with minimal defaults", {
   # where the call to system time splits across a second
   # expect_equal(grep("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}", ds_json$creationDateTime), 1)
 
-  # File metadata
+  # Metadata
+  expect_null(attr(ds_json, "datasetJSONCreationDateTime"))
   expect_equal(attr(ds_json, "datasetJSONVersion"), "1.1.0")
   expect_null(attr(ds_json, "fileOID"))
   expect_null(attr(ds_json, "dbLastModifiedDateTime"))
@@ -33,107 +38,38 @@ test_that("datasetjson object builds with minimal defaults", {
   expect_null(attr(ds_json, "metaDataVersionOID"))
   expect_null(attr(ds_json, "metaDataRef"))
   expect_equal(attr(ds_json, "itemGroupOID"), "IG.IRIS")
+  expect_equal(attr(ds_json, "isReferenceData"), FALSE)
+  expect_null(attr(ds_json, "records"))
   expect_equal(attr(ds_json, "name"), "IRIS")
   expect_equal(attr(ds_json, "label"), "Iris")
+  expect_equal(attr(ds_json, "columns"), iris_items_list)
 
-
-  # Verify that ITEMGROUPSEQ is attached properly
-  # iris_items_test <- rbind(
-  #   data.frame(itemOID  = "ITEMGROUPDATASEQ",
-  #              name = "ITEMGROUPDATASEQ",
-  #              label = "Record Identifier",
-  #              dataType = "integer",
-  #              targetDataType  = NA_character_,
-  #              length = NA_integer_,
-  #              keySequence = NA_integer_,
-  #              displayFormat = NA_character_),
-  #   iris_items
-  # )
-
-  expect_equal(ds_json$clinicalData$itemGroupData$IG.IRIS$items, iris_items_list)
-
-  # Verify that data are attached properly with ITEMGRPUPSEQ attached
-  iris_test <- unname(cbind(
-    ITEMGROUPDATASEQ = 1:nrow(iris),
-    iris
-  ))
-
-  expect_equal(ds_json$clinicalData$itemGroupData$IG.IRIS$itemData, iris_test)
 })
 
 test_that("datasetjson setter functions insert info in the right fields", {
-  ds_json_updated <- set_data_type(ds_json, "referenceData")
-  ds_json_updated <- set_file_oid(ds_json_updated, "/some/path")
+  ds_json_updated <- set_file_oid(ds_json, "/some/path")
   ds_json_updated <- set_metadata_ref(ds_json_updated, "some/define.xml")
   ds_json_updated <- set_metadata_version(ds_json_updated, "MDV.MSGv2.0.SDTMIG.3.3.SDTM.1.7")
   ds_json_updated <- set_originator(ds_json_updated, "Some Org")
   ds_json_updated <- set_source_system(ds_json_updated, "source system", "1.0")
   ds_json_updated <- set_study_oid(ds_json_updated, "SOMESTUDY")
 
-  expect_equal(tail(names(ds_json_updated), 1), "referenceData")
-  expect_equal(ds_json_updated$fileOID, "/some/path")
-  expect_equal(ds_json_updated$originator, "Some Org")
-  expect_equal(ds_json_updated$sourceSystem, "source system")
-  expect_equal(ds_json_updated$sourceSystemVersion, "1.0")
-  expect_equal(ds_json_updated$referenceData$studyOID, "SOMESTUDY")
-  expect_equal(ds_json_updated$referenceData$metaDataVersionOID, "MDV.MSGv2.0.SDTMIG.3.3.SDTM.1.7")
-  expect_equal(ds_json_updated$referenceData$metaDataRef, "some/define.xml")
-})
-
-test_that("Data type passes through", {
-  x <- dataset_json(iris, "IG.IRIS", "IRIS", "Iris", iris_items, data_type = "referenceData")
-  expect_equal(tail(names(x), 1), "referenceData")
+  expect_equal(attr(ds_json_updated, "fileOID"), "/some/path")
+  expect_equal(attr(ds_json_updated, "originator"), "Some Org")
+  expect_equal(attr(ds_json_updated, "sourceSystem"), list(name = "source system", version = "1.0"))
+  expect_equal(attr(ds_json_updated, "studyOID"), "SOMESTUDY")
+  expect_equal(attr(ds_json_updated, "metaDataVersionOID"), "MDV.MSGv2.0.SDTMIG.3.3.SDTM.1.7")
+  expect_equal(attr(ds_json_updated, "metaDataRef"), "some/define.xml")
 })
 
 # Error checking
 test_that("Errors are thrown properly", {
   expect_error(
-    dataset_json(iris, "IG.IRIS", "IRIS", "Iris", iris_items, data_type = "blah"),
-    regexp = "should be one of"
-    )
-
-  expect_error(
-    dataset_json(iris, item_id = "IG.IRIS", name = "IRIS", items = iris_items),
-    "If dataset_meta is not provided, then name, label, and items must be provided"
-  )
-
-  expect_error(
-    dataset_json(iris, "IG.IRIS", "IRIS", "Iris", iris_items, version="2"),
+    dataset_json(iris, version="2"),
     regexp = "Unsupported version specified"
   )
-})
-
-test_that("Object builds from prespecified metadata objects", {
-  file_meta <- file_metadata(
-    originator = "Some Org",
-    sys = "source system",
-    sys_version = "1.0"
+  expect_error(
+    dataset_json(as.list(iris), version="1.1.0"),
+    regexp = "must inherit from a data.frame"
   )
-
-  data_meta <- data_metadata(
-    study = "SOMESTUDY",
-    metadata_version = "MDV.MSGv2.0.SDTMIG.3.3.SDTM.1.7",
-    metadata_ref = "some/define.xml"
-  )
-
-  dataset_meta <- dataset_metadata(
-    item_id = "IG.IRIS",
-    name = "IRIS",
-    label = "Iris",
-    items = iris_items
-  )
-
-  ds_json_from_meta <- dataset_json(iris,
-                                    dataset_meta = dataset_meta,
-                                    file_meta = file_meta,
-                                    data_meta = data_meta)
-
-
-  expect_equal(tail(names(ds_json_from_meta), 1), "clinicalData")
-  expect_equal(ds_json_from_meta$originator, "Some Org")
-  expect_equal(ds_json_from_meta$sourceSystem, "source system")
-  expect_equal(ds_json_from_meta$sourceSystemVersion, "1.0")
-  expect_equal(ds_json_from_meta$clinicalData$studyOID, "SOMESTUDY")
-  expect_equal(ds_json_from_meta$clinicalData$metaDataVersionOID, "MDV.MSGv2.0.SDTMIG.3.3.SDTM.1.7")
-  expect_equal(ds_json_from_meta$clinicalData$metaDataRef, "some/define.xml")
 })
