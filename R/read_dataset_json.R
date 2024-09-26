@@ -89,7 +89,8 @@ read_dataset_json <- function(file) {
     dataset_label = ds_json$label,
     ref_data = ds_json$isReferenceData,
     last_modified = ds_json$dbLastModifiedDateTime,
-    version = ds_json$datasetJSONVersion
+    version = ds_json$datasetJSONVersion,
+    columns = ds_json$columns
   )
 
   # Apply records and column attribute
@@ -98,7 +99,6 @@ read_dataset_json <- function(file) {
   }
 
   attr(ds_attr, 'records') <- ds_json$records
-  attr(ds_attr, 'columns') <- ds_json$columns
 
   ds_attr
 }

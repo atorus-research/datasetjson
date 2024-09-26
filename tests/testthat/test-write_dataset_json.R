@@ -19,13 +19,14 @@ test_that("write_dataset_json matches the original json", {
     metadata_ref = "define.xml",
     item_oid = "IG.ADSL",
     name = "ADSL",
-    dataset_label = "Subject-Level Analysis Dataset"
+    dataset_label = "Subject-Level Analysis Dataset",
+    columns = df_metadata
   )
 
   # write json to disk
   json_location <- paste0(df_name,".json")
   withr::local_file(json_location)
-  write_dataset_json(ds_json, json_location, items=df_metadata)
+  write_dataset_json(ds_json, json_location)
 
   comp <- jsonlite::read_json(json_location)
   expected <- jsonlite::read_json(test_path("testdata/adsl.json"))
@@ -55,13 +56,14 @@ test_that("write_dataset_json matches the original json", {
     metadata_ref = "define.xml",
     item_oid = "IG.DM",
     name = "DM",
-    dataset_label = "Demographics"
+    dataset_label = "Demographics",
+    columns = df_metadata
   )
 
   # write json to disk
   json_location <- paste0(df_name,".json")
   withr::local_file(json_location)
-  write_dataset_json(ds_json, json_location, items=df_metadata)
+  write_dataset_json(ds_json, json_location)
 
   comp <- jsonlite::read_json(json_location)
   expected <- jsonlite::read_json(test_path("testdata/dm.json"))
@@ -92,13 +94,14 @@ test_that("write_dataset_json matches the original json", {
     item_oid = "IG.TA",
     name = "TA",
     dataset_label = "Trial Arms",
-    ref_data = TRUE
+    ref_data = TRUE,
+    columns = df_metadata
   )
 
   # write json to disk
   json_location <- paste0(df_name,".json")
   withr::local_file(json_location)
-  write_dataset_json(ds_json, json_location, items=df_metadata)
+  write_dataset_json(ds_json, json_location)
 
   comp <- jsonlite::read_json(json_location)
   expected <- jsonlite::read_json(test_path("testdata/ta.json"))
@@ -136,9 +139,10 @@ test_that("write_dataset_json errors are thrown properly", {
       item_oid = "IG.TA",
       name = "TA",
       dataset_label = "Trial Arms",
-      ref_data = TRUE
+      ref_data = TRUE,
+      columns = df_metadata
     )
-    write_dataset_json(ds_json, items = df_metadata,file = "not/a/valid/directory/ta.json")},
+    write_dataset_json(ds_json, file = "not/a/valid/directory/ta.json")},
     "Folder supplied to `file` does not exist"
   )
 })

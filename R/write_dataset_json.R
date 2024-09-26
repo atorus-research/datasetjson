@@ -3,7 +3,6 @@
 #' @param x datasetjson object
 #' @param file File path to save Dataset JSON file
 #' @param pretty If TRUE, write with readable formatting
-#' @param items Variable metadata
 #'
 #' @return NULL when file written to disk, otherwise character string
 #' @export
@@ -17,7 +16,7 @@
 #' \dontrun{
 #'   write_dataset_json(ds_json, "path/to/file.json")
 #' }
-write_dataset_json <- function(x, file, pretty=FALSE, items) {
+write_dataset_json <- function(x, file, pretty=FALSE) {
   stopifnot_datasetjson(x)
 
   # Populate the creation datetime
@@ -42,14 +41,14 @@ write_dataset_json <- function(x, file, pretty=FALSE, items) {
     "isReferenceData",
     "records",
     "name",
-    "label")
+    "label",
+    "columns")
     ]
 
   # add ITEMGROUPDATASEQ to data
   x <- cbind(ITEMGROUPDATASEQ = 1:records, x)
 
-  # add variable metadata and data
-  temp$columns <- variable_metadata(items)
+  # add data rows
   temp$rows <- unname(x)
 
   if (!missing(file)) {
