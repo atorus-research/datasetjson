@@ -5,15 +5,17 @@
 #'   - Columns present that are not permissible
 #'   - Columns with NAs that must be fully populated
 #'   - Columns columns that should be character or integer but aren't
-#'   - Within the type column, if the values are within the permissible list per
+#'   - Within the dataType column, if the values are within the permissible list per
+#'     the schema
+#'   - Within the targetDataType column, if the values are within the permissible list per
 #'     the schema
 #' @param items
 #'
 #' @return Error Check
 #' @noRd
 validate_dataset_columns <- function(items) {
-  required_cols <- c("OID", "name", "label", "type")
-  all_cols <- c("OID", "name", "label", "type", "displayFormat", "length", "keySequence")
+  required_cols <- c("itemOID", "name", "label", "dataType")
+  all_cols <- c("itemOID", "name", "label", "dataType", "targetDataType", "length", "displayFormat", "keySequence")
 
   # Check for missing or extraneous columns
   missing_cols <- setdiff(required_cols, names(items))
@@ -27,7 +29,7 @@ validate_dataset_columns <- function(items) {
   err_nas <- sprintf("Column `%s` must not have NA values", has_nas)
 
   # Check columns that should be character
-  char_cols <- intersect(c("OID", "name", "label", "type", "displayFormat"), names(items))
+  char_cols <- intersect(c("itemOID", "name", "label", "dataType", "targetDataType", "displayFormat"), names(items))
   are_char_cols <- vapply(items[char_cols], is.character, FUN.VALUE=TRUE)
   not_char_cols <- names(are_char_cols)[!are_char_cols]
   err_char_cols <- sprintf("Column `%s` must be of type character", not_char_cols)
@@ -38,20 +40,35 @@ validate_dataset_columns <- function(items) {
   not_int_cols <- names(are_int_cols)[!are_int_cols]
   err_int_cols <- sprintf("Column `%s` must be of type integer", not_int_cols)
 
-  # Check that type values are within the permissible list
-  err_type_vars <- character()
-  if ('type' %in% names(items)) {
-    bad_types <- !(items$type %in% c("string", "integer", "float", "double", "decimal", "boolean"))
-    bad_type_vars <- items$name[bad_types]
-    bad_type_vals <- items$type[bad_types]
-    err_type_vars <- sprintf(
-      paste("Variable %s has an invalid type value of %s.",
-            "Must be one of string, integer, float, double, decimal, boolean"),
-      bad_type_vars, bad_type_vals
+  # Check that dataType values are within the permissible list
+  err_dataType_vars <- character()
+  if ('dataType' %in% names(items)) {
+    bad_dataType <- !(items$type %in% c("string", "integer", "float", "double", "decimal", "boolean",
+                                     "datetime", "date", "time", "URI"))
+    bad_dataType_vars <- items$name[bad_dataType]
+    bad_dataType_vals <- items$type[bad_dataType]
+    err_dataType_vars <- sprintf(
+      paste("Variable %s has an invalid dataType value of %s.",
+            "Must be one of string, integer, float, double, decimal, boolean, datetime, date, time, URI"),
+      bad_dataType_vars, bad_dataType_vals
     )
   }
 
-  all_errs <- c(err_missing_cols, err_additional_cols, err_nas, err_char_cols, err_int_cols, err_type_vars)
+  # Check that targetDataType values are within the permissible list
+  err_targetDataType_vars <- character()
+  if ('targetDataType' %in% names(items)) {
+    bad_targetDataType <- !(items$type %in% c("integer", "decimal"))
+    bad_targetDataType_vars <- items$name[bad_targetDataType]
+    bad_targetDataType_vals <- items$type[bad_targetDataType]
+    err_targetDataType_vars <- sprintf(
+      paste("Variable %s has an invalid targetDataType value of %s.",
+            "Must be integer or decimal"),
+      bad_targetDataType_vars, bad_targetDataType_vals
+    )
+  }
+
+  all_errs <- c(err_missing_cols, err_additional_cols, err_nas, err_char_cols,
+                err_int_cols, err_dataType_vars, err_targetDataType_vars)
 
   if (length(all_errs) > 0) {
     msg_prep <- paste0("\n\t", all_errs)
@@ -68,10 +85,10 @@ set_column_metadata <- function(x, columns) {
   # Attach in the variable metadata
   if (!("ITEMGROUPDATASEQ" %in% columns$OID)) {
     igds_row <- data.frame(
-      OID = "ITEMGROUPDATASEQ",
+      itemOID = "ITEMGROUPDATASEQ",
       name = "ITEMGROUPDATASEQ",
       label = "Record Identifier",
-      type = "integer"
+      dataType = "integer"
     )
 
     # Match up columns and fill
