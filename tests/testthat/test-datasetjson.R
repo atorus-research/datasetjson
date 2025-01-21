@@ -1,6 +1,3 @@
-# Objects to use for testing
-# iris_metadata <- readRDS(test_path("testdata", "iris_metadata.Rds"))
-
 ds_json <- dataset_json(
   iris,
   # file_oid = "/some/path",

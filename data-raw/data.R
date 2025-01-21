@@ -1,3 +1,5 @@
+devtools::load_all()
+
 ## code to prepare `iris_items` dataset
 iris_items <- tibble::tribble(
   ~itemOID,             ~name,          ~label,           ~dataType, ~length,    ~keySequence,
@@ -66,3 +68,17 @@ saveRDS(iris_items_list, file=testthat::test_path("testdata", "iris_items_bad.Rd
 schema_file <- testthat::test_path("testdata", "dataset.schema.json")
 schema_1_1_0 = readChar(schema_file, file.info(schema_file)$size)
 usethis::use_data(schema_1_1_0, overwrite=TRUE)
+
+# Test data metadata
+
+save_metadata <- function(df) {
+  .data <- read_dataset_json(testthat::test_path("testdata", sprintf("%s.json", df)))
+  .data_metadata <- purrr::map_df(attributes(.data)$columns, as.data.frame)
+  saveRDS(.data_metadata, testthat::test_path("testdata", sprintf("%s_metadata.Rds", df)))
+}
+
+save_metadata("ae")
+save_metadata("dm")
+save_metadata("ta")
+save_metadata("adsl")
+
