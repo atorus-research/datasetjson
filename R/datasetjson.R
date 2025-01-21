@@ -25,8 +25,6 @@
 #' @param item_oid ID used to label dataset with the itemGroupData parameter.
 #'   Defined as "Object of Datasets. Key value is a unique identifier for
 #'   Dataset, corresponding to ItemGroupDef/@OID in Define-XML."
-#' @param ref_data Boolean value that is set to "true" when the dataset contains
-#'   reference data (not subject data). The default value is "false".
 #' @param version The DatasetJSON version to use. Currently only 1.1.0 is supported.
 #' @param columns Variable level metadata for the Dataset JSON object
 #'
@@ -53,7 +51,6 @@
 #' )
 #'
 #' # Attach attributes directly
-#' ds_json_updated <- set_data_type(ds_json, "referenceData")
 #' ds_json_updated <- set_file_oid(ds_json_updated, "/some/path")
 #' ds_json_updates <- set_last_modified(ds_json_updates, "2023-02-15T10:23:15")
 #' ds_json_updated <- set_metadata_ref(ds_json_updated, "some/define.xml")
@@ -68,10 +65,10 @@
 dataset_json <- function(.data, file_oid=NULL, last_modified=NULL,
                           originator=NULL, sys=NULL, sys_version = NULL,
                           study=NULL, metadata_version=NULL,metadata_ref=NULL,
-                          item_oid=NULL, name=NULL, dataset_label=NULL, ref_data=FALSE,
+                          item_oid=NULL, name=NULL, dataset_label=NULL,
                           columns=NULL, version="1.1.0") {
   new_dataset_json(.data, file_oid, last_modified, originator, sys, sys_version, study,
-                   metadata_version, metadata_ref, item_oid, name, dataset_label, ref_data,
+                   metadata_version, metadata_ref, item_oid, name, dataset_label,
                    columns, version)
 }
 
@@ -86,7 +83,7 @@ dataset_json <- function(.data, file_oid=NULL, last_modified=NULL,
 #' @noRd
 new_dataset_json <- function(.data, file_oid, last_modified, originator, sys, sys_version, study,
                              metadata_version, metadata_ref, item_oid, name, dataset_label,
-                             ref_data, columns, version) {
+                             columns, version) {
 
   if (!(version %in% c("1.1.0"))) {
     stop("Unsupported version specified - currently only version 1.1.0 is supported", call.=FALSE)
@@ -100,7 +97,7 @@ new_dataset_json <- function(.data, file_oid, last_modified, originator, sys, sy
   # Extract the function and call it to return the base structure
   funcs[[version]](.data, file_oid, last_modified, originator, sys, sys_version, study,
                    metadata_version, metadata_ref, item_oid, name, dataset_label,
-                   ref_data, columns)
+                   columns)
 }
 
 #' Dataset JSON v1.1.0 Generator
@@ -109,7 +106,7 @@ new_dataset_json <- function(.data, file_oid, last_modified, originator, sys, sy
 #' @noRd
 new_dataset_json_v1_1_0 <- function(.data, file_oid, last_modified, originator, sys, sys_version,
                                     study, metadata_version, metadata_ref, item_oid, name,
-                                    dataset_label, ref_data, columns) {
+                                    dataset_label, columns) {
 
   if (!inherits(.data, 'data.frame')) {
     stop("datasetjson objects must inherit from a data.frame", call.=FALSE)
@@ -132,7 +129,6 @@ new_dataset_json_v1_1_0 <- function(.data, file_oid, last_modified, originator, 
   attr(.data, "itemGroupOID") <- item_oid
   attr(.data, 'name') <- name
   attr(.data, 'label') <- dataset_label
-  attr(.data, 'isReferenceData') <- ref_data
   if (!is.null(columns)) {
     validate_dataset_columns(columns)
   }

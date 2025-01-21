@@ -1,6 +1,3 @@
-# Objects to use for testing
-iris_metadata <- readRDS(test_path("testdata", "iris_metadata.Rds"))
-
 ds_json <- dataset_json(
   iris,
   # file_oid = "/some/path",
@@ -14,7 +11,7 @@ ds_json <- dataset_json(
   item_oid = "IG.IRIS",
   name = "IRIS",
   dataset_label = "Iris",
-  columns = iris_metadata
+  columns = iris_items
 )
 
 iris_items_list <- readRDS(test_path("testdata", "iris_items_list.Rds"))
@@ -38,7 +35,6 @@ test_that("datasetjson object builds with minimal defaults", {
   expect_null(attr(ds_json, "metaDataVersionOID"))
   expect_null(attr(ds_json, "metaDataRef"))
   expect_equal(attr(ds_json, "itemGroupOID"), "IG.IRIS")
-  expect_equal(attr(ds_json, "isReferenceData"), FALSE)
   expect_null(attr(ds_json, "records"))
   expect_equal(attr(ds_json, "name"), "IRIS")
   expect_equal(attr(ds_json, "label"), "Iris")

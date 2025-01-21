@@ -83,21 +83,5 @@ set_column_metadata <- function(columns) {
   # Check items before moving any further
   validate_dataset_columns(columns)
 
-  # Attach in the variable metadata
-  if (!("ITEMGROUPDATASEQ" %in% columns$itemOID)) {
-    igds_row <- data.frame(
-      itemOID = "ITEMGROUPDATASEQ",
-      name = "ITEMGROUPDATASEQ",
-      label = "Record Identifier",
-      dataType = "integer"
-    )
-
-    # Match up columns and fill
-    igds_row[setdiff(names(columns), names(igds_row))] <- NA
-    columns[setdiff(names(igds_row), names(columns))] <- NA
-
-    columns <- rbind(igds_row, columns)
-  }
-
   columns_converted <- df_to_list_rows(columns)
 }

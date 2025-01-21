@@ -73,8 +73,6 @@ read_dataset_json <- function(file) {
   # Apply variable labels
   d[names(d)] <- lapply(items$name, set_col_attr, d, 'label', items)
 
-  d <- d[,-1] # get rid of ITEMGROUPDATASEQ column
-
   ds_attr <- dataset_json(
     d,
     file_oid = ds_json$fileOID,
@@ -87,7 +85,6 @@ read_dataset_json <- function(file) {
     item_oid = ds_json$itemGroupOID,
     name = ds_json$name,
     dataset_label = ds_json$label,
-    ref_data = ds_json$isReferenceData,
     last_modified = ds_json$dbLastModifiedDateTime,
     version = ds_json$datasetJSONVersion,
     columns = ds_json$columns

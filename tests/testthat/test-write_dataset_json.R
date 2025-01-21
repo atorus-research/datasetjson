@@ -9,8 +9,8 @@ test_that("write_dataset_json matches the original json", {
   # create dataset json object
   ds_json <- dataset_json(
     orig_df,
-    file_oid = "www.cdisc.org/StudyMSGv1/1/Define-XML_2.1.0/2024-08-05/adsl",
-    last_modified = "2024-08-05T10:08:46",
+    file_oid = "www.cdisc.org/StudyMSGv1/1/Define-XML_2.1.0/2024-11-11/adsl",
+    last_modified = "2022-04-16T20:09:03",
     originator = "CDISC ADaM MSG Team",
     sys = "SAS on X64_10PRO",
     sys_version = "9.0401M7",
@@ -46,7 +46,7 @@ test_that("write_dataset_json matches the original json", {
   # create dataset json object
   ds_json <- dataset_json(
     orig_df,
-    file_oid = "www.cdisc.org/StudyMSGv2/1/Define-XML_2.1.0/2024-08-05/dm",
+    file_oid = "www.cdisc.org/StudyMSGv2/1/Define-XML_2.1.0/2024-11-11/dm",
     last_modified = "2020-08-21T09:14:29",
     originator = "CDISC SDTM MSG Team",
     sys = "SAS on X64_10PRO",
@@ -83,7 +83,7 @@ test_that("write_dataset_json matches the original json", {
   # create dataset json object
   ds_json <- dataset_json(
     orig_df,
-    file_oid = "www.cdisc.org/StudyMSGv2/1/Define-XML_2.1.0/2024-08-05/ta",
+    file_oid = "www.cdisc.org/StudyMSGv2/1/Define-XML_2.1.0/2024-11-11/ta",
     last_modified = "2020-08-21T09:14:26",
     originator = "CDISC SDTM MSG Team",
     sys = "SAS on X64_10PRO",
@@ -94,7 +94,6 @@ test_that("write_dataset_json matches the original json", {
     item_oid = "IG.TA",
     name = "TA",
     dataset_label = "Trial Arms",
-    ref_data = TRUE,
     columns = df_metadata
   )
 
@@ -128,7 +127,7 @@ test_that("write_dataset_json errors are thrown properly", {
 
     ds_json <- dataset_json(
       orig_df,
-      file_oid = "www.cdisc.org/StudyMSGv2/1/Define-XML_2.1.0/2024-08-05/ta",
+      file_oid = "www.cdisc.org/StudyMSGv2/1/Define-XML_2.1.0/2024-11-11/ta",
       last_modified = "2020-08-21T09:14:26",
       originator = "CDISC SDTM MSG Team",
       sys = "SAS on X64_10PRO",
@@ -139,7 +138,6 @@ test_that("write_dataset_json errors are thrown properly", {
       item_oid = "IG.TA",
       name = "TA",
       dataset_label = "Trial Arms",
-      ref_data = TRUE,
       columns = df_metadata
     )
     write_dataset_json(ds_json, file = "not/a/valid/directory/ta.json")},
