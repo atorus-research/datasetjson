@@ -38,15 +38,11 @@ write_dataset_json <- function(x, file, pretty=FALSE) {
     "metaDataVersionOID",
     "metaDataRef",
     "itemGroupOID",
-    "isReferenceData",
     "records",
     "name",
     "label",
     "columns")
     ]
-
-  # add ITEMGROUPDATASEQ to data
-  x <- cbind(ITEMGROUPDATASEQ = 1:records, x)
 
   # add data rows
   temp$rows <- unname(x)

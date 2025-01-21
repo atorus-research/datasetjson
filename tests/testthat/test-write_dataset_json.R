@@ -94,7 +94,6 @@ test_that("write_dataset_json matches the original json", {
     item_oid = "IG.TA",
     name = "TA",
     dataset_label = "Trial Arms",
-    ref_data = TRUE,
     columns = df_metadata
   )
 
@@ -139,7 +138,6 @@ test_that("write_dataset_json errors are thrown properly", {
       item_oid = "IG.TA",
       name = "TA",
       dataset_label = "Trial Arms",
-      ref_data = TRUE,
       columns = df_metadata
     )
     write_dataset_json(ds_json, file = "not/a/valid/directory/ta.json")},

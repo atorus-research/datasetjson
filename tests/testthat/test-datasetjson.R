@@ -38,7 +38,6 @@ test_that("datasetjson object builds with minimal defaults", {
   expect_null(attr(ds_json, "metaDataVersionOID"))
   expect_null(attr(ds_json, "metaDataRef"))
   expect_equal(attr(ds_json, "itemGroupOID"), "IG.IRIS")
-  expect_equal(attr(ds_json, "isReferenceData"), FALSE)
   expect_null(attr(ds_json, "records"))
   expect_equal(attr(ds_json, "name"), "IRIS")
   expect_equal(attr(ds_json, "label"), "Iris")
