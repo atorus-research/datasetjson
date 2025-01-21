@@ -25,3 +25,22 @@ test_that("URL checker regex works as expected", {
 
   expect_equal(path_is_url(url_list), bool_check)
 })
+
+
+test_that("Date, datetime and time conversions work as expected", {
+  df <- data.frame(
+    date = c("2020-01-01", "2020-01-02", NA),
+    datetime = c("2020-01-01T12:00:00", "2020-01-01T12:00:01", NA),
+    time = c("12:00:00", "12:00:01", NA)
+  )
+
+  df_converted <- date_time_conversions(df,
+                                        c("date", "datetime", "time"),
+                                        c("integer", "integer", "integer"))
+
+  expect_equal(df_converted$date, as.Date(c("2020-01-01", "2020-01-02", NA)))
+  expect_equal(df_converted$datetime, as.POSIXct(c("2020-01-01 12:00:00",
+                                                   "2020-01-01 12:00:01",
+                                                   NA), tz = "UTC"))
+  expect_equal(df_converted$time, hms(c("12:00:00", "12:00:01", NA)))
+})

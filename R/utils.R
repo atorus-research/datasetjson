@@ -84,3 +84,28 @@ df_to_list_rows <- function(x) {
   })
 }
 
+#' Convert date, datetime and time
+#'
+#' The variable attributes are stored as named lists within the output
+#' JSON file, so to write them out the dataframe needs to be a named
+#' list of rows
+#'
+#' @param d A data.frame
+#' @param dt A character vector of dataTypes
+#' @param tdt A character vector of targetDataTypes
+#'
+#' @return A data.frame with converted columns
+#' @noRd
+date_time_conversions <- function(d, dt, tdt){
+  date_cols <- dt %in% c("date") & tdt %in% "integer"
+  datetime_cols <- dt %in% c("datetime") & tdt %in% "integer"
+  time_cols <- dt %in% c("time") & tdt %in% "integer"
+  d[date_cols] <- lapply(d[date_cols], as.Date, tz = "UTC")
+  d[datetime_cols] <- lapply(d[datetime_cols],
+                             as.POSIXct,
+                             tz = "UTC",
+                             tryFormats = "%Y-%m-%dT%H:%M:%S")
+  d[time_cols] <- lapply(d[time_cols], hms)
+  d
+}
+
