@@ -29,8 +29,8 @@
 #' @param item_oid ID used to label dataset with the itemGroupData parameter.
 #'   Defined as "Object of Datasets. Key value is a unique identifier for
 #'   Dataset, corresponding to ItemGroupDef/@OID in Define-XML."
-#' @param ref_data Boolean value that is set to "true" when the dataset contains 
-#'   reference data (not subject data). The default value is "false". 
+#' @param ref_data Boolean value that is set to "true" when the dataset contains
+#'   reference data (not subject data). The default value is "false".
 #' @param name Dataset name
 #' @param dataset_label Dataset Label
 #'
@@ -152,7 +152,7 @@ set_dataset_name <- function(x, name) {
 #' @rdname dataset_metadata_setters
 set_dataset_label <- function(x, dataset_label) {
   stopifnot_datasetjson(x)
-  if (!is.character(dataset_labelx)) {
+  if (!is.character(dataset_label)) {
     stop("`dataset_label` must be a character")
   }
   attr(x, 'label') <- dataset_label
