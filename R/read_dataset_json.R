@@ -48,7 +48,7 @@
 #' }
 #'
 #' # Read from an already imported character vector
-#' ds_json <- dataset_json(iris, "IG.IRIS", "IRIS", "Iris", iris_items)
+#' ds_json <- dataset_json(iris, "IG.IRIS", "IRIS", "Iris", columns=iris_items)
 #' js <- write_dataset_json(ds_json)
 #' dat <- read_dataset_json(js)
 read_dataset_json <- function(file) {
