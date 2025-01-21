@@ -1,5 +1,5 @@
 # Objects to use for testing
-iris_metadata <- readRDS(test_path("testdata", "iris_metadata.Rds"))
+# iris_metadata <- readRDS(test_path("testdata", "iris_metadata.Rds"))
 
 ds_json <- dataset_json(
   iris,
@@ -14,7 +14,7 @@ ds_json <- dataset_json(
   item_oid = "IG.IRIS",
   name = "IRIS",
   dataset_label = "Iris",
-  columns = iris_metadata
+  columns = iris_items
 )
 
 iris_items_list <- readRDS(test_path("testdata", "iris_items_list.Rds"))
