@@ -1,13 +1,43 @@
-#' Read a Dataset JSON to datasetjson object
+#'Read a Dataset JSON to datasetjson object
 #'
-#' This function validates a dataset JSON file against the Dataset JSON schema,
-#' and if valid returns a datasetjson object. The Dataset JSON file can be
-#' either a file path on disk of a URL which contains the Dataset JSON file.
+#'This function validates a dataset JSON file against the Dataset JSON schema,
+#'and if valid returns a datasetjson object. The Dataset JSON file can be either
+#'a file path on disk of a URL which contains the Dataset JSON file.
 #'
-#' @param file File path or URL of a Dataset JSON file
+#'@details
 #'
-#' @return datasetjson object
-#' @export
+#'The resulting dataframe contains the additional metadata available on the
+#'Dataset JSON file within the attributes to make this accessible to the user.
+#'Note that these attributes are only populated if available.
+#' - **sourceSystem**: The information system from which the content of this
+#'dataset was source, including system name and version.
+#' - **datasetJSONVersion**: The version of the Dataset-JSON standard used to
+#'create the dataset.
+#' - **fileOID**: A unique identifier for this dataset.
+#' - **dbLastModifiedDateTime**: The date/time the source database was last
+#'modified before creating the Dataset-JSON file.
+#' - **originator**: The organization that generated the Dataset-JSON dataset.
+#' - **studyOID**: Unique identifier for the study that may also function as a
+#'foreign key to a Study/@OID in an associated Define-XML document, or to any
+#'studyOID references that are used as keys in other documents;
+#' - **metaDataVersionOID**: Unique identifier for the metadata version that may
+#'also function as a foreign key to a MetaDataVersion/@OID in an associated
+#'Define-XML file
+#' - **metaDataRef**: URI for the metadata file describing the dataset (e.g.,
+#'a Define-XML file).
+#' - **itemGroupOID**: Unique identifier for the dataset that may also function
+#'as a foreign key to an ItemGroupDef/@OID in an associated Define-XML file.
+#' - **name**: The human-readable name for the dataset.
+#' - **label**: A short description of the dataset.
+#' - **columns**: An array of metadata objects that describe the dataset
+#'variables. See `dataset_json()` for further information on the contents of
+#'these fields.
+#'
+#'@param file File path or URL of a Dataset JSON file
+#'
+#'@return A dataframe with additional attributes attached containing the
+#'  DatasetJSON metadata.
+#'@export
 #'
 #' @examples
 #' # Read from disk
