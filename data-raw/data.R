@@ -106,4 +106,4 @@ adsl_meta <- readRDS(testthat::test_path("testdata", "adsl_metadata.Rds")) |>
   )
 
 saveRDS(adsl, file=testthat::test_path("testdata", "adsl_time_test.Rds"))
-saveRDS(new_meta, file=testthat::test_path("testdata", "adsl_time_test_meta.Rds"))
+saveRDS(adsl_meta, file=testthat::test_path("testdata", "adsl_time_test_meta.Rds"))

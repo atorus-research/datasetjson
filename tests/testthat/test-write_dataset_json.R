@@ -144,3 +144,32 @@ test_that("write_dataset_json errors are thrown properly", {
     "Folder supplied to `file` does not exist"
   )
 })
+
+test_that("datetime and times write out properly", {
+  df_name <- "adsl"
+  orig_df <- readRDS(testthat::test_path("testdata", "adsl_time_test.Rds"))
+  df_metadata <- readRDS(testthat::test_path("testdata", "adsl_time_test_meta.Rds"))
+
+  # create dataset json object
+  ds_json <- dataset_json(
+    orig_df,
+    file_oid = "www.cdisc.org/StudyMSGv1/1/Define-XML_2.1.0/2024-11-11/adsl",
+    last_modified = "2022-04-16T20:09:03",
+    originator = "CDISC ADaM MSG Team",
+    sys = "SAS on X64_10PRO",
+    sys_version = "9.0401M7",
+    study = "TDF_ADaM.ADaMIG.1.1",
+    metadata_version = "MDV.TDF_ADaM.ADaMIG.1.1",
+    metadata_ref = "define.xml",
+    item_oid = "IG.ADSL",
+    name = "ADSL",
+    dataset_label = "Subject-Level Analysis Dataset",
+    columns = df_metadata
+  )
+
+  # write json to disk
+  json_location <- paste0(df_name,".json")
+  withr::local_file(json_location)
+  # write_dataset_json(ds_json, json_location)
+  write_dataset_json(ds_json)
+})
