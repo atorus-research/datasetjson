@@ -1,0 +1,31 @@
+---
+title: "Converting from XPT"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Converting from XPT}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(datasetjson)
+```
+
+Some users may be interested in converting SAS Version 5 Transport files into XPT, or converting from other file types such as SAS7BDAT. There may be some existing processes in place to do this in SAS, such as a post-processing conversion step where files are converted in bulk. This vignette offers some guidance and best practice for doing this process in R. 
+
+## Converting from XPT
+
+```{r XPT conversion}
+
+```
+
+
+
+## Bulk File Conversion
