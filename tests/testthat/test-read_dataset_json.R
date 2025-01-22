@@ -83,11 +83,11 @@ test_that("Dataset JSON can be read from imported string", {
 test_that("datetime conversions work properly",{
   iris_timetest <- read_dataset_json(test_path("testdata", "iris_timetest.json"))
 
-  expect_s3_class(iris_timetest$Datetime, "POSIXct")
+  expect_s3_class(iris_timetest$Datetime, "POSIXlt")
   expect_equal(class(iris_timetest$Time), "Period", ignore_attr=TRUE)
 
   expect_equal(sort(unique(iris_timetest$Datetime)),
-               as.POSIXct(strptime(c("2024-01-01T12:34:56", "2024-01-17T18:45:56"),
+               as.POSIXlt(strptime(c("2024-01-01T12:34:56", "2024-01-17T18:45:56"),
                         "%Y-%m-%dT%H:%M:%S", tz="UTC")))
   expect_equal(sort(unique(as.numeric(iris_timetest$Time))),
                as.numeric(hms(c("12:34:56", "18:45:56"))))
