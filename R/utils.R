@@ -36,6 +36,28 @@ get_null_inds <- function(x) {
   which(vapply(x, is.null, FUN.VALUE = TRUE))
 }
 
+#' Remove nulls from a Dataset JSON object
+#'
+#' Only targets the file and data metadata to pull off optional elements
+#'
+#' @param x A Dataset JSON object
+#'
+#' @return A Dataset JSON object
+#' @noRd
+remove_nulls <- function(x) {
+
+  # Specifically target the data metadata
+  dm_nulls <- get_null_inds(x)
+
+  # Top level
+  dm_nulls <- get_null_inds(x)
+  if (length(dm_nulls) > 0) {
+    x <- x[-dm_nulls]
+  }
+
+  x
+}
+
 
 
 #' Check if given path is a URL

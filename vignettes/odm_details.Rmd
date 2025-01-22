@@ -25,9 +25,3 @@ Without having a background in ODM, some fields within the Dataset JSON file may
 > FileOIDs should be universally unique if at all possible. One way to ensure this is to prefix every FileOID with an internet domain name owned by the creator of the ODM file or database (followed by a forward slash, "/"). For example, FileOID="BestPharmaceuticals.com/Study5894/1" might be a good way to denote the first file in a series for study 5894 from Best Pharmaceuticals.
  
 [*Reference link*](https://wiki.cdisc.org/display/ODM2/Single+Files+and+Collections)
-
-## asOfDateTime and creationDateTime
-
-> The creationDateTime attribute indicates when the ODM document was created. In contrast, the asOfDateTime attribute tells when the document content was accurate by specifying the date/time at which the source database was queried to create the ODM document. This is of particular importance when a series of files is used to give an evolving view of a changing database.
-
-[*Reference link*](https://wiki.cdisc.org/display/ODM2/Single+Files+and+Collections)

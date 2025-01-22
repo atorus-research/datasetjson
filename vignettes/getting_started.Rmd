@@ -56,10 +56,10 @@ This data frame has 7 columns, 4 of which are strictly required. This is defined
 | dataType       | Required        | Type of the variable. Allowed values: "string", "integer", "decimal", "float", "double", "boolean", "datetime", "date", "time", "URI". See ODM types for details. |
 | targetDataType | Required        | Type of the variable. Allowed values: "integer", "decimal". Indicates the data type into which the receiving system must transform the associated Dataset-JSON variable. |
 | length         | Optional        | Variable length                                                                                                                |
-| displayFormat  | Optional        | Display format supports data visualization of numeric float and date values.Â                                                  |
+| displayFormat  | Optional        | Display format supports data visualization of numeric float and date values.                                               |
 | keySequence    | Optional        | Indicates that this item is a key variable in the dataset structure. It also provides an ordering for the keys.                |
 
-The data within this dataframe ultimatly populates the `columns` element of the Dataset JSON file. The itemOID, name, label, and dataType columns are all required and must be populated for each variable. Note that the dataType column has a list of allowable values:
+The data within this dataframe ultimately populates the `columns` element of the Dataset JSON file. The itemOID, name, label, and dataType columns are all required and must be populated for each variable. Note that the dataType column has a list of allowable values:
 
 - `string`
 - `integer`
@@ -105,10 +105,4 @@ The data frame that's read in carries a number of attributes. For example, openi
 
 ```{r attributes}
 attributes(dat)
-```
-
-For variable level metadata, the attributes are applied directly to the columns.
-
-```{r col_attributes}
-attributes(dat$Species)
 ```
