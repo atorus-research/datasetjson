@@ -89,14 +89,14 @@ time_options <- c("12:34:56", "15:34:34", "11:12:52", "21:16:11")
 
 adsl$VIST1TMC <- sample(time_options, 254, replace=TRUE)
 adsl$VIST1DTC <-paste(format(adsl$VISIT1DT, "%Y-%m-%d"), sample(time_options, 254, replace=TRUE), sep="T")
-# adsl$VISIT1TM <- lubridate::hms(adsl$VIST1TMC)
-adsl$VIST1DTM <- strptime(adsl$VIST1DTC, "%Y-%m-%dT%H:%M:%S")
+adsl$VISIT1TM <- lubridate::hms(adsl$VIST1TMC)
+adsl$VIST1DTM <- as.POSIXct(strptime(adsl$VIST1DTC, "%Y-%m-%dT%H:%M:%S", tz="UTC"))
 
 new_meta <- tibble::tribble(
   ~itemOID,             ~name,          ~label,             ~dataType, ~length,      ~targetDataType, ~displayFormat, ~keySequence,
   'IT.ADSL.VIST1TMC',   'VIST1TMC',     'Visit 1 Time',     'string',   8L,          NA_character_,   NA_character_,  NA_integer_,
   'IT.ADSL.VIST1DTC',   'VIST1DTC',     'Visit 1 Datetime', 'string',   19L,         NA_character_,   NA_character_,  NA_integer_,
-  # 'IT.ADSL.VISIT1TM',   'VISIT1TM',     'Numeric time',     'time',     NA_integer_, "integer",       "TIME8",        NA_integer_,
+  'IT.ADSL.VISIT1TM',   'VISIT1TM',     'Numeric time',     'time',     NA_integer_, "integer",       "TIME8",        NA_integer_,
   'IT.ADSL.VIST1DTM',   'VIST1DTM',     'Numeric datetime', 'datetime', NA_integer_, "integer",      "E8601DT",       NA_integer_
 )
 

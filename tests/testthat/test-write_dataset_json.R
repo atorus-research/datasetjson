@@ -167,9 +167,27 @@ test_that("datetime and times write out properly", {
     columns = df_metadata
   )
 
-  # write json to disk
-  json_location <- paste0(df_name,".json")
-  withr::local_file(json_location)
-  # write_dataset_json(ds_json, json_location)
-  write_dataset_json(ds_json)
+  # Write JSON
+  adsl_json_output <- write_dataset_json(ds_json)
+  adsl_json_input <- read_dataset_json(adsl_json_output)
+
+  # The ignore_attr option isn't working here.
+  # Period objects (i.e. times)
+  x <- orig_df$VISIT1TM
+  y <- adsl_json_input$VISIT1TM
+  attr(y, 'label') <- NULL
+  expect_equal(x, y)
+
+  # Datetimes
+  x <- orig_df$VIST1DTM
+  y <- adsl_json_input$VIST1DTM
+  attr(y, 'label') <- NULL
+  expect_equal(x, y)
+
+  # Dates
+  x <- orig_df$VISIT1DT
+  y <- adsl_json_input$VISIT1DT
+  attr(x, 'format.sas') <- NULL
+  expect_equal(x, y)
+
 })
