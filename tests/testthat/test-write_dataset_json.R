@@ -190,4 +190,51 @@ test_that("datetime and times write out properly", {
   attr(x, 'format.sas') <- NULL
   expect_equal(x, y)
 
+
+
+})
+
+make_ds_json <- function(dat, meta) {
+  dataset_json(
+    dat,
+    file_oid = "www.cdisc.org/StudyMSGv1/1/Define-XML_2.1.0/2024-11-11/adsl",
+    last_modified = "2022-04-16T20:09:03",
+    originator = "CDISC ADaM MSG Team",
+    sys = "SAS on X64_10PRO",
+    sys_version = "9.0401M7",
+    study = "TDF_ADaM.ADaMIG.1.1",
+    metadata_version = "MDV.TDF_ADaM.ADaMIG.1.1",
+    metadata_ref = "define.xml",
+    item_oid = "IG.ADSL",
+    name = "ADSL",
+    dataset_label = "Subject-Level Analysis Dataset",
+    columns = meta
+  )
+}
+
+test_that("Writing errors trigger", {
+  orig_df <- readRDS(testthat::test_path("testdata", "adsl_time_test.Rds"))
+  df_metadata <- readRDS(testthat::test_path("testdata", "adsl_time_test_meta.Rds"))
+
+  # fails for POSIXct
+  orig_df2 <- orig_df
+  orig_df2$VIST1DTM <- as.POSIXct(orig_df2$VIST1DTM)
+
+  # create dataset json object
+  ds_json <- make_ds_json(orig_df2, df_metadata)
+  expect_error(write_dataset_json(ds_json), "Date time variable")
+
+  orig_df3 <- orig_df
+  orig_df3$VISIT1TM <- as.numeric(orig_df3$VISIT1TM)
+  ds_json2 <- make_ds_json(orig_df3, df_metadata)
+  expect_error(write_dataset_json(ds_json2), "If dataType is time")
+
+  # Fudge metadata
+  df_metadata2 <- df_metadata
+  df_metadata2$targetDataType <- NA_character_
+
+  ds_json3 <- make_ds_json(orig_df, df_metadata2)
+
+  expect_error(write_dataset_json(ds_json3), "If dataType is date")
+
 })

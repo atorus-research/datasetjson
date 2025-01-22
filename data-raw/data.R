@@ -90,7 +90,7 @@ time_options <- c("12:34:56", "15:34:34", "11:12:52", "21:16:11")
 adsl$VIST1TMC <- sample(time_options, 254, replace=TRUE)
 adsl$VIST1DTC <-paste(format(adsl$VISIT1DT, "%Y-%m-%d"), sample(time_options, 254, replace=TRUE), sep="T")
 adsl$VISIT1TM <- lubridate::hms(adsl$VIST1TMC)
-adsl$VIST1DTM <- as.POSIXct(strptime(adsl$VIST1DTC, "%Y-%m-%dT%H:%M:%S", tz="UTC"))
+adsl$VIST1DTM <- strptime(adsl$VIST1DTC, "%Y-%m-%dT%H:%M:%S", tz="UTC")
 
 new_meta <- tibble::tribble(
   ~itemOID,             ~name,          ~label,             ~dataType, ~length,      ~targetDataType, ~displayFormat, ~keySequence,
