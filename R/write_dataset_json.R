@@ -22,13 +22,41 @@ write_dataset_json <- function(x, file, pretty=FALSE) {
   # Find all date, datetime and time columns and convert to character
   for (y in attr(x,'columns')) {
 
-    if (!("targetDataType" %in% names(y))) next
+    # Make sure metadata is compliant
+    if (y$dataType %in% c("date", "datetime", "time") & !("targetDataType" %in% names(y))) {
+      if (!inherits(x[[y$name]], "character")) {
+        stop_write_error(
+          y$name,
+          "If dataType is date, time, or datetime and targetDataType is null, the input variable type must be character"
+        )
+      }
+    }
 
-    if(y$dataType %in% c("date", "datetime", "time") & y$targetDataType == "integer") {
-      # Here
-      if (y$dataType == "date") x[y$name] <- format(x[[y$name]], "%Y-%m-%d", tz='UTC')
-      if (y$dataType == "datetime") x[y$name] <- strftime(x[[y$name]], "%Y-%m-%dT%H:%M:%S", tz='UTC')
-      if (y$dataType == "time") x[y$name] <- strftime(as.numeric(x[[y$name]]), "%H:%M:%S", tz='UTC')
+    if(y$dataType %in% c("date", "datetime", "time") & (!is.null(y$targetDataType) && y$targetDataType == "integer")) {
+      # Convert date
+      if (y$dataType == "date") {
+        x[y$name] <- format(x[[y$name]], "%Y-%m-%d", tz='UTC')
+      }
+
+      # Convert datetime
+      if (y$dataType == "datetime") {
+        # Ensure type and timezone is right.
+        if (!inherits(x[[y$name]], "POSIXlt") || !("UTC" %in% attr(x[[y$name]], 'tzone'))){
+          stop_write_error(y$name, "Date time variable must be provided as POSIXlt type with timezone set to UTC.")
+        }
+        x[y$name] <- strftime(x[[y$name]], "%Y-%m-%dT%H:%M:%S", tz='UTC')
+      }
+
+      # Convert time
+      if (y$dataType == "time") {
+        if (y$dataType == "time" & !inherits(x[[y$name]], "Period")) {
+          stop_write_error(
+            y$name,
+            "If dataType is time and targetDataType is integer, the input variable type must be a lubridate Period object"
+          )
+        }
+        x[y$name] <- strftime(as.numeric(x[[y$name]]), "%H:%M:%S", tz='UTC')
+      }
     }
   }
 
@@ -89,4 +117,20 @@ write_dataset_json <- function(x, file, pretty=FALSE) {
       opts = json_opts
     )
   }
+}
+
+stop_write_error <- function(varname, msg){
+  stop(
+    sprintf(paste(
+      "Please check the variable %s.",
+      msg,
+      sep="\n  "),
+      varname)
+  )
+}
+
+#' Verify that date, time, and datetime columns are set properly
+#' @noRd
+validate_dt_cols <- function(x, y) {
+
 }
