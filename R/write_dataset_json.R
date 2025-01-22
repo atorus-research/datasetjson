@@ -19,6 +19,23 @@
 write_dataset_json <- function(x, file, pretty=FALSE) {
   stopifnot_datasetjson(x)
 
+  # Find all date, datetime and time columns and convert to character
+  columns_converted <- lapply(attr(x, 'columns'), function(y) {
+
+    if (!("targetDataType" %in% names(y))){
+      return(FALSE)
+    }
+
+    if(y$dataType %in% c("date", "datetime", "time") & y$targetDataType == "integer") {
+      if (y$dataType == "date") x[y$name] <- strftime(as.numeric(x[[y$name]]), "%Y-%m-%d", tz='UTC')
+      if (y$dataType == "datetime") x[y$name] <- strftime(as.numeric(x[[y$name]]), "%Y-%m-%dT%H:%M:%S", tz='UTC')
+      if (y$dataType == "time") x[y$name] <- strftime(as.numeric(x[[y$name]]), "%H:%M:%S", tz='UTC')
+      y$name
+    } else {
+      FALSE
+    }
+    })
+
   # Populate the creation datetime
   attr(x, 'datasetJSONCreationDateTime') <- get_datetime()
 
@@ -59,6 +76,10 @@ write_dataset_json <- function(x, file, pretty=FALSE) {
     pretty = pretty,
     auto_unbox = TRUE,
   )
+
+
+  numeric_cols <- names(temp$columns$dataType)[temp$columns$dataType %in% c("date", "datetime", "time")]
+
 
   if (!missing(file)) {
     # Write file to disk
