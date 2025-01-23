@@ -11,7 +11,9 @@ write_dataset_json(x, file, pretty = FALSE)
 
 \item{file}{File path to save Dataset JSON file}
 
-\item{pretty}{If TRUE, write with readable formatting}
+\item{pretty}{If TRUE, write with readable formatting. \emph{Note: The Dataset
+JSON standard prefers compressed formatting without line feeds. It is not
+recommended you use pretty printing for submission purposes.}}
 }
 \value{
 NULL when file written to disk, otherwise character string
@@ -22,7 +24,7 @@ Write out a Dataset JSON file
 \examples{
 # Write to character object
 ds_json <- dataset_json(iris, "IG.IRIS", "IRIS", "Iris", iris_items)
-js <- write_dataset_json(ds_json)
+js <- write_dataset_json(ds_json, iris_items)
 
 # Write to disk
 \dontrun{

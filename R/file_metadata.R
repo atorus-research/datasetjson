@@ -1,7 +1,7 @@
 #' Dataset Metadata Setters
 #'
-#' Set information about the file, source system, study, and dataset used to generate the Dataset
-#' JSON object.
+#' Set information about the file, source system, study, and dataset used to
+#' generate the Dataset JSON object.
 #'
 #' @details
 #'
@@ -14,23 +14,23 @@
 #' the first file in a series for study 5894 from Best Pharmaceuticals."
 #'
 #' @param x datasetjson object
-#' @param sys sourceSystem parameter, defined as "The computer system or
-#'   database management system that is the source of the information in this
-#'   file."
-#' @param sys_version sourceSystemVersion, defined as "The version of the
-#'   sourceSystem"
-#' @param originator originator parameter, defined as "The organization that
-#'   generated the Dataset-JSON file."
 #' @param file_oid fileOID parameter, defined as "A unique identifier for this
-#'   file."
-#' @param study Study OID value
-#' @param metadata_version Metadata version OID value
-#' @param metadata_ref Metadata reference (i.e. path to Define.xml)
+#'   file." (optional)
+#' @param last_modified The date/time the source database was last modified
+#'   before creating the Dataset-JSON file (optional)
+#' @param originator originator parameter, defined as "The organization that
+#'   generated the Dataset-JSON file." (optional)
+#' @param sys sourceSystem.name parameter, defined as "The computer system or
+#'   database management system that is the source of the information in this
+#'   file." (Optional, required if coupled with sys_version)
+#' @param sys_version sourceSystem.Version, defined as "The version of the
+#'   sourceSystem" (Optional, required if coupled with sys)
+#' @param study Study OID value (optional)
+#' @param metadata_version Metadata version OID value (optional)
+#' @param metadata_ref Metadata reference (i.e. path to Define.xml) (optional)
 #' @param item_oid ID used to label dataset with the itemGroupData parameter.
 #'   Defined as "Object of Datasets. Key value is a unique identifier for
 #'   Dataset, corresponding to ItemGroupDef/@OID in Define-XML."
-#' @param ref_data Boolean value that is set to "true" when the dataset contains
-#'   reference data (not subject data). The default value is "false".
 #' @param name Dataset name
 #' @param dataset_label Dataset Label
 #'
@@ -40,16 +40,17 @@
 #' @rdname dataset_metadata_setters
 #'
 #' @examples
-#' ds_json <- dataset_json(iris)
+#' ds_json <- dataset_json(iris, columns = iris_items)
 #' ds_json <- set_file_oid(ds_json, "/some/path")
-#' ds_json <- set_study_oid(ds_json, "SOMESTUDY")
+#' ds_json <- set_last_modified(ds_json, "2025-01-21T13:34:50")
 #' ds_json <- set_originator(ds_json, "Some Org")
 #' ds_json <- set_source_system(ds_json, "source system", "1.0")
+#' ds_json <- set_study_oid(ds_json, "SOMESTUDY")
 #' ds_json <- set_metadata_ref(ds_json, "some/define.xml")
 #' ds_json <- set_metadata_version(ds_json, "MDV.MSGv2.0.SDTMIG.3.3.SDTM.1.7")
 #' ds_json <- set_item_oid(ds_json, "IG.IRIS")
-#' ds_json <- set_dataset_name(ds_json, "IRIS")
-#' ds_json <- set_dataset_label(ds_json, "Iris")
+#' ds_json <- set_dataset_name(ds_json, "Iris")
+#' ds_json <- set_dataset_label(ds_json, "The Iris Dataset")
 set_source_system <- function(x, sys, sys_version) {
   stopifnot_datasetjson(x)
   if (!is.character(sys)) {
@@ -134,6 +135,7 @@ set_item_oid <- function(x, item_oid) {
     stop("`item_oid` must be a character")
   }
   attr(x, "itemGroupOID") <- item_oid
+  x
 }
 
 #' @export
@@ -145,6 +147,7 @@ set_dataset_name <- function(x, name) {
     stop("`name` must be a character")
   }
   attr(x, 'name') <- name
+  x
 }
 
 #' @export
@@ -156,17 +159,7 @@ set_dataset_label <- function(x, dataset_label) {
     stop("`dataset_label` must be a character")
   }
   attr(x, 'label') <- dataset_label
-}
-
-#' @export
-#' @family Dataset Metadata Setters
-#' @rdname dataset_metadata_setters
-set_reference_data <- function(x, is_refdata) {
-  stopifnot_datasetjson(x)
-  if (!is.logical(is_refdata)) {
-    stop("`is_refdata` must be a boolean")
-  }
-  attr(x, 'isReferenceData') <- is_refdata
+  x
 }
 
 #' @export
@@ -178,6 +171,7 @@ set_last_modified <- function(x, last_modified) {
     stop("`last_modified` must be a character")
   }
   attr(x, 'dbLastModifiedDateTime') <- last_modified
+  x
 }
 
 #' Create an ISO8601 formatted datetime of the current time

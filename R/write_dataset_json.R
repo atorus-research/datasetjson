@@ -2,7 +2,9 @@
 #'
 #' @param x datasetjson object
 #' @param file File path to save Dataset JSON file
-#' @param pretty If TRUE, write with readable formatting
+#' @param pretty If TRUE, write with readable formatting. *Note: The Dataset
+#'   JSON standard prefers compressed formatting without line feeds. It is not
+#'   recommended you use pretty printing for submission purposes.*
 #'
 #' @return NULL when file written to disk, otherwise character string
 #' @export
@@ -84,6 +86,8 @@ write_dataset_json <- function(x, file, pretty=FALSE) {
     "label",
     "columns")
     ]
+
+  temp <- remove_nulls(temp)
 
   # add data rows
   temp$rows <- unname(x)
