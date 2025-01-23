@@ -23,7 +23,7 @@ library(datasetjson)
 **datasetjson** works by allowing you to take a data frame and apply the necessary attributes required for the CDISC Dataset JSON. The goal is to make this experience simple. Before you can write a Dataset JSON file to disk, you first need to build the Dataset JSON object. An example call looks like this:
 
 ```{r sample_call}
-ds_json <- dataset_json(iris[1:5, ], 
+ds_json <- dataset_json(head(iris, 5), 
                         item_oid = "IG.IRIS", 
                         name = "IRIS", 
                         dataset_label = "Iris", 
@@ -101,8 +101,17 @@ You can also provide single element character vector of the JSON text already re
 dat <- read_dataset_json(js)
 ```
 
-The data frame that's read in carries a number of attributes. For example, opening the dataframe within the RStudio IDE will present the variable labels. All data available within the Dataset JSON file is ultimately attached to the imported data frame.
+The data frame that's read in is itself a `datasetjson` object and carries a number of attributes. For example, opening the dataframe within the RStudio IDE will present the variable labels. Additionally, the extra metadata provided in a Dataset JSON file is available. The attributes provided follow the naming convention of the Dataset JSON standard. 
 
-```{r attributes}
-attributes(dat)
+We've provided some helper functions to leverage this data further. If you'd like to grab the column metadata from the `columns` element, you can use the function `get_column_metadata()`
+
+```{r column_metadata}
+get_column_metadata(dat)
 ```
+With this column metadata available, you can additionally use the function `set_variable_attributes()` to apply the `columns` metadata to the individual variables within the data frame.
+
+```{r variable_attributes}
+dat <- set_variable_attributes(dat)
+attributes(dat$Species)
+```
+
