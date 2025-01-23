@@ -75,9 +75,9 @@ ds_json <- dataset_json(
 
 # Write the JSON
 json_file_content <- write_dataset_json(ds_json)
-read_in <- read_dataset_json(json_file_content)
 
-x <- validate_dataset_json(json_file_content)
+# Check schema compliance
+validate_dataset_json(json_file_content)
 
 ```
 
@@ -87,10 +87,10 @@ If your intention is to convert files into Dataset JSON format in bulk, there ar
 
 Remember that R by default holds data in memory, whereas work datasets in SAS are still written to disk. This means that if you're doing a bulk conversion of datasets, you'll want to read in and write out one dataset at a time. For example:
 
-- Read in the XPT or SAS7BDAT file
-- Write out the Dataset JSON file
-- Remove the objects from memory to free up space
+1. Read in the XPT or SAS7BDAT file
+2. Write out the Dataset JSON file
+3. Remove the objects from memory to free up space
 
 It's likely best to wrap the conversion process in a function, because the function namespace will inherently release the temporary objects during garbage collection. Depending on the size of your data, it could be easy to max out memory if you first read in all the datasets.
 
-A second consideration is use of the function `validate_dataset_json()`. Particularly if you have large datasets, we recommend _against_ using this function. The validation it performs is against the Dataset JSON schema - so it's not performing additional CDISC checks on the data. We offer this function primarily due to the fact that 
+A second consideration is use of the function `validate_dataset_json()`. Particularly if you have large datasets, we recommend _against_ using this function. The validation it performs is against the Dataset JSON schema - so it's not performing additional CDISC checks on the data. We offer this function primarily due to the fact that the schema is available, and if necessary the function allows you to check that the schema compliance is met. That said, we've done the testing to make sure that `write_dataset_json()` writes the file out using a compliant schema - so this step is redundant. 
