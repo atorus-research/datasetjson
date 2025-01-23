@@ -93,6 +93,7 @@ read_dataset_json <- function(file) {
   }
 
   attr(ds_attr, 'records') <- ds_json$records
+  attr(ds_attr, 'datasetJSONCreationDateTime') <- ds_json$datasetJSONCreationDateTime
 
   ds_attr
 }
