@@ -33,6 +33,8 @@ Suggests:
     knitr,
     haven,
     rmarkdown,
-    withr
+    withr,
+    purrr,
+    tibble
 VignetteBuilder: knitr
 Config/testthat/edition: 3

@@ -11,8 +11,14 @@
 #'
 #' @examples
 #' # Write to character object
-#' ds_json <- dataset_json(iris, "IG.IRIS", "IRIS", "Iris", iris_items)
-#' js <- write_dataset_json(ds_json, iris_items)
+#' ds_json <- dataset_json(
+#'   iris,
+#'   item_oid = "IG.IRIS",
+#'   name = "IRIS",
+#'   dataset_label = "Iris",
+#'   columns = iris_items
+#' )
+#' js <- write_dataset_json(ds_json)
 #'
 #' # Write to disk
 #' \dontrun{
@@ -131,10 +137,4 @@ stop_write_error <- function(varname, msg){
       sep="\n  "),
       varname)
   )
-}
-
-#' Verify that date, time, and datetime columns are set properly
-#' @noRd
-validate_dt_cols <- function(x, y) {
-
 }
