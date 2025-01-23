@@ -57,6 +57,7 @@ extract_xpt_meta <- function(n, .data) {
   out$itemOID <- n
   out$name <- n
   out$label <- attr(.data[[n]], 'label')
+  out$displayFormat <- attr(.data[[n]], 'format.sas')
   tibble::as_tibble(out)
   
 }
