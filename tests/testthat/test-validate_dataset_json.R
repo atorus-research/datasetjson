@@ -21,6 +21,21 @@ test_that("validate_dataset_json returns correct messages", {
 
 })
 
+test_that("Missing optional attributes still validates", {
+
+  ds_json <- dataset_json(
+    iris,
+    item_oid = "IG.IRIS",
+    name = "IRIS",
+    dataset_label = "Iris",
+    columns = iris_items
+  )
+  js <- write_dataset_json(ds_json)
+
+  expect_message(validate_dataset_json(js), "File is valid per the Dataset JSON v1.1.0 schema")
+
+})
+
 test_that("JSON can checked from URL", {
   fpath <- paste0("file://", normalizePath(test_path("testdata", "invalid_dm.json")))
   expect_warning(
