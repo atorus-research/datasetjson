@@ -92,3 +92,29 @@ test_that("datetime conversions work properly",{
   expect_equal(sort(unique(as.numeric(iris_timetest$Time))),
                as.numeric(hms(c("12:34:56", "18:45:56"))))
 })
+
+test_that("read_dataset_json warnings are thrown properly", {
+  ds_json <- dataset_json(
+    iris[1:5, ],
+    file_oid = "/some/path",
+    last_modified = "2023-02-15T10:23:15",
+    originator = "Some Org",
+    sys = "source system",
+    sys_version = "1.0",
+    study = "SOMESTUDY",
+    metadata_version = "MDV.MSGv2.0.SDTMIG.3.3.SDTM.1.7",
+    metadata_ref = "some/define.xml",
+    item_oid = "IG.IRIS",
+    name = "IRIS",
+    dataset_label = "Iris",
+    columns = iris_items
+  )
+  js <- write_dataset_json(ds_json, pretty=TRUE)
+
+  # modify records attribute so it doesn't match the number of rows in the data
+  js_record_update <- gsub("\"records\": 5", "\"records\": 100", js)
+
+  expect_warning(read_dataset_json(js_record_update),
+                 "The number of rows in the data does not match the number of records recorded in the metadata.")
+})
+
