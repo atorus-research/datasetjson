@@ -1,7 +1,7 @@
 Package: datasetjson
 Type: Package
 Title: Read and Write CDISC Dataset JSON Files
-Version: 0.2.0
+Version: 0.3.0
 Authors@R: c(
     person(given = "Mike",
            family = "Stackhouse",
@@ -14,7 +14,7 @@ Authors@R: c(
            role = "aut")
     )
 Description: Read, construct and write CDISC (Clinical Data Interchange Standards Consortium) Dataset JSON (JavaScript Object Notation) files, while validating per the Dataset JSON schema file, as described in CDISC (2023) <https://www.cdisc.org/dataset-json>.
-URL: https://github.com/atorus-research/datasetjson
+URL: https://atorus-research.github.io/datasetjson
 BugReports: https://github.com/atorus-research/datasetjson/issues
 Encoding: UTF-8
 Language: en-US
@@ -25,13 +25,19 @@ RoxygenNote: 7.3.2
 Depends: R (>= 4.0)
 Imports:
     yyjsonr (>= 0.1.18),
-    jsonvalidate (>= 1.3.1)
+    jsonvalidate (>= 1.3.1),
+    lubridate
 Suggests:
     testthat (>= 2.1.0),
     jsonlite (>= 1.8.0),
     knitr,
     haven,
     rmarkdown,
-    withr
+    withr,
+    purrr,
+    tibble,
+    dplyr,
+    hms,
+    data.table
 VignetteBuilder: knitr
 Config/testthat/edition: 3

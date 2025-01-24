@@ -11,8 +11,14 @@
 #'
 #' @examples
 #' # Write to character object
-#' ds_json <- dataset_json(iris, "IG.IRIS", "IRIS", "Iris", iris_items)
-#' js <- write_dataset_json(ds_json, iris_items)
+#' ds_json <- dataset_json(
+#'   iris,
+#'   item_oid = "IG.IRIS",
+#'   name = "IRIS",
+#'   dataset_label = "Iris",
+#'   columns = iris_items
+#' )
+#' js <- write_dataset_json(ds_json)
 #'
 #' # Write to disk
 #' \dontrun{
@@ -20,6 +26,47 @@
 #' }
 write_dataset_json <- function(x, file, pretty=FALSE) {
   stopifnot_datasetjson(x)
+
+  # Find all date, datetime and time columns and convert to character
+  for (y in attr(x,'columns')) {
+
+    # Make sure metadata is compliant
+    if (y$dataType %in% c("date", "datetime", "time") & !("targetDataType" %in% names(y))) {
+      if (!inherits(x[[y$name]], "character")) {
+        stop_write_error(
+          y$name,
+          "If dataType is date, time, or datetime and targetDataType is null, the input variable type must be character"
+        )
+      }
+    }
+
+    if(y$dataType %in% c("date", "datetime", "time") & (!is.null(y$targetDataType) && y$targetDataType == "integer")) {
+      # Convert date
+      if (y$dataType == "date") {
+        x[y$name] <- format(x[[y$name]], "%Y-%m-%d", tz='UTC')
+      }
+
+      # Convert datetime
+      if (y$dataType == "datetime") {
+        # Ensure type and timezone is right.
+        if (!inherits(x[[y$name]], "POSIXt") || !("UTC" %in% attr(x[[y$name]], 'tzone'))){
+          stop_write_error(y$name, "Date time variable must be provided as POSIXlt type with timezone set to UTC.")
+        }
+        x[y$name] <- strftime(x[[y$name]], "%Y-%m-%dT%H:%M:%S", tz='UTC')
+      }
+
+      # Convert time
+      if (y$dataType == "time") {
+        if (y$dataType == "time" & !inherits(x[[y$name]], c("Period", "difftime", "ITime"))) {
+          stop_write_error(
+            y$name,
+            "If dataType is time and targetDataType is integer, the input variable type must be a lubridate Period, an hms difftime, or a data.table ITime object"
+          )
+        }
+        x[y$name] <- strftime(as.numeric(x[[y$name]]), "%H:%M:%S", tz='UTC')
+      }
+    }
+  }
 
   # Populate the creation datetime
   attr(x, 'datasetJSONCreationDateTime') <- get_datetime()
@@ -64,6 +111,7 @@ write_dataset_json <- function(x, file, pretty=FALSE) {
     auto_unbox = TRUE,
   )
 
+
   if (!missing(file)) {
     # Write file to disk
     yyjsonr::write_json_file(
@@ -78,4 +126,14 @@ write_dataset_json <- function(x, file, pretty=FALSE) {
       opts = json_opts
     )
   }
+}
+
+stop_write_error <- function(varname, msg){
+  stop(
+    sprintf(paste(
+      "Please check the variable %s.",
+      msg,
+      sep="\n  "),
+      varname)
+  )
 }

@@ -11,7 +11,7 @@ Read, construct and write CDISC (Clinical Data Interchange Standards Consortium)
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://github.com/atorus-research/datasetjson}
+  \item \url{https://atorus-research.github.io/datasetjson}
   \item Report bugs at \url{https://github.com/atorus-research/datasetjson/issues}
 }
 

@@ -23,8 +23,14 @@ Write out a Dataset JSON file
 }
 \examples{
 # Write to character object
-ds_json <- dataset_json(iris, "IG.IRIS", "IRIS", "Iris", iris_items)
-js <- write_dataset_json(ds_json, iris_items)
+ds_json <- dataset_json(
+  iris,
+  item_oid = "IG.IRIS",
+  name = "IRIS",
+  dataset_label = "Iris",
+  columns = iris_items
+)
+js <- write_dataset_json(ds_json)
 
 # Write to disk
 \dontrun{

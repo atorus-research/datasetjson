@@ -25,7 +25,13 @@ file per the Dataset JSON schema.
   validate_dataset_json('https://www.somesite.com/file.json')
 }
 
-ds_json <- dataset_json(iris, "IG.IRIS", "IRIS", "Iris", iris_items)
+ds_json <- dataset_json(
+  iris,
+  item_oid = "IG.IRIS",
+  name = "IRIS",
+  dataset_label = "Iris",
+  columns = iris_items
+)
 js <- write_dataset_json(ds_json)
 
 validate_dataset_json(js)

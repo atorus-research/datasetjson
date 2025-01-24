@@ -86,19 +86,16 @@ read_dataset_json <- function(file) {
   colnames(d) <- items$name
 
   # Process type conversions
-  tt <- items$dataType
+  dt <- items$dataType
   tdt <- items$targetDataType
-  int_cols <- tt == "integer"
-  dbl_cols <- tt %in% c("float", "double", "decimal")
-  bool_cols <- tt == "boolean"
+  int_cols <- dt == "integer"
+  dbl_cols <- dt %in% c("float", "double", "decimal")
+  bool_cols <- dt == "boolean"
   d[int_cols] <- lapply(d[int_cols], as.integer)
   d[dbl_cols] <- lapply(d[dbl_cols], as.double)
   d[bool_cols] <- lapply(d[bool_cols], as.logical)
 
-  date_cols <- tt %in% c("date") & tdt %in% "integer"
-  datetime_cols <- tt %in% c("datetime", "time") & tdt %in% "integer"
-  d[date_cols] <- lapply(d[date_cols], as.Date)
-  d[datetime_cols] <- lapply(d[datetime_cols], as.POSIXct)
+  d <- date_time_conversions(d, dt, tdt)
 
   # Apply variable labels
   d[names(d)] <- lapply(items$name, set_col_attr, d, 'label', items)
@@ -126,6 +123,7 @@ read_dataset_json <- function(file) {
   }
 
   attr(ds_attr, 'records') <- ds_json$records
+  attr(ds_attr, 'datasetJSONCreationDateTime') <- ds_json$datasetJSONCreationDateTime
 
   ds_attr
 }
