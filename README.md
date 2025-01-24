@@ -57,7 +57,7 @@ ds_json <- dataset_json(
 ```
 
 To attach necessary metadata (that can’t be inferred by the input
-dataframe or at time or write) to the `datasetjson` object, you can use
+dataframe or at time of write) to the `datasetjson` object, you can use
 a variety of setter functions:
 
 ``` r
@@ -92,7 +92,7 @@ cat(js_text)
 ```
 
     ## {
-    ##   "datasetJSONCreationDateTime": "2025-01-23T18:35:13",
+    ##   "datasetJSONCreationDateTime": "2025-01-24T12:44:59",
     ##   "datasetJSONVersion": "1.1.0",
     ##   "fileOID": "/some/path",
     ##   "dbLastModifiedDateTime": "2025-01-21T13:34:50",
