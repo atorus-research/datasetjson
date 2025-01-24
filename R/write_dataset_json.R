@@ -49,7 +49,7 @@ write_dataset_json <- function(x, file, pretty=FALSE) {
       # Convert datetime
       if (y$dataType == "datetime") {
         # Ensure type and timezone is right.
-        if (!inherits(x[[y$name]], "POSIXlt") || !("UTC" %in% attr(x[[y$name]], 'tzone'))){
+        if (!inherits(x[[y$name]], "POSIXt") || !("UTC" %in% attr(x[[y$name]], 'tzone'))){
           stop_write_error(y$name, "Date time variable must be provided as POSIXlt type with timezone set to UTC.")
         }
         x[y$name] <- strftime(x[[y$name]], "%Y-%m-%dT%H:%M:%S", tz='UTC')
@@ -111,7 +111,6 @@ write_dataset_json <- function(x, file, pretty=FALSE) {
     auto_unbox = TRUE,
   )
 
-  # numeric_cols <- names(temp$columns$dataType)[temp$columns$dataType %in% c("date", "datetime", "time")]
 
   if (!missing(file)) {
     # Write file to disk

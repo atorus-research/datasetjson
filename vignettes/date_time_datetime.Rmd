@@ -42,7 +42,7 @@ tibble::tribble(
 
 In the table above, we have the metadata for both character and numeric dates, times, and date times. Both sets of variables have the same values within `dataType`. The difference is the optional field of `targetDataType`, where the value for the numeric variables is set to `integer`. Both `read_dataset_json()` and `write_dataset_json()` rely on these fields and as such they must be set properly. This comes with a few assumption and requirements.
 
--   Numeric dates will be converted into the type of `Date`
+-   Numeric dates will be converted into the type of `Date` (see `help("Date", package="base")`)
 -   Numeric times will be converted to the **{lubridate}** type of `Period`
   - R doesn't have a specific built in type of time. We decided to take on **{lubridate}** as a dependency given package stability and **{lubridate}**'s inclusion in the tidyverse. The `Period` objects on read are produced using the `lubridate::hms()`. 
 -   Numeric date times will be converted to the base R type of `POSIXlt`
