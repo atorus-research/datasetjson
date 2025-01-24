@@ -111,7 +111,6 @@ write_dataset_json <- function(x, file, pretty=FALSE) {
     auto_unbox = TRUE,
   )
 
-  # numeric_cols <- names(temp$columns$dataType)[temp$columns$dataType %in% c("date", "datetime", "time")]
 
   if (!missing(file)) {
     # Write file to disk
