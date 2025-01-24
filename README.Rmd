@@ -53,7 +53,7 @@ ds_json <- dataset_json(
 )
 ```
 
-To attach necessary metadata (that can't be inferred by the input dataframe or at time or write) to the `datasetjson` object, you can use a variety of setter functions:
+To attach necessary metadata (that can't be inferred by the input dataframe or at time of write) to the `datasetjson` object, you can use a variety of setter functions:
 
 ```{r setters}
 ds_json <- dataset_json(
