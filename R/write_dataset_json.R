@@ -57,10 +57,10 @@ write_dataset_json <- function(x, file, pretty=FALSE) {
 
       # Convert time
       if (y$dataType == "time") {
-        if (y$dataType == "time" & !inherits(x[[y$name]], "Period")) {
+        if (y$dataType == "time" & !inherits(x[[y$name]], c("Period", "difftime", "ITime"))) {
           stop_write_error(
             y$name,
-            "If dataType is time and targetDataType is integer, the input variable type must be a lubridate Period object"
+            "If dataType is time and targetDataType is integer, the input variable type must be a lubridate Period, an hms difftime, or a data.table ITime object"
           )
         }
         x[y$name] <- strftime(as.numeric(x[[y$name]]), "%H:%M:%S", tz='UTC')

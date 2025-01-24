@@ -190,9 +190,25 @@ test_that("datetime and times write out properly", {
   attr(x, 'format.sas') <- NULL
   expect_equal(x, y)
 
+  # Check that times in supported data types convert propery
+  ds_json$VISIT1TM <- hms::as_hms(as.numeric(ds_json$VISIT1TM))
 
+  # Write JSON
+  adsl_json_output <- write_dataset_json(ds_json)
+  adsl_json_input <- read_dataset_json(adsl_json_output)
+  expect_equal(as.numeric(orig_df$VISIT1TM), as.numeric(adsl_json_input$VISIT1TM))
+
+  # Check that times in supported data types convert propery
+  ds_json$VISIT1TM <- data.table::as.ITime(as.numeric(ds_json$VISIT1TM))
+
+  # Write JSON
+  adsl_json_output <- write_dataset_json(ds_json)
+  adsl_json_input <- read_dataset_json(adsl_json_output)
+  expect_equal(as.numeric(orig_df$VISIT1TM), as.numeric(adsl_json_input$VISIT1TM))
 
 })
+
+
 
 make_ds_json <- function(dat, meta) {
   dataset_json(

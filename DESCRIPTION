@@ -36,6 +36,8 @@ Suggests:
     withr,
     purrr,
     tibble,
-    dplyr
+    dplyr,
+    hms,
+    data.table
 VignetteBuilder: knitr
 Config/testthat/edition: 3
