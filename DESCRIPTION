@@ -13,9 +13,9 @@ Authors@R: c(
            email = "nmasel@its.jnj.com",
            role = "aut")
     )
-Description: Read, construct and write CDISC (Clinical Data Interchange Standards Consortium) Dataset JSON (JavaScript Object Notation) files, while validating per the Dataset JSON schema file, as described in CDISC (2023) <https://www.cdisc.org/dataset-json>.
-URL: https://atorus-research.github.io/datasetjson
-BugReports: https://github.com/atorus-research/datasetjson/issues
+Description: Read, construct and write CDISC (Clinical Data Interchange Standards Consortium) Dataset JSON (JavaScript Object Notation) files, while validating per the Dataset JSON schema file, as described in CDISC (2023) <https://www.cdisc.org/standards/data-exchange/dataset-json>.
+URL: https://atorus-research.github.io/datasetjson/
+BugReports: https://github.com/atorus-research/datasetjson/issues/
 Encoding: UTF-8
 Language: en-US
 License: Apache License (>= 2)

@@ -10,7 +10,8 @@ experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](h
 <!-- badges: end -->
 
 Welcome to **datasetjson**. **datasetjson** is an R package built to
-read and write [CDISC Dataset JSON](https://www.cdisc.org/dataset-json)
+read and write [CDISC Dataset
+JSON](https://www.cdisc.org/standards/data-exchange/dataset-json)
 formatted datasets.
 
 As always, we welcome your feedback. If you spot a bug, would like to
@@ -92,7 +93,7 @@ cat(js_text)
 ```
 
     ## {
-    ##   "datasetJSONCreationDateTime": "2025-01-24T12:44:59",
+    ##   "datasetJSONCreationDateTime": "2025-01-24T16:34:20",
     ##   "datasetJSONVersion": "1.1.0",
     ##   "fileOID": "/some/path",
     ##   "dbLastModifiedDateTime": "2025-01-21T13:34:50",
