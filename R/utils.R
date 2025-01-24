@@ -124,7 +124,7 @@ date_time_conversions <- function(d, dt, tdt){
   time_cols <- dt %in% c("time") & tdt %in% "integer"
   d[date_cols] <- lapply(d[date_cols], as.Date, tz = "UTC")
   d[datetime_cols] <- lapply(d[datetime_cols],
-                             as.POSIXlt,
+                             as.POSIXct,
                              tz = "UTC",
                              tryFormats = "%Y-%m-%dT%H:%M:%S")
   d[time_cols] <- lapply(d[time_cols], hms)

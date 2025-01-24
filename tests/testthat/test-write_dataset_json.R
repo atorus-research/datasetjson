@@ -218,7 +218,7 @@ test_that("Writing errors trigger", {
 
   # fails for POSIXct
   orig_df2 <- orig_df
-  orig_df2$VIST1DTM <- as.POSIXct(orig_df2$VIST1DTM)
+  orig_df2$VIST1DTM <- as.numeric(orig_df2$VIST1DTM)
 
   # create dataset json object
   ds_json <- make_ds_json(orig_df2, df_metadata)
