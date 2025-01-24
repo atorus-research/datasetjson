@@ -45,7 +45,7 @@ In the table above, we have the metadata for both character and numeric dates, t
 -   Numeric dates will be converted into the type of `Date` (see `help("Date", package="base")`)
 -   Numeric times will be converted to the **{lubridate}** type of `Period`
   - R doesn't have a specific built in type of time. We decided to take on **{lubridate}** as a dependency given package stability and **{lubridate}**'s inclusion in the tidyverse. The `Period` objects on read are produced using the `lubridate::hms()`. 
--   Numeric date times will be converted to the base R type of `POSIXlt`
-  - `POSIXlt` is used as opposed to `POSIXct` because we require that datetimes are set to the UTC timezone. CDISC dates are generally not timezone qualified, and unless a timezone is explicitly specified systems may default to the user's current timezone. As such, we've introduced a hard requirement that datetimes are anchored to UTC. If the datetime variable is found to be using a different timezone, an error will be thrown. 
+-   Numeric date times will be converted to the base R type of `POSIXct` and anchored to the UTC timezone.
+  - CDISC dates are generally not timezone qualified, though for character dates, this is optional. Unless a timezone is explicitly specified systems may default to the user's current timezone. To decrease ambiguity, we've introduced a hard requirement that datetimes are anchored to UTC. If the datetime variable is found to be using a different timezone, an error will be thrown. 
 
 If any of these assumption don't work for your purpose or if you find other situations we need to handle, please leave an issue on Github as we want to make sure we support the community as best we can. 
