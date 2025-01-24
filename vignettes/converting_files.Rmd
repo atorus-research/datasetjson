@@ -64,7 +64,12 @@ extract_xpt_meta <- function(n, .data) {
 
 # Loop the ADSL columns
 adsl_meta <- purrr::map_df(names(adsl), extract_xpt_meta, .data=adsl)
+adsl_meta
+```
 
+Now that we have the metadata, we can use this to write out the Dataset JSON file.
+
+``` {r}
 # Create the datasetjson object
 ds_json <- dataset_json(
   adsl, 
@@ -76,10 +81,13 @@ ds_json <- dataset_json(
 
 # Write the JSON
 json_file_content <- write_dataset_json(ds_json)
+```
 
+Just for good measure, we can confirm the metadata we just created is compliant with the schema.
+
+``` {r}
 # Check schema compliance
 validate_dataset_json(json_file_content)
-
 ```
 
 ## Bulk File Conversion
