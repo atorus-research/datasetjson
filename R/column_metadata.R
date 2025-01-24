@@ -73,7 +73,7 @@ validate_dataset_columns <- function(items) {
 
   if (length(all_errs) > 0) {
     msg_prep <- paste0("\n\t", all_errs)
-    err_msg <- paste0(c("Error: Issues found in items data:", msg_prep))
+    err_msg <- paste0(c("Issues found in columns data:", msg_prep))
     stop(err_msg, call.=FALSE)
   }
 }
