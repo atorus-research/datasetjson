@@ -91,7 +91,9 @@ read_dataset_json <- function(file, decimals_as_floats=FALSE) {
   tdt <- items$targetDataType
   int_cols <- dt == "integer"
   if (decimals_as_floats) {
-    dbl_cols <- dt %in% c("float", "double", "decimal")
+    flt_cols <- dt %in% c("float", "double")
+    dec_cols <- dt == "decimal" & tdt == "decimal"
+    dbl_cols <- flt_cols | dec_cols
   } else {
     dbl_cols <- dt %in% c("float", "double")
   }

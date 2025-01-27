@@ -298,4 +298,40 @@ test_that("float_as_decimal works on read and write", {
   # Still to schema
   expect_message(validate_dataset_json(json_out1), "File is valid")
   expect_message(validate_dataset_json(json_out2), "File is valid")
+
+})
+
+test_that("Decimal won't convert unless target data type is set", {
+
+  test_df <- head(iris, 5)
+  test_df['float_col'] <- as.character(c(
+    143.66666666666699825,
+    2/3,
+    1/3,
+    165/37,
+    6/7
+  ))
+
+  test_items <- iris_items |> dplyr::bind_rows(
+    data.frame(
+      itemOID = "IT.IR.float_col",
+      name = "float_col",
+      label = "Test column long decimal",
+      dataType = "decimal"
+    )
+  )
+
+  dsjson <- dataset_json(
+    test_df,
+    item_oid = "test_df",
+    name = "test_df",
+    dataset_label = "test_df",
+    columns = test_items
+  )
+
+  json_out <- write_dataset_json(dsjson, float_as_decimals = TRUE)
+
+  out <- read_dataset_json(json_out)
+
+  expect_true(inherits(out$float_col, "character"))
 })
