@@ -9,7 +9,7 @@ read_dataset_json(file, decimals_as_floats = FALSE)
 \arguments{
 \item{file}{File path or URL of a Dataset JSON file}
 
-\item{decimals_as_float}{Convert variables of "decimal" type to float}
+\item{decimals_as_floats}{Convert variables of "decimal" type to float}
 }
 \value{
 A dataframe with additional attributes attached containing the

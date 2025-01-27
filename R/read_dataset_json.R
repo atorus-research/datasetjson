@@ -34,7 +34,7 @@
 #'these fields.
 #'
 #'@param file File path or URL of a Dataset JSON file
-#' @param decimals_as_float Convert variables of "decimal" type to float
+#' @param decimals_as_floats Convert variables of "decimal" type to float
 #'
 #'@return A dataframe with additional attributes attached containing the
 #'  DatasetJSON metadata.
