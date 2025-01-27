@@ -52,7 +52,7 @@
 #' ds_json <- dataset_json(iris, "IG.IRIS", "IRIS", "Iris", columns=iris_items)
 #' js <- write_dataset_json(ds_json)
 #' dat <- read_dataset_json(js)
-read_dataset_json <- function(file, decimals_as_float=FALSE) {
+read_dataset_json <- function(file, decimals_as_floats=FALSE) {
 
   json_opts <- yyjsonr::opts_read_json(
     promote_num_to_string = TRUE
@@ -90,7 +90,7 @@ read_dataset_json <- function(file, decimals_as_float=FALSE) {
   dt <- items$dataType
   tdt <- items$targetDataType
   int_cols <- dt == "integer"
-  if (decimals_as_float) {
+  if (decimals_as_floats) {
     dbl_cols <- dt %in% c("float", "double", "decimal")
   } else {
     dbl_cols <- dt %in% c("float", "double")

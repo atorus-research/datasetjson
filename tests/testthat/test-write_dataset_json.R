@@ -255,7 +255,7 @@ test_that("Writing errors trigger", {
 
 })
 
-test_that("float_as_decimal works on read and write" {
+test_that("float_as_decimal works on read and write", {
 
   test_df <- head(iris, 5)
   test_df['float_col'] <- c(
@@ -266,7 +266,7 @@ test_that("float_as_decimal works on read and write" {
     6/7
   )
 
-  test_items <- iris_items |> bind_rows(
+  test_items <- iris_items |> dplyr::bind_rows(
     data.frame(
       itemOID = "IT.IR.float_col",
       name = "float_col",
