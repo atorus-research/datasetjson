@@ -5,6 +5,16 @@
 #' @param pretty If TRUE, write with readable formatting. *Note: The Dataset
 #'   JSON standard prefers compressed formatting without line feeds. It is not
 #'   recommended you use pretty printing for submission purposes.*
+#' @param float_as_decimals If TRUE, Convert float variables to "decimal" data
+#'   type in the JSON output. This will manually convert the numeric values
+#'   using the `format()` function using the number of digits specified in
+#'   `digits`, bypassing the `yyjsonr` handling of float values and writing the
+#'   numbers out as JSON character strings. See the [Dataset JSON user
+#'   guide](https://wiki.cdisc.org/display/PUB/Precision+and+Rounding) for more
+#'   information. Defaults to FALSE
+#' @param digits When using `float_as_decimals`, the number of digits to use
+#'   when writing out floats. Going higher than 16 may start writing otherwise
+#'   sufficiently precise decimals (i.e. .2) to long strings.
 #'
 #' @return NULL when file written to disk, otherwise character string
 #' @export
@@ -24,11 +34,16 @@
 #' \dontrun{
 #'   write_dataset_json(ds_json, "path/to/file.json")
 #' }
-write_dataset_json <- function(x, file, pretty=FALSE) {
+write_dataset_json <- function(x, file, pretty=FALSE, float_as_decimals=FALSE, digits=16) {
   stopifnot_datasetjson(x)
 
+  meta <- attributes(x)
+
   # Find all date, datetime and time columns and convert to character
-  for (y in attr(x,'columns')) {
+  for (i in seq_along(meta$columns)) {
+
+
+    y <- meta$columns[[i]]
 
     # Make sure metadata is compliant
     if (y$dataType %in% c("date", "datetime", "time") & !("targetDataType" %in% names(y))) {
@@ -65,18 +80,22 @@ write_dataset_json <- function(x, file, pretty=FALSE) {
         }
         x[y$name] <- strftime(as.numeric(x[[y$name]]), "%H:%M:%S", tz='UTC')
       }
+    } else if (float_as_decimals && y$dataType == "float") {
+      meta$columns[[i]]['dataType'] <- "decimal"
+      meta$columns[[i]]['targetDataType'] <- "decimal"
+      x[y$name] <- format(x[y$name], digits=digits)
     }
   }
 
   # Populate the creation datetime
-  attr(x, 'datasetJSONCreationDateTime') <- get_datetime()
+  meta$datasetJSONCreationDateTime <- get_datetime()
 
   # Store number of records
   records <- nrow(x)
-  attr(x, 'records') <- records
+  meta$records <- records
 
   # Pull attributes into a list and order
-  temp <- attributes(x)[c(
+  temp <- meta[c(
     "datasetJSONCreationDateTime",
     "datasetJSONVersion",
     "fileOID",
@@ -107,10 +126,10 @@ write_dataset_json <- function(x, file, pretty=FALSE) {
 
   # Create the JSON text
   json_opts <- yyjsonr::opts_write_json(
+    digits=19,
     pretty = pretty,
     auto_unbox = TRUE,
   )
-
 
   if (!missing(file)) {
     # Write file to disk
