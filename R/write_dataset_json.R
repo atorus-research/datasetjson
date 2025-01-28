@@ -80,7 +80,7 @@ write_dataset_json <- function(x, file, pretty=FALSE, float_as_decimals=FALSE, d
         }
         x[y$name] <- strftime(as.numeric(x[[y$name]]), "%H:%M:%S", tz='UTC')
       }
-    } else if (float_as_decimals && y$dataType == "float") {
+    } else if (float_as_decimals && y$dataType %in% c("float", 'double', 'decimal')) {
       meta$columns[[i]]['dataType'] <- "decimal"
       meta$columns[[i]]['targetDataType'] <- "decimal"
       x[y$name] <- format(x[y$name], digits=digits)
