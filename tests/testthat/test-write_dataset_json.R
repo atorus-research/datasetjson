@@ -254,3 +254,84 @@ test_that("Writing errors trigger", {
   expect_error(write_dataset_json(ds_json3), "If dataType is date")
 
 })
+
+test_that("float_as_decimal works on read and write", {
+
+  test_df <- head(iris, 5)
+  test_df['float_col'] <- c(
+    143.66666666666699825,
+    2/3,
+    1/3,
+    165/37,
+    6/7
+  )
+
+  test_items <- iris_items |> dplyr::bind_rows(
+    data.frame(
+      itemOID = "IT.IR.float_col",
+      name = "float_col",
+      label = "Test column long decimal",
+      dataType = "float"
+    )
+  )
+
+  dsjson <- dataset_json(
+    test_df,
+    item_oid = "test_df",
+    name = "test_df",
+    dataset_label = "test_df",
+    columns = test_items
+  )
+
+  json_out1 <- write_dataset_json(dsjson, float_as_decimals = FALSE)
+  json_out2 <- write_dataset_json(dsjson, float_as_decimals = TRUE)
+
+  out1 <- read_dataset_json(json_out1)
+  out2 <- read_dataset_json(json_out2, decimals_as_float = TRUE)
+
+  # Expect precision to fall apart around 7 decimal place
+  expect_true(all(abs(out1$float_col - test_df$float_col) > 0.0000001))
+
+  # Should be rectified by manual decimal conversions
+  expect_equal(out2$float_col, test_df$float_col,ignore_attr = TRUE)
+
+  # Still to schema
+  expect_message(validate_dataset_json(json_out1), "File is valid")
+  expect_message(validate_dataset_json(json_out2), "File is valid")
+
+})
+
+test_that("Decimal won't convert unless target data type is set", {
+
+  test_df <- head(iris, 5)
+  test_df['float_col'] <- as.character(c(
+    143.66666666666699825,
+    2/3,
+    1/3,
+    165/37,
+    6/7
+  ))
+
+  test_items <- iris_items |> dplyr::bind_rows(
+    data.frame(
+      itemOID = "IT.IR.float_col",
+      name = "float_col",
+      label = "Test column long decimal",
+      dataType = "decimal"
+    )
+  )
+
+  dsjson <- dataset_json(
+    test_df,
+    item_oid = "test_df",
+    name = "test_df",
+    dataset_label = "test_df",
+    columns = test_items
+  )
+
+  json_out <- write_dataset_json(dsjson, float_as_decimals = TRUE)
+
+  out <- read_dataset_json(json_out)
+
+  expect_true(inherits(out$float_col, "character"))
+})

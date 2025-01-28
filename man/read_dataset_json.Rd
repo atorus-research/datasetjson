@@ -4,10 +4,12 @@
 \alias{read_dataset_json}
 \title{Read a Dataset JSON to datasetjson object}
 \usage{
-read_dataset_json(file)
+read_dataset_json(file, decimals_as_floats = FALSE)
 }
 \arguments{
 \item{file}{File path or URL of a Dataset JSON file}
+
+\item{decimals_as_floats}{Convert variables of "decimal" type to float}
 }
 \value{
 A dataframe with additional attributes attached containing the

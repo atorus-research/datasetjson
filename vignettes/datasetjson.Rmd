@@ -46,7 +46,7 @@ The `columns` parameter is special here, in that you provide a data frame with t
 iris_items
 ```
 
-This data frame has 7 columns, 4 of which are strictly required. This is defined by the [CDISC Dataset JSON Specification](https://www.cdisc.org/dataset-json).
+This data frame has 7 columns, 4 of which are strictly required. This is defined by the [CDISC Dataset JSON Specification](https://www.cdisc.org/standards/data-exchange/dataset-json).
 
 | **Attribute** | **Requirement** | **Description**                                                                                                                |
 |----------------|-----------------|--------------------------------------------------------------------------------------------------------------------------------|

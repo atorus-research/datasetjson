@@ -10,8 +10,15 @@ experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](h
 <!-- badges: end -->
 
 Welcome to **datasetjson**. **datasetjson** is an R package built to
-read and write [CDISC Dataset JSON](https://www.cdisc.org/dataset-json)
+read and write [CDISC Dataset
+JSON](https://www.cdisc.org/standards/data-exchange/dataset-json)
 formatted datasets.
+
+If you’re stumbling into the world of Dataset JSON, you might be
+wondering “Why JSON?”, as many have asked this question. We highly
+recommend you take a pit stop to read [this blog
+post](https://swhume.github.io/why-json-for-datasets) by Sam Hume one of
+the creators of the Dataset JSON standard.
 
 As always, we welcome your feedback. If you spot a bug, would like to
 see a new feature, or if any documentation is unclear - submit an issue
@@ -92,7 +99,7 @@ cat(js_text)
 ```
 
     ## {
-    ##   "datasetJSONCreationDateTime": "2025-01-24T12:44:59",
+    ##   "datasetJSONCreationDateTime": "2025-01-27T16:45:36",
     ##   "datasetJSONVersion": "1.1.0",
     ##   "fileOID": "/some/path",
     ##   "dbLastModifiedDateTime": "2025-01-21T13:34:50",
