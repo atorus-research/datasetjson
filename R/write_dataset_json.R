@@ -126,7 +126,6 @@ write_dataset_json <- function(x, file, pretty=FALSE, float_as_decimals=FALSE, d
 
   # Create the JSON text
   json_opts <- yyjsonr::opts_write_json(
-    digits=19,
     pretty = pretty,
     auto_unbox = TRUE,
   )
