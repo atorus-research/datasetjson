@@ -4,14 +4,33 @@
 \alias{write_dataset_json}
 \title{Write out a Dataset JSON file}
 \usage{
-write_dataset_json(x, file, pretty = FALSE)
+write_dataset_json(
+  x,
+  file,
+  pretty = FALSE,
+  float_as_decimals = FALSE,
+  digits = 16
+)
 }
 \arguments{
 \item{x}{datasetjson object}
 
 \item{file}{File path to save Dataset JSON file}
 
-\item{pretty}{If TRUE, write with readable formatting}
+\item{pretty}{If TRUE, write with readable formatting. \emph{Note: The Dataset
+JSON standard prefers compressed formatting without line feeds. It is not
+recommended you use pretty printing for submission purposes.}}
+
+\item{float_as_decimals}{If TRUE, Convert float variables to "decimal" data
+type in the JSON output. This will manually convert the numeric values
+using the \code{format()} function using the number of digits specified in
+\code{digits}, bypassing the \code{yyjsonr} handling of float values and writing the
+numbers out as JSON character strings. See the \href{https://wiki.cdisc.org/display/PUB/Precision+and+Rounding}{Dataset JSON user guide} for more
+information. Defaults to FALSE}
+
+\item{digits}{When using \code{float_as_decimals}, the number of digits to use
+when writing out floats. Going higher than 16 may start writing otherwise
+sufficiently precise decimals (i.e. .2) to long strings.}
 }
 \value{
 NULL when file written to disk, otherwise character string
@@ -21,7 +40,13 @@ Write out a Dataset JSON file
 }
 \examples{
 # Write to character object
-ds_json <- dataset_json(iris, "IG.IRIS", "IRIS", "Iris", iris_items)
+ds_json <- dataset_json(
+  iris,
+  item_oid = "IG.IRIS",
+  name = "IRIS",
+  dataset_label = "Iris",
+  columns = iris_items
+)
 js <- write_dataset_json(ds_json)
 
 # Write to disk

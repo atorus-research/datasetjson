@@ -1,3 +1,14 @@
+# datasetjson 0.3.0
+
+This release provides a significant overhaul of the package due to the updates 
+for Dataset JSON 1.1.0. Performance has also been significantly improved, as well
+as the main object interface.
+
+-  Initial support for Dataset JSON v1.1.0 schema
+-  Flip JSON backend to {yyjsonr} (#32)
+-  Redesign of core objects
+-  New vignettes and helper functions
+
 # datasetjson 0.2.0
 
 - Remove schema validation on read and write (#26)

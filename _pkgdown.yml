@@ -29,9 +29,6 @@ reference:
   desc: Relevant objects within datasetjson
 - contents:
   - dataset_json
-  - file_metadata
-  - data_metadata
-  - dataset_metadata
 - title: Setter functions
   desc: Setter functions to add attributes
 - contents:
@@ -42,11 +39,21 @@ reference:
   - read_dataset_json
   - write_dataset_json
   - validate_dataset_json
+- title: Helper Functions
+  desc: Additional helpers
+- contents:
+  - set_variable_attributes
+  - get_column_metadata
 - title: Data Objects
   desc: Data objects stored in the datasetjson package
 - contents:
   - iris_items
-  - sas_date_formats
-  - sas_datetime_formats
-  - sas_time_formats
-  - schema_1_0_0
+  - schema_1_1_0
+articles:
+- title: Vignettes
+  navbar: Vignettes
+  contents:
+  - date_time_datetime
+  - converting_files
+  - odm_details
+  - precision

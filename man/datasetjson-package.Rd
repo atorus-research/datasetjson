@@ -6,13 +6,13 @@
 \alias{datasetjson-package}
 \title{datasetjson: Read and Write CDISC Dataset JSON Files}
 \description{
-Read, construct and write CDISC (Clinical Data Interchange Standards Consortium) Dataset JSON (JavaScript Object Notation) files, while validating per the Dataset JSON schema file, as described in CDISC (2023) \url{https://www.cdisc.org/dataset-json}.
+Read, construct and write CDISC (Clinical Data Interchange Standards Consortium) Dataset JSON (JavaScript Object Notation) files, while validating per the Dataset JSON schema file, as described in CDISC (2023) \url{https://www.cdisc.org/standards/data-exchange/dataset-json}.
 }
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://github.com/atorus-research/datasetjson}
-  \item Report bugs at \url{https://github.com/atorus-research/datasetjson/issues}
+  \item \url{https://atorus-research.github.io/datasetjson/}
+  \item Report bugs at \url{https://github.com/atorus-research/datasetjson/issues/}
 }
 
 }

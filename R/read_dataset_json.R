@@ -1,13 +1,44 @@
-#' Read a Dataset JSON to datasetjson object
+#'Read a Dataset JSON to datasetjson object
 #'
-#' This function validates a dataset JSON file against the Dataset JSON schema,
-#' and if valid returns a datasetjson object. The Dataset JSON file can be
-#' either a file path on disk of a URL which contains the Dataset JSON file.
+#'This function validates a dataset JSON file against the Dataset JSON schema,
+#'and if valid returns a datasetjson object. The Dataset JSON file can be either
+#'a file path on disk of a URL which contains the Dataset JSON file.
 #'
-#' @param file File path or URL of a Dataset JSON file
+#'@details
 #'
-#' @return datasetjson object
-#' @export
+#'The resulting dataframe contains the additional metadata available on the
+#'Dataset JSON file within the attributes to make this accessible to the user.
+#'Note that these attributes are only populated if available.
+#' - **sourceSystem**: The information system from which the content of this
+#'dataset was source, including system name and version.
+#' - **datasetJSONVersion**: The version of the Dataset-JSON standard used to
+#'create the dataset.
+#' - **fileOID**: A unique identifier for this dataset.
+#' - **dbLastModifiedDateTime**: The date/time the source database was last
+#'modified before creating the Dataset-JSON file.
+#' - **originator**: The organization that generated the Dataset-JSON dataset.
+#' - **studyOID**: Unique identifier for the study that may also function as a
+#'foreign key to a Study/@OID in an associated Define-XML document, or to any
+#'studyOID references that are used as keys in other documents;
+#' - **metaDataVersionOID**: Unique identifier for the metadata version that may
+#'also function as a foreign key to a MetaDataVersion/@OID in an associated
+#'Define-XML file
+#' - **metaDataRef**: URI for the metadata file describing the dataset (e.g.,
+#'a Define-XML file).
+#' - **itemGroupOID**: Unique identifier for the dataset that may also function
+#'as a foreign key to an ItemGroupDef/@OID in an associated Define-XML file.
+#' - **name**: The human-readable name for the dataset.
+#' - **label**: A short description of the dataset.
+#' - **columns**: An array of metadata objects that describe the dataset
+#'variables. See `dataset_json()` for further information on the contents of
+#'these fields.
+#'
+#'@param file File path or URL of a Dataset JSON file
+#' @param decimals_as_floats Convert variables of "decimal" type to float
+#'
+#'@return A dataframe with additional attributes attached containing the
+#'  DatasetJSON metadata.
+#'@export
 #'
 #' @examples
 #' # Read from disk
@@ -18,76 +49,88 @@
 #' }
 #'
 #' # Read from an already imported character vector
-#' ds_json <- dataset_json(iris, "IG.IRIS", "IRIS", "Iris", iris_items)
+#' ds_json <- dataset_json(iris, "IG.IRIS", "IRIS", "Iris", columns=iris_items)
 #' js <- write_dataset_json(ds_json)
 #' dat <- read_dataset_json(js)
-read_dataset_json <- function(file) {
+read_dataset_json <- function(file, decimals_as_floats=FALSE) {
+
+  json_opts <- yyjsonr::opts_read_json(
+    promote_num_to_string = TRUE
+  )
 
   if (path_is_url(file)) {
     # Url?
     file_contents <- read_from_url(file)
+    ds_json <- yyjsonr::read_json_str(
+      file_contents,
+      opts = json_opts
+    )
   } else if (file.exists(file)) {
     # File on disk?
-    file_contents <- readLines(file)
+    ds_json <- yyjsonr::read_json_file(
+      file,
+      opts = json_opts
+    )
   } else {
     # Direct file contents?
-    file_contents <- file
+    ds_json <- yyjsonr::read_json_str(
+      file,
+      opts = json_opts
+    )
   }
 
-  # Read the file and convert to datasetjson object
-  ds_json <- jsonlite::fromJSON(file_contents)
-
-  # Pull the object out with a lot of assumptions because the format has already
-  # been validated
-  dtype <- ifelse("clinicalData" %in% names(ds_json), "clinicalData", "referenceData")
-  d <- as.data.frame(ds_json[[dtype]]$itemGroupData[[1]]$itemData)
-  items <- ds_json[[dtype]]$itemGroupData[[1]]$items
+  # Pull the data and items
+  d <- as.data.frame(ds_json$rows)
+  items <- ds_json$columns
 
   # Start setting attributes
   colnames(d) <- items$name
 
   # Process type conversions
-  tt <- items$type
-  int_cols <- tt == "integer"
-  dbl_cols <- tt %in% c("float", "double", "decimal")
-  bool_cols <- tt == "boolean"
+  dt <- items$dataType
+  tdt <- items$targetDataType
+  int_cols <- dt == "integer"
+  if (decimals_as_floats) {
+    flt_cols <- dt %in% c("float", "double")
+    dec_cols <- dt == "decimal" & tdt == "decimal"
+    dbl_cols <- flt_cols | dec_cols
+  } else {
+    dbl_cols <- dt %in% c("float", "double")
+  }
+  bool_cols <- dt == "boolean"
   d[int_cols] <- lapply(d[int_cols], as.integer)
   d[dbl_cols] <- lapply(d[dbl_cols], as.double)
   d[bool_cols] <- lapply(d[bool_cols], as.logical)
 
-  # Grab date and datetime column info
-  fmts <- items$displayFormat
-  date_cols <- fmts %in% sas_date_formats
-  datetime_cols <- fmts %in% sas_datetime_formats
-  d[date_cols] <- lapply(d[date_cols], as.Date, origin="1960-01-01")
-  d[datetime_cols] <- lapply(d[datetime_cols], as.POSIXct, origin="1960-01-01")
+  d <- date_time_conversions(d, dt, tdt)
 
   # Apply variable labels
   d[names(d)] <- lapply(items$name, set_col_attr, d, 'label', items)
-  d[names(d)] <- lapply(items$name, set_col_attr, d, 'OID', items)
-  d[names(d)] <- lapply(items$name, set_col_attr, d, 'length', items)
-  d[names(d)] <- lapply(items$name, set_col_attr, d, 'type', items)
-  d[names(d)] <- lapply(items$name, set_col_attr, d, 'keySequence', items)
-  d[names(d)] <- lapply(items$name, set_col_attr, d, 'displayFormat', items)
 
-  d <- d[,-1] # get rid of ITEMGROUPDATASEQ column
+  ds_attr <- dataset_json(
+    d,
+    file_oid = ds_json$fileOID,
+    originator = ds_json$originator,
+    sys = ds_json$sourceSystem$name,
+    sys_version = ds_json$sourceSystem$version,
+    study = ds_json$studyOID,
+    metadata_version = ds_json$metaDataVersionOID,
+    metadata_ref = ds_json$metaDataRef,
+    item_oid = ds_json$itemGroupOID,
+    name = ds_json$name,
+    dataset_label = ds_json$label,
+    last_modified = ds_json$dbLastModifiedDateTime,
+    version = ds_json$datasetJSONVersion,
+    columns = ds_json$columns
+  )
 
-  # Apply file and data level attributes
-  attr(d, 'creationDateTime') <- ds_json$creationDateTime
-  attr(d, 'datasetJSONVersion') <- ds_json$datasetJSONVersion
-  attr(d, 'fileOID') <- ds_json$fileOID
-  attr(d, 'asOfDateTime') <- ds_json$asOfDateTime
-  attr(d, 'originator') <- ds_json$originator
-  attr(d, 'sourceSystem') <- ds_json$sourceSystem
-  attr(d, 'sourceSystemVersion') <- ds_json$sourceSystemVersion
-  attr(d, 'name') <-ds_json[[dtype]]$itemGroupData[[1]]$name
-  attr(d, 'records') <-ds_json[[dtype]]$itemGroupData[[1]]$records
-  attr(d, 'label') <-ds_json[[dtype]]$itemGroupData[[1]]$label
+  # Apply records and column attribute
+  if(ds_json$records != nrow(d)) {
+    warning("The number of rows in the data does not match the number of records recorded in the metadata.")
+  }
 
-  # Still save the name of the element storing the dataset metadata
-  ds_json[[dtype]]$itemGroupData <- names(ds_json[[dtype]]$itemGroupData)
+  attr(ds_attr, 'records') <- ds_json$records
+  attr(ds_attr, 'datasetJSONCreationDateTime') <- ds_json$datasetJSONCreationDateTime
 
-  # Store the data metadata still within it's own list
-  attr(d, dtype) <- ds_json[[dtype]]
-  d
+  ds_attr
 }

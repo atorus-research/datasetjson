@@ -10,35 +10,6 @@ stopifnot_datasetjson <- function(x) {
   }
 }
 
-stopifnot_dataset_metadata <- function(x) {
-  if (!(inherits(x, "datasetjson") | inherits(x, "dataset_metadata"))) {
-    stop("Input must be a datasetjson or dataset_metadata object", call.=FALSE)
-  }
-}
-
-stopifnot_data_metadata <- function(x) {
-  if (!(inherits(x, "datasetjson") | inherits(x, "data_metadata"))) {
-    stop("Input must be a datasetjson or data_metadata object", call.=FALSE)
-  }
-}
-
-stopifnot_file_metadata <- function(x) {
-  if (!(inherits(x, "datasetjson") | inherits(x, "file_metadata"))) {
-    stop("Input must be a datasetjson object or file_metadata object", call.=FALSE)
-  }
-}
-
-#' Retrieve the data type of a datasetjson object
-#'
-#' @param x A datasetjson object
-#'
-#' @return A character string containing the Datset JSON data type
-#' @noRd
-get_data_type <- function(x) {
-  stopifnot_datasetjson(x)
-  tail(names(x), 1)
-}
-
 #' Helper to set column attributes from items metadata
 #'
 #' @param nm Column name
@@ -76,19 +47,18 @@ get_null_inds <- function(x) {
 remove_nulls <- function(x) {
 
   # Specifically target the data metadata
-  dm_nulls <- get_null_inds(x[[get_data_type(x)]])
-  if (length(dm_nulls) > 0) {
-    x[[get_data_type(x)]] <- x[[get_data_type(x)]][-dm_nulls]
-  }
+  dm_nulls <- get_null_inds(x)
 
   # Top level
-  fm_nulls <- get_null_inds(x)
-  if (length(fm_nulls) > 0) {
-    x <- x[-fm_nulls]
+  dm_nulls <- get_null_inds(x)
+  if (length(dm_nulls) > 0) {
+    x <- x[-dm_nulls]
   }
 
   x
 }
+
+
 
 #' Check if given path is a URL
 #'
@@ -115,3 +85,49 @@ read_from_url <- function(path) {
   close(con)
   x
 }
+
+#' Convert an dataframe into a named list of rows without NAs
+#'
+#' The variable attributes are stored as named lists within the output
+#' JSON file, so to write them out the dataframe needs to be a named
+#' list of rows
+#'
+#' @param x A data.frame
+#'
+#' @return List of named lists with single elements
+#' @noRd
+df_to_list_rows <- function(x) {
+  # Split the dataframe rows into individual rows
+  rows <- unname(split(x, seq(nrow(x))))
+  # Convert each row into a named list while removing NAs
+  lapply(rows, function(X) {
+    y <- as.list(X)
+    y[!is.na(y)]
+  })
+}
+
+#' Convert date, datetime and time
+#'
+#' The variable attributes are stored as named lists within the output
+#' JSON file, so to write them out the dataframe needs to be a named
+#' list of rows
+#'
+#' @param d A data.frame
+#' @param dt A character vector of dataTypes
+#' @param tdt A character vector of targetDataTypes
+#'
+#' @return A data.frame with converted columns
+#' @noRd
+date_time_conversions <- function(d, dt, tdt){
+  date_cols <- dt %in% c("date") & tdt %in% "integer"
+  datetime_cols <- dt %in% c("datetime") & tdt %in% "integer"
+  time_cols <- dt %in% c("time") & tdt %in% "integer"
+  d[date_cols] <- lapply(d[date_cols], as.Date, tz = "UTC")
+  d[datetime_cols] <- lapply(d[datetime_cols],
+                             as.POSIXct,
+                             tz = "UTC",
+                             tryFormats = "%Y-%m-%dT%H:%M:%S")
+  d[time_cols] <- lapply(d[time_cols], as_hms)
+  d
+}
+

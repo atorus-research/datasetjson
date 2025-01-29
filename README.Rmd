@@ -15,7 +15,9 @@ library(datasetjson)
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 <!-- badges: end -->
 
-Welcome to **datasetjson**. **datasetjson** is an R package built to read and write [CDISC Dataset JSON](https://www.cdisc.org/dataset-json) formatted datasets. 
+Welcome to **datasetjson**. **datasetjson** is an R package built to read and write [CDISC Dataset JSON](https://www.cdisc.org/standards/data-exchange/dataset-json) formatted datasets. 
+
+If you're stumbling into the world of Dataset JSON, you might be wondering "Why JSON?", as many have asked this question. We highly recommend you take a pit stop to read [this blog post](https://swhume.github.io/why-json-for-datasets) by Sam Hume one of the creators of the Dataset JSON standard. 
 
 As always, we welcome your feedback. If you spot a bug, would like to see a new feature, or if any documentation is unclear - submit an issue through GitHub right [here](https://github.com/atorus-research/datasetjson/issues). 
 
@@ -36,34 +38,52 @@ devtools::install_github("https://github.com/atorus-research/datasetjson.git", r
 **datasetjson** works by allowing you to take a data frame and apply the necessary attributes required for the CDISC Dataset JSON. The goal is to make this experience simple. Before you can write a Dataset JSON file to disk, you first need to build the Dataset JSON object. An example call looks like this:
 
 ```{r sample_call}
-ds_json <- dataset_json(iris[1:5, ], "IG.IRIS", "IRIS", "Iris", iris_items)
+ds_json <- dataset_json(
+  head(iris, 5),
+  file_oid = "/some/path",
+  last_modified = "2023-02-15T10:23:15",
+  originator = "Some Org",
+  sys = "source system",
+  sys_version = "1.0",
+  study = "SOMESTUDY",
+  metadata_version = "MDV.MSGv2.0.SDTMIG.3.3.SDTM.1.7",
+  metadata_ref = "some/define.xml",
+  item_oid = "IG.IRIS",
+  name = "IRIS",
+  dataset_label = "Iris",
+  columns = iris_items
+)
 ```
 
-To attach necessary metadata (that can't be inferred by the input dataframe) to the `datasetjson` object, you can use a variety of setter functions:
+To attach necessary metadata (that can't be inferred by the input dataframe or at time of write) to the `datasetjson` object, you can use a variety of setter functions:
 
 ```{r setters}
-ds_updated <- ds_json |>
-  set_data_type("referenceData") |>
+ds_json <- dataset_json(
+    head(iris, 5),
+    item_oid = "IG.IRIS",
+    name = "IRIS",
+    dataset_label = "Iris",
+    columns = iris_items
+  ) |>
   set_file_oid("/some/path") |>
-  set_metadata_ref("some/define.xml") |>
-  set_metadata_version("MDV.MSGv2.0.SDTMIG.3.3.SDTM.1.7") |>
+  set_last_modified("2025-01-21T13:34:50") |>
   set_originator("Some Org") |>
   set_source_system("source system", "1.0") |>
-  set_study_oid("SOMESTUDY")
+  set_study_oid("SOMESTUDY") |>
+  set_metadata_ref("some/define.xml") |>
+  set_metadata_version("MDV.MSGv2.0.SDTMIG.3.3.SDTM.1.7")
 ```
-
-If these settings are not provided, `dataset_json()` will default the fields to "NA" so a compliant file can still be generated. 
 
 Once the `datasetjson` object is prepared with the necessary metadata, you can use `write_dataset_json()` to write the file to disk. 
 
 ```{r write_disk, eval=FALSE}
-write_dataset_json(ds_updated, file = "./iris.json")
+write_dataset_json(ds_json, file = "./iris.json")
 ```
 
 Or if you don't provide a file path, the JSON text will return directly. 
 
 ```{r write_print}
-js_text <- write_dataset_json(ds_updated, pretty=TRUE)
+js_text <- write_dataset_json(ds_json, pretty=TRUE)
 cat(js_text)
 ```
 
@@ -74,14 +94,14 @@ dat <- read_dataset_json(js_text)
 dat
 ```
 
-The data frame that's returned is enriched with attributes available in the Dataset JSON format. For example, opening the dataframe within the RStudio IDE will present the variable labels. The other variable is attached as attributes on individual columns, and file level metadata is attached as attributes on the data frame itself:
+The data frame that's returned is enriched with attributes available in the Dataset JSON format. For example, opening the dataframe within the RStudio IDE will present the variable labels. All the other metadata contained within the Dataset JSON file is attached as attributes to the resulting dataframe.
 
 ```{r dataframe_attributes}
-print(attr(dat, "creationDateTime"))
-print(attr(dat$Sepal.Length, "OID"))
-print(attr(dat$Sepal.Width, "type"))
+print(attr(dat, 'dbLastModifiedDateTime'))
+print(attr(dat, 'fileOID'))
 ```
-Note that Dataset JSON is an early CDISC standard and is still subject to change, as as such this package will be updated. Backwards compatibility will be enforced once the standard itself is more stable. Until then, it is not recommended to use this package within production activities. 
+
+This package currently supports Dataset JSON Version 1.1.0. Support for Version 1.0.0 has been dropped, as version 1.1.0 is intended to be the first stable version of the standard. 
 
 # [<img src="man/figures/cdisc.png" alt="" width="120" />](https://www.cdisc.org/)
 
