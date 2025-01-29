@@ -69,7 +69,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          remotes::install_deps(dependencies = TRUE)
+          remotes::install_deps(dependencies = TRUE, upgrade="always")
           remotes::install_cran("rcmdcheck", force = TRUE)
         shell: Rscript {0}
 
