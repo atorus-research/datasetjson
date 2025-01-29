@@ -1,11 +1,13 @@
-pandoc: 2.19.2
-pkgdown: 2.0.7
+pandoc: 3.1.11
+pkgdown: 2.1.1
 pkgdown_sha: ~
 articles:
-  getting_started: getting_started.html
+  converting_files: converting_files.html
+  datasetjson: datasetjson.html
+  date_time_datetime: date_time_datetime.html
   odm_details: odm_details.html
-last_built: 2024-01-09T20:03Z
+  precision: precision.html
+last_built: 2025-01-29T19:03Z
 urls:
   reference: https://atorus-research.github.io/datasetjson/reference
   article: https://atorus-research.github.io/datasetjson/articles
-
