@@ -49,6 +49,9 @@ extract_xpt_meta <- function(n, .data) {
   } else if (inherits(.data[[n]],"numeric")) {
     if (any(is.double(.data[[n]]))) out$dataType <- "float"
     else out$dataType <- "integer"
+  }  else if (inherits(.data[[n]],"hms")) {
+    out$dataType <- "time"
+    out$targetDataType <- "integer"
   } else {
     out$dataType <- "string"
     out$length <- max(purrr::map_int(.data[[n]], nchar))
