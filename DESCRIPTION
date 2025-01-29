@@ -37,6 +37,7 @@ Suggests:
     purrr,
     tibble,
     dplyr,
+    lubridate,
     data.table
 VignetteBuilder: knitr
 Config/testthat/edition: 3
