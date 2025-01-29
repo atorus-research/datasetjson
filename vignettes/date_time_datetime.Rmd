@@ -43,8 +43,8 @@ tibble::tribble(
 In the table above, we have the metadata for both character and numeric dates, times, and date times. Both sets of variables have the same values within `dataType`. The difference is the optional field of `targetDataType`, where the value for the numeric variables is set to `integer`. Both `read_dataset_json()` and `write_dataset_json()` rely on these fields and as such they must be set properly. This comes with a few assumption and requirements.
 
 -   Numeric dates will be converted into the type of `Date` (see `help("Date", package="base")`)
--   Numeric times will be converted to the **{lubridate}** type of `Period`
-  - R doesn't have a specific built in type of time. We decided to take on **{lubridate}** as a dependency given package stability and **{lubridate}**'s inclusion in the tidyverse. The `Period` objects on read are produced using the `lubridate::hms()`. 
+-   Numeric times will be converted to the **{hms}** type of `hms`
+  - R doesn't have a specific built in type of time. We decided to take on **{hms}** as a dependency given that this is the type using by the **{haven}** package when reading SAS Version 5 Transport files. As such, similar behavior can be expected when importing an XPT or a Dataset JSON file. 
 -   Numeric date times will be converted to the base R type of `POSIXct` and anchored to the UTC timezone.
   - CDISC dates are generally not timezone qualified, though for character dates, this is optional. Unless a timezone is explicitly specified systems may default to the user's current timezone. To decrease ambiguity, we've introduced a hard requirement that datetimes are anchored to UTC. If the datetime variable is found to be using a different timezone, an error will be thrown. 
 

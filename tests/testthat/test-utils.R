@@ -42,5 +42,5 @@ test_that("Date, datetime and time conversions work as expected", {
   expect_equal(df_converted$datetime, as.POSIXct(c("2020-01-01 12:00:00",
                                                    "2020-01-01 12:00:01",
                                                    NA), tz = "UTC"))
-  expect_equal(df_converted$time, hms(c("12:00:00", "12:00:01", NA)))
+  expect_equal(df_converted$time, as_hms(c("12:00:00", "12:00:01", NA)))
 })
