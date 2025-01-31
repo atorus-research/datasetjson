@@ -7,7 +7,7 @@ articles:
   date_time_datetime: date_time_datetime.html
   odm_details: odm_details.html
   precision: precision.html
-last_built: 2025-01-29T19:03Z
+last_built: 2025-01-31T17:25Z
 urls:
   reference: https://atorus-research.github.io/datasetjson/reference
   article: https://atorus-research.github.io/datasetjson/articles
