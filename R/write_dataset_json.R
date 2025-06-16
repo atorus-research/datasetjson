@@ -100,10 +100,12 @@ write_dataset_json <- function(
           )
         }
         x[y$name] <- strftime(
-          as.numeric(x[[y$name]]),
+          as.POSIXlt(
+            as.numeric(x[[y$name]]),
+            tz = 'UTC',
+            origin = "1970-01-01"
+          ),
           "%H:%M:%S",
-          tz = 'UTC',
-          origin = "1970-01-01"
         )
       }
     } else if (
