@@ -51,3 +51,6 @@ admiraltemplate*.tgz
 # Docs
 docs/
 inst/doc
+
+# Claude Code scratch directory
+scratch/
