@@ -79,58 +79,8 @@ read_dataset_json <- function(file, decimals_as_floats=FALSE) {
     )
   }
 
-  # Pull the data and items
+  # Pull the data
   d <- as.data.frame(ds_json$rows)
-  items <- ds_json$columns
 
-  # Start setting attributes
-  colnames(d) <- items$name
-
-  # Process type conversions
-  dt <- items$dataType
-  tdt <- items$targetDataType
-  int_cols <- dt == "integer"
-  if (decimals_as_floats) {
-    flt_cols <- dt %in% c("float", "double")
-    dec_cols <- dt == "decimal" & tdt == "decimal"
-    dbl_cols <- flt_cols | dec_cols
-  } else {
-    dbl_cols <- dt %in% c("float", "double")
-  }
-  bool_cols <- dt == "boolean"
-  d[int_cols] <- lapply(d[int_cols], as.integer)
-  d[dbl_cols] <- lapply(d[dbl_cols], as.double)
-  d[bool_cols] <- lapply(d[bool_cols], as.logical)
-
-  d <- date_time_conversions(d, dt, tdt)
-
-  # Apply variable labels
-  d[names(d)] <- lapply(items$name, set_col_attr, d, 'label', items)
-
-  ds_attr <- dataset_json(
-    d,
-    file_oid = ds_json$fileOID,
-    originator = ds_json$originator,
-    sys = ds_json$sourceSystem$name,
-    sys_version = ds_json$sourceSystem$version,
-    study = ds_json$studyOID,
-    metadata_version = ds_json$metaDataVersionOID,
-    metadata_ref = ds_json$metaDataRef,
-    item_oid = ds_json$itemGroupOID,
-    name = ds_json$name,
-    dataset_label = ds_json$label,
-    last_modified = ds_json$dbLastModifiedDateTime,
-    version = ds_json$datasetJSONVersion,
-    columns = ds_json$columns
-  )
-
-  # Apply records and column attribute
-  if(ds_json$records != nrow(d)) {
-    warning("The number of rows in the data does not match the number of records recorded in the metadata.")
-  }
-
-  attr(ds_attr, 'records') <- ds_json$records
-  attr(ds_attr, 'datasetJSONCreationDateTime') <- ds_json$datasetJSONCreationDateTime
-
-  ds_attr
+  build_datasetjson_from_parsed(ds_json, d, decimals_as_floats)
 }

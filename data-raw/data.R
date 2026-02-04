@@ -64,10 +64,21 @@ iris_items_bad <- tibble::tribble(
 
 saveRDS(iris_items_list, file=testthat::test_path("testdata", "iris_items_bad.Rds"))
 
-# Dataset JSON Schema V1.0.0 as Character Vector
+# Dataset JSON Schema V1.1.0 as Character Vector
 schema_file <- testthat::test_path("testdata", "dataset.schema.json")
 schema_1_1_0 = readChar(schema_file, file.info(schema_file)$size)
 usethis::use_data(schema_1_1_0, overwrite=TRUE)
+
+# Dataset NDJSON Schema V1.1.0 as Character Vector
+# Note: Source file is UTF-16LE encoded, must be converted
+ndjson_schema_file <- testthat::test_path("testdata", "dataset-ndjson-schema.json")
+ndjson_schema_lines <- system2("iconv",
+  args = c("-f", "UTF-16LE", "-t", "UTF-8", ndjson_schema_file),
+  stdout = TRUE
+)
+schema_ndjson_1_1_0 <- paste(ndjson_schema_lines, collapse = "\n")
+schema_ndjson_1_1_0 <- sub("^\uFEFF", "", schema_ndjson_1_1_0)
+usethis::use_data(schema_ndjson_1_1_0, overwrite = TRUE)
 
 # Test data metadata
 
