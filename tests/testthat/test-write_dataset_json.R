@@ -301,6 +301,38 @@ test_that("float_as_decimal works on read and write", {
 
 })
 
+test_that("float_as_decimals writes NA as null not padded string", {
+
+  test_df <- head(iris, 3)
+  test_df['float_col'] <- c(1.23456, NA, 100.5)
+
+  test_items <- iris_items |> dplyr::bind_rows(
+    data.frame(
+      itemOID = "IT.IR.float_col",
+      name = "float_col",
+      label = "Test column with NA",
+      dataType = "float"
+    )
+  )
+
+  dsjson <- dataset_json(
+    test_df,
+    item_oid = "test_df",
+    name = "test_df",
+    dataset_label = "test_df",
+    columns = test_items
+  )
+
+  json_out <- write_dataset_json(dsjson, float_as_decimals = TRUE)
+
+  # NA should be written as JSON null, not a padded string like "    NA"
+  expect_false(grepl(" +NA", json_out))
+  expect_true(grepl("null", json_out))
+
+  out <- read_dataset_json(json_out, decimals_as_float = TRUE)
+  expect_true(is.na(out$float_col[2]))
+})
+
 test_that("Decimal won't convert unless target data type is set", {
 
   test_df <- head(iris, 5)
