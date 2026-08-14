@@ -67,21 +67,21 @@ Another way to handle numeric precision issues is to use the "decimal" types tha
 >
 > To use decimal in Dataset-JSON, set the dataType to decimal and the targetDataType to decimal. This instructs conversion software to convert the number it reads from a native dataset into a string in Dataset-JSON. It also instructs the receiver to convert the number as a string into the decimal datatype or closest approximation available in the receiving technology. Note that not all technologies support an explicit decimal datatype.
 
-In order to address this problem, we've added the options `floats_as_decimals` and `digits` to `write_dataset_json()` and `decimals_as_floats` to `read_dataset_json()`. 
+In order to address this problem, we've added the options `float_as_decimals` and `digits` to `write_dataset_json()`. When `float_as_decimals = TRUE`, the columns are written as `decimal`/`decimal` in the JSON, and `read_dataset_json()` will automatically convert them back to numeric on read per the Dataset JSON v1.1 specification.
 
 Considering the example before, here's how these options can help.
 
 ```{r conversion}
-json_out <-write_dataset_json(dsjson, float_as_decimals = TRUE)
+json_out <- write_dataset_json(dsjson, float_as_decimals = TRUE)
 
-out <- read_dataset_json(json_out, decimals_as_floats = TRUE)
+out <- read_dataset_json(json_out)
 
 test_df$float_col - out$float_col
 ```
 
 By manually handling how the decimal precision is rendered, the values were able to serialize and re-import more effectively. 
 
-There are a few reasons we've chosen to NOT make this default behavior:
+There are a few reasons we've chosen to NOT make `float_as_decimals` default behavior:
 
 - This inherently adds overhead, because we convert the values prior to letting `yyjsonr` serialize them
 - We're changing the way the metadata is writing to use the `decimal` type. While the standard supports the use of the `decimal` type, it's an extra step that that the consuming system needs to be aware of, and Dataset JSON is still a young standard. 
