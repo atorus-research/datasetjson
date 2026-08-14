@@ -1,0 +1,88 @@
+# Read a Dataset JSON to datasetjson object
+
+This function validates a dataset JSON file against the Dataset JSON
+schema, and if valid returns a datasetjson object. The Dataset JSON file
+can be either a file path on disk of a URL which contains the Dataset
+JSON file.
+
+## Usage
+
+``` r
+read_dataset_json(file, decimals_as_floats = FALSE)
+```
+
+## Arguments
+
+- file:
+
+  File path or URL of a Dataset JSON file
+
+- decimals_as_floats:
+
+  Convert variables of "decimal" type to float
+
+## Value
+
+A dataframe with additional attributes attached containing the
+DatasetJSON metadata.
+
+## Details
+
+The resulting dataframe contains the additional metadata available on
+the Dataset JSON file within the attributes to make this accessible to
+the user. Note that these attributes are only populated if available.
+
+- **sourceSystem**: The information system from which the content of
+  this dataset was source, including system name and version.
+
+- **datasetJSONVersion**: The version of the Dataset-JSON standard used
+  to create the dataset.
+
+- **fileOID**: A unique identifier for this dataset.
+
+- **dbLastModifiedDateTime**: The date/time the source database was last
+  modified before creating the Dataset-JSON file.
+
+- **originator**: The organization that generated the Dataset-JSON
+  dataset.
+
+- **studyOID**: Unique identifier for the study that may also function
+  as a foreign key to a Study/@OID in an associated Define-XML document,
+  or to any studyOID references that are used as keys in other
+  documents;
+
+- **metaDataVersionOID**: Unique identifier for the metadata version
+  that may also function as a foreign key to a MetaDataVersion/@OID in
+  an associated Define-XML file
+
+- **metaDataRef**: URI for the metadata file describing the dataset
+  (e.g., a Define-XML file).
+
+- **itemGroupOID**: Unique identifier for the dataset that may also
+  function as a foreign key to an ItemGroupDef/@OID in an associated
+  Define-XML file.
+
+- **name**: The human-readable name for the dataset.
+
+- **label**: A short description of the dataset.
+
+- **columns**: An array of metadata objects that describe the dataset
+  variables. See
+  [`dataset_json()`](https://atorus-research.github.io/datasetjson/reference/dataset_json.md)
+  for further information on the contents of these fields.
+
+## Examples
+
+``` r
+# Read from disk
+if (FALSE) { # \dontrun{
+  dat <- read_dataset_json("path/to/file.json")
+ # Read file from URL
+  dat <- dataset_json('https://www.somesite.com/file.json')
+} # }
+
+# Read from an already imported character vector
+ds_json <- dataset_json(iris, "IG.IRIS", "IRIS", "Iris", columns=iris_items)
+js <- write_dataset_json(ds_json)
+dat <- read_dataset_json(js)
+```

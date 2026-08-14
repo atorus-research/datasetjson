@@ -1,0 +1,34 @@
+# Notes on ODM V2
+
+Dataset JSON inherently pulls some standards from the [ODM
+v2.0](https://wiki.cdisc.org/display/ODM2/ODM+v2.0+Specification)
+(Operational Data Model). From
+[CDISC](https://www.cdisc.org/standards/data-exchange/odm-xml/odm-v2-0):
+
+> The Operational Data Model (ODM) is a vendor-neutral,
+> platform-independent data exchange format, intended primarily for
+> interchange and archival of clinical study data pertaining to
+> individual subjects, aggregated collections of subjects, and
+> integrated research studies. The model includes the clinical data
+> along with its associated metadata, administrative data, reference
+> data, and audit information. All information that needs to be shared
+> among different software systems during the setup, operation,
+> analysis, submission, and archiving of a study are included in the
+> model.
+
+Without having a background in ODM, some fields within the Dataset JSON
+file may be hard to understand without the ODM references available.
+This vignette provides some quick defintions that may prove useful.
+
+## fileOID
+
+> FileOIDs should be universally unique if at all possible. One way to
+> ensure this is to prefix every FileOID with an internet domain name
+> owned by the creator of the ODM file or database (followed by a
+> forward slash, “/”). For example,
+> FileOID=“BestPharmaceuticals.com/Study5894/1” might be a good way to
+> denote the first file in a series for study 5894 from Best
+> Pharmaceuticals.
+
+[*Reference
+link*](https://wiki.cdisc.org/display/ODM2/Single+Files+and+Collections)
