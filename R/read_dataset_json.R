@@ -34,7 +34,6 @@
 #'these fields.
 #'
 #'@param file File path or URL of a Dataset JSON file
-#' @param decimals_as_floats Convert variables of "decimal" type to float
 #'
 #'@return A dataframe with additional attributes attached containing the
 #'  DatasetJSON metadata.
@@ -52,7 +51,7 @@
 #' ds_json <- dataset_json(iris, "IG.IRIS", "IRIS", "Iris", columns=iris_items)
 #' js <- write_dataset_json(ds_json)
 #' dat <- read_dataset_json(js)
-read_dataset_json <- function(file, decimals_as_floats=FALSE) {
+read_dataset_json <- function(file) {
 
   json_opts <- yyjsonr::opts_read_json(
     promote_num_to_string = TRUE
@@ -90,13 +89,7 @@ read_dataset_json <- function(file, decimals_as_floats=FALSE) {
   dt <- items$dataType
   tdt <- items$targetDataType
   int_cols <- dt == "integer"
-  if (decimals_as_floats) {
-    flt_cols <- dt %in% c("float", "double")
-    dec_cols <- dt == "decimal" & tdt == "decimal"
-    dbl_cols <- flt_cols | dec_cols
-  } else {
-    dbl_cols <- dt %in% c("float", "double")
-  }
+  dbl_cols <- dt %in% c("float", "double") | (dt == "decimal" & !is.na(tdt) & tdt == "decimal")
   bool_cols <- dt == "boolean"
   d[int_cols] <- lapply(d[int_cols], as.integer)
   d[dbl_cols] <- lapply(d[dbl_cols], as.double)

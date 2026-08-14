@@ -1,0 +1,57 @@
+8/14/26, 12:12 PM                                                                   Use of sourceSystem - PUBLIC - Wiki
+
+
+                                                                        🔒 Wiki Security Update 🔒
+
+ Pages / Welcome to CDISC WIKI / Dataset-JSON v1.1 User's Guide
+
+ Use of sourceSystem
+ Created by Lex Jansen, last updated by Lorraine Sobson on Dec 04, 2024 • 1 minute read
+
+
+ sourceSystem should be used to describe some attributes of the system where this Dataset-JSON file originated; it is an analogue of the SourceSystemName and
+ SourceSystemVersion attributes from the ODM element specification. As this is intended to be system dependent it also serves as a good location for vendor
+ extensions that help with semantic interoperability; an example and guidance for this are provided in Section 3, Dataset-JSON Extensions.
+ In the following example of sourceSystem it is assumed:
+
+        The sourceSystem attribute reflects the primary software used to create the source DB.
+        It is possible to extend the Dataset-JSON schema to add extensions to the sourceSystem object in order to provide more detail about the system where the
+        Dataset-JSON file originated.
+ Example without extensions:
+
+  {
+        "sourceSystem": {
+             "name": "PostgreSQL",
+             "version": "16"
+        }
+  }
+
+
+
+
+ Example with extensions:
+
+
+
+
+https://wiki.cdisc.org/spaces/PUB/pages/236372365/Use+of+sourceSystem                                                                                              1/2
+
+8/14/26, 12:12 PM                                                                         Use of sourceSystem - PUBLIC - Wiki
+
+
+
+
+        The name and version attributes are required when their parent object, sourceSystem, is present; in this sense, they are conditionally required attributes.
+
+                                                                                                                                                                             No labels
+
+
+
+                                                          Powered by a free Atlassian Confluence Community License granted to CDISC. Evaluate Confluence today.
+                                                            This Confluence installation runs a Free Gliffy License - Evaluate the Gliffy Confluence Plugin for your Wiki!
+
+
+
+
+https://wiki.cdisc.org/spaces/PUB/pages/236372365/Use+of+sourceSystem                                                                                                               2/2
+
