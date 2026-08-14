@@ -1,3 +1,7 @@
+# datasetjson 0.4.0
+
+- `decimals_as_floats` parameter removed from `read_dataset_json()`. Variables with `dataType = "decimal"` and `targetDataType = "decimal"` are now always converted to numeric on read, per the Dataset JSON v1.1 specification.
+
 # datasetjson 0.3.0
 
 This release provides a significant overhaul of the package due to the updates 

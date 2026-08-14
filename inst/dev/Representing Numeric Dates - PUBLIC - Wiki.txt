@@ -1,0 +1,62 @@
+8/14/26, 12:12 PM                                                                    Representing Numeric Dates - PUBLIC - Wiki
+
+
+                                                                               🔒 Wiki Security Update 🔒
+
+ Pages / Welcome to CDISC WIKI / Dataset-JSON v1.1 User's Guide
+
+ Representing Numeric Dates
+ Created by Sarvar Khamidov, last updated by Lorraine Sobson on Dec 04, 2024 • 1 minute read
+
+
+ When exchanging datasets between different programming environments (e.g., SAS and R), interoperability issues may arise due to the differing date epochs used by
+ these systems. SAS uses 01-Jan-1960 00:00:00 as its epoch, whereas Unix-based programming languages (R, Python) use 01-Jan-1970 00:00:00 as the start of the
+ epoch. This discrepancy can cause significant differences in integer-based date representations, leading to potential errors and misunderstandings when datasets are
+ shared across platforms. Dataset-JSON v1.1 addresses this issue by standardizing date representations using ISO 8601 formats and providing additional metadata to
+ guide the conversion process.
+ When a SAS programmer sends a dataset with integer dates to an R programmer, the difference in epochs results in a discrepancy of 10 years.
+ To ensure accurate and consistent date handling, Dataset-JSON v1.1 introduces the following measures:
+       1. ISO 8601 date format: Dates are represented using the ISO 8601 standard (e.g., "2024-05-28T12:34:56").
+       2. Additional metadata attribute (targetDataType): A new attribute, targetDataType, indicates the desired data type for date conversion. When the environment
+          imports a standardized date (ISO 8601), it uses this targetDataType attribute to convert the date accordingly.
+ Usually, datetime values in ADaM datasets are represented in numeric format. The following is an example of how dates are represented in SDTM and ADaM
+ datasets.
+
+                                                              Source                                                                             Dataset-JSON
+
+   Programming                  Variable      Value                                        Data type                              Value                Attributes
+   language
+
+   SAS                          ADTM          1669288800                                   SAS datatype: numeric                  "2012-11-            dataType: "datetime"
+                                                                                                                                  23T11:20:00"         targetDataType:
+                                              Format: datetime19.                                                                                      "integer"
+                                              Displayed in dataset:                                                                                    displayFormat:
+                                              23NOV2012:11:20:00                                                                                       "datetime19."
+
+   R                            ADTM          1353669600                                   R class (storage type):                "2012-11-            dataType": datetime"
+                                                                                           POSIXct (double)                       23T11:20:00"         targetDataType:
+                                                                                                                                                       "integer"
+                                              Displayed in dataframe: 2012-11-23                                                                       displayFormat:
+                                              11:20:00                                                                                                 "datetime19."
+
+   SAS/R                        LBDTC         2012-11-23T11:20                             Datatype: character                    "2012-11-23T11:20"   dataType: "datetime"
+
+
+
+
+https://wiki.cdisc.org/spaces/PUB/pages/236369276/Representing+Numeric+Dates                                                                                                  1/2
+
+8/14/26, 12:12 PM                                                                      Representing Numeric Dates - PUBLIC - Wiki
+
+                                                                                                                                                                             No labels
+
+
+
+                                                          Powered by a free Atlassian Confluence Community License granted to CDISC. Evaluate Confluence today.
+                                                            This Confluence installation runs a Free Gliffy License - Evaluate the Gliffy Confluence Plugin for your Wiki!
+
+
+
+
+https://wiki.cdisc.org/spaces/PUB/pages/236369276/Representing+Numeric+Dates                                                                                                        2/2
+
