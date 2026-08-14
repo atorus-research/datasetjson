@@ -287,7 +287,7 @@ test_that("float_as_decimal works on read and write", {
   json_out2 <- write_dataset_json(dsjson, float_as_decimals = TRUE)
 
   out1 <- read_dataset_json(json_out1)
-  out2 <- read_dataset_json(json_out2, decimals_as_float = TRUE)
+  out2 <- read_dataset_json(json_out2)
 
   # Expect precision to fall apart around 7 decimal place
   expect_true(all(abs(out1$float_col - test_df$float_col) > 0.0000001))
@@ -329,7 +329,7 @@ test_that("Decimal won't convert unless target data type is set", {
     columns = test_items
   )
 
-  json_out <- write_dataset_json(dsjson, float_as_decimals = TRUE)
+  json_out <- write_dataset_json(dsjson)
 
   out <- read_dataset_json(json_out)
 
