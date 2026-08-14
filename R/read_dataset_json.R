@@ -87,9 +87,10 @@ read_dataset_json <- function(file) {
 
   # Process type conversions
   dt <- items$dataType
-  tdt <- items$targetDataType
+  # targetDataType is optional in the spec - if no column has it, items$targetDataType is NULL
+  tdt <- if (is.null(items$targetDataType)) rep(NA_character_, nrow(items)) else items$targetDataType
   int_cols <- dt == "integer"
-  dbl_cols <- dt %in% c("float", "double") | (dt == "decimal" & !is.na(tdt) & tdt == "decimal")
+  dbl_cols <- dt %in% c("float", "double") | (dt == "decimal" & tdt == "decimal")
   bool_cols <- dt == "boolean"
   d[int_cols] <- lapply(d[int_cols], as.integer)
   d[dbl_cols] <- lapply(d[dbl_cols], as.double)
