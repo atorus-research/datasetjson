@@ -15,7 +15,7 @@
 #' \dontrun{
 #'   validate_dataset_json('path/to/file.json')
 #'   validate_dataset_json('https://www.somesite.com/file.json')
-#' }
+#' 
 #'
 #' ds_json <- dataset_json(
 #'   iris,
@@ -27,6 +27,7 @@
 #' js <- write_dataset_json(ds_json)
 #'
 #' validate_dataset_json(js)
+#'}
 validate_dataset_json <- function(x) {
   # If contents are a URL then pull out the content
   if (path_is_url(x)) {

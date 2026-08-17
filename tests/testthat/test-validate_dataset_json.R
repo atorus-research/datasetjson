@@ -1,4 +1,5 @@
 test_that("validate_dataset_json errors if jsonvalidate is not installed", {
+  skip_if_not_installed("mockery")
   ds_json <- dataset_json(
     iris,
     item_oid = "IG.IRIS",
@@ -16,6 +17,7 @@ test_that("validate_dataset_json errors if jsonvalidate is not installed", {
 })
 
 test_that("validate_dataset_json returns correct messages", {
+  skip_if_not_installed("jsonvalidate")
 
     ds_json <- dataset_json(
       iris,
@@ -39,6 +41,7 @@ test_that("validate_dataset_json returns correct messages", {
 })
 
 test_that("Missing optional attributes still validates", {
+  skip_if_not_installed("jsonvalidate")
 
   ds_json <- dataset_json(
     iris,
@@ -54,6 +57,7 @@ test_that("Missing optional attributes still validates", {
 })
 
 test_that("JSON can checked from URL", {
+  skip_if_not_installed("jsonvalidate")
   fpath <- paste0("file://", normalizePath(test_path("testdata", "invalid_dm.json")))
   expect_warning(
     err <- validate_dataset_json(fpath),
