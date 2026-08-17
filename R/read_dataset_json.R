@@ -107,6 +107,17 @@ read_dataset_json <- function(file, decimals_as_floats=FALSE) {
   # Apply variable labels
   d[names(d)] <- lapply(items$name, set_col_attr, d, 'label', items)
 
+  # Apply SAS format from displayFormat
+  if (!is.null(items$displayFormat)) {
+    has_format <- !is.na(items$displayFormat)
+    fmt_items <- items[has_format, ]
+    d[fmt_items$name] <- lapply(fmt_items$name, set_col_attr, d, 'displayFormat', fmt_items)
+    for (nm in fmt_items$name) {
+      attr(d[[nm]], 'format.sas') <- attr(d[[nm]], 'displayFormat')
+      attr(d[[nm]], 'displayFormat') <- NULL
+    }
+  }
+
   ds_attr <- dataset_json(
     d,
     file_oid = ds_json$fileOID,
