@@ -1,3 +1,20 @@
+test_that("validate_dataset_json errors if jsonvalidate is not installed", {
+  ds_json <- dataset_json(
+    iris,
+    item_oid = "IG.IRIS",
+    name = "IRIS",
+    dataset_label = "Iris",
+    columns = iris_items
+  )
+  js <- write_dataset_json(ds_json)
+
+  mockery::stub(validate_dataset_json, "requireNamespace", FALSE)
+  expect_error(
+    validate_dataset_json(js),
+    "Package 'jsonvalidate' is required for this function"
+  )
+})
+
 test_that("validate_dataset_json returns correct messages", {
 
     ds_json <- dataset_json(
