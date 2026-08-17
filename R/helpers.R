@@ -1,3 +1,25 @@
+#' Get path to a datasetjson example file
+#'
+#' datasetjson comes bundled with sample files in its `inst/extdata` directory.
+#' This function makes them easy to access.
+#'
+#' @param file Name of file. If `NULL`, the example files will be listed.
+#'
+#' @return A file path string, or a character vector of available files if
+#'   `file` is `NULL`.
+#' @export
+#'
+#' @examples
+#' datasetjson_example()
+#' datasetjson_example("dm.json")
+datasetjson_example <- function(file = NULL) {
+  if (is.null(file)) {
+    dir(system.file("extdata", package = "datasetjson"))
+  } else {
+    system.file("extdata", file, package = "datasetjson", mustWork = TRUE)
+  }
+}
+
 #' Extract column metadata to data frame
 #'
 #' This function pulls out the column metadata from the `datasetjson` object

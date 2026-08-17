@@ -31,9 +31,7 @@
 #' js <- write_dataset_json(ds_json)
 #'
 #' # Write to disk
-#' \dontrun{
-#'   write_dataset_json(ds_json, "path/to/file.json")
-#' }
+#' write_dataset_json(ds_json, tempfile(fileext = ".json"))
 write_dataset_json <- function(x, file, pretty=FALSE, float_as_decimals=FALSE, digits=16) {
   stopifnot_datasetjson(x)
 
