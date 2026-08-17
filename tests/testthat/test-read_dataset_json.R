@@ -1,3 +1,19 @@
+test_that("displayFormat is assigned as format.sas attribute", {
+  dat <- read_dataset_json(test_path("testdata", "adsl.json"))
+
+  # Date columns with displayFormat: "DATE9." in the JSON
+  date_cols <- c("TRTSDT", "TRTEDT", "DISONSDT", "VISIT1DT", "RFENDT")
+  for (col in date_cols) {
+    expect_equal(attr(dat[[col]], "format.sas"), "DATE9.",
+                 info = paste("format.sas for", col))
+    expect_null(attr(dat[[col]], "displayFormat"),
+                info = paste("displayFormat removed for", col))
+  }
+
+  # Columns without displayFormat should not have format.sas
+  expect_null(attr(dat[["STUDYID"]], "format.sas"))
+})
+
 test_that("read_dataset_json matches xpt", {
 
   # adsl ----
