@@ -15,7 +15,7 @@
 #' \dontrun{
 #'   validate_dataset_json('path/to/file.json')
 #'   validate_dataset_json('https://www.somesite.com/file.json')
-#' }
+#' 
 #'
 #' ds_json <- dataset_json(
 #'   iris,
@@ -27,6 +27,7 @@
 #' js <- write_dataset_json(ds_json)
 #'
 #' validate_dataset_json(js)
+#'}
 validate_dataset_json <- function(x) {
   # If contents are a URL then pull out the content
   if (path_is_url(x)) {
@@ -35,6 +36,9 @@ validate_dataset_json <- function(x) {
     js <- x
   }
 
+  if (!requireNamespace("jsonvalidate", quietly = TRUE)) {
+    stop("Package 'jsonvalidate' is required for this function. Install it with install.packages('jsonvalidate')", call. = FALSE)
+  }
   v <- jsonvalidate::json_validate(js, schema_1_1_0, engine="ajv", verbose=TRUE)
   if (!v) {
     warning("File contains errors!")

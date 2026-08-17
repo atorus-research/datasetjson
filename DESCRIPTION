@@ -21,15 +21,16 @@ Language: en-US
 License: Apache License (>= 2)
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 Depends: R (>= 4.0)
 Imports:
     yyjsonr (>= 0.1.18),
-    jsonvalidate (>= 1.3.1),
     hms
 Suggests:
     testthat (>= 2.1.0),
+    jsonvalidate (>= 1.3.1),
     jsonlite (>= 1.8.0),
+    mockery,
     knitr,
     haven,
     rmarkdown,

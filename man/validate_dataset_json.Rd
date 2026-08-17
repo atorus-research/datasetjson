@@ -23,7 +23,7 @@ file per the Dataset JSON schema.
 \dontrun{
   validate_dataset_json('path/to/file.json')
   validate_dataset_json('https://www.somesite.com/file.json')
-}
+
 
 ds_json <- dataset_json(
   iris,
@@ -35,4 +35,5 @@ ds_json <- dataset_json(
 js <- write_dataset_json(ds_json)
 
 validate_dataset_json(js)
+}
 }
