@@ -114,7 +114,6 @@ read_dataset_json <- function(file, decimals_as_floats=FALSE) {
     d[fmt_items$name] <- lapply(fmt_items$name, set_col_attr, d, 'displayFormat', fmt_items)
     for (nm in fmt_items$name) {
       attr(d[[nm]], 'format.sas') <- attr(d[[nm]], 'displayFormat')
-      attr(d[[nm]], 'displayFormat') <- NULL
     }
   }
 
