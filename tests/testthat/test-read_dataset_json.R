@@ -6,8 +6,8 @@ test_that("displayFormat is assigned as format.sas attribute", {
   for (col in date_cols) {
     expect_equal(attr(dat[[col]], "format.sas"), "DATE9.",
                  info = paste("format.sas for", col))
-    expect_equal(attr(dat[[col]], "displayFormat"), "DATE9.",
-                 info = paste("displayFormat preserved for", col))
+    expect_null(attr(dat[[col]], "displayFormat"),
+                info = paste("displayFormat blanked for", col))
   }
 
   # Columns without displayFormat should not have format.sas
