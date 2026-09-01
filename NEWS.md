@@ -1,3 +1,7 @@
+# datasetjson 0.4.0
+
+- Fixed a bug in the `converting_files` vignette where `extract_xpt_meta()` could return `-Inf` for the `length` field of empty or all-NA string columns; minimum length is now 1 (#71)
+
 # datasetjson 0.3.0
 
 This release provides a significant overhaul of the package due to the updates 
