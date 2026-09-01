@@ -1,3 +1,7 @@
+# datasetjson 0.4.0
+
+- Updated `read_dataset_json()`: `format.sas` is now set from the `displayFormat` attribute on columns (#87)
+
 # datasetjson 0.3.0
 
 This release provides a significant overhaul of the package due to the updates 
