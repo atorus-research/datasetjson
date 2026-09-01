@@ -1,3 +1,7 @@
+# datasetjson 0.4.0
+
+- Fixed a bug where `write_dataset_json()` with `float_as_decimals = TRUE` would write `NA` values as padded strings (e.g., `"    NA"`) instead of JSON `null` (#76)
+
 # datasetjson 0.3.0
 
 This release provides a significant overhaul of the package due to the updates 
