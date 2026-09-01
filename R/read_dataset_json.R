@@ -109,14 +109,14 @@ read_dataset_json <- function(file, decimals_as_floats=FALSE) {
 
   # Apply SAS format from displayFormat
   if (!is.null(items$displayFormat)) {
-    has_format <- !is.na(items$displayFormat)
-    fmt_items <- items[has_format, ]
-    d[fmt_items$name] <- lapply(fmt_items$name, set_col_attr, d, 'displayFormat', fmt_items)
-    for (nm in fmt_items$name) {
-      attr(d[[nm]], 'format.sas') <- attr(d[[nm]], 'displayFormat')
-      attr(d[[nm]], 'displayFormat') <- NULL
-    }
+  # Iterate only over columns that have a displayFormat value
+  for (nm in items$name[!is.na(items$displayFormat)]) {
+    # Set format.sas directly from items metadata (recognized by haven and SAS-aware tools)
+    attr(d[[nm]], 'format.sas') <- items$displayFormat[items$name == nm]
+    # Remove displayFormat to avoid duplication with format.sas
+    attr(d[[nm]], 'displayFormat') <- NULL
   }
+}
 
   ds_attr <- dataset_json(
     d,
