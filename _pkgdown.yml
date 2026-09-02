@@ -34,7 +34,7 @@ reference:
 - contents:
   - starts_with("set")
 - title: Read, Write, and Validate
-  desc: Functions to read, write, and validate Dataset JSON and Dataset NDJSON files
+  desc: Functions to read, write, and validate Dataset JSON, Dataset NDJSON and compressed (DSJC) files
 - contents:
   - read_dataset_json
   - write_dataset_json
@@ -42,6 +42,9 @@ reference:
   - read_dataset_ndjson
   - write_dataset_ndjson
   - validate_dataset_ndjson
+  - read_dataset_dsjc
+  - write_dataset_dsjc
+  - validate_dataset_dsjc
 - title: Helper Functions
   desc: Additional helpers
 - contents:

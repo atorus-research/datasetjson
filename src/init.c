@@ -8,8 +8,11 @@ static const R_CallMethodDef CallEntries[] = {
   {"C_read_dsndjson_file", (DL_FUNC) &C_read_dsndjson_file, 1},
   {"C_read_dsndjson_str",  (DL_FUNC) &C_read_dsndjson_str,  1},
   {"C_ndjson_shape",     (DL_FUNC) &C_ndjson_shape,     1},
+  {"C_read_dsjc_file",   (DL_FUNC) &C_read_dsjc_file,   1},
+  {"C_read_dsjc_raw",    (DL_FUNC) &C_read_dsjc_raw,    1},
   {"C_write_dsjson",     (DL_FUNC) &C_write_dsjson,     6},
   {"C_write_dsndjson",   (DL_FUNC) &C_write_dsndjson,   5},
+  {"C_write_dsjc",       (DL_FUNC) &C_write_dsjc,       6},
   {NULL, NULL, 0}
 };
 

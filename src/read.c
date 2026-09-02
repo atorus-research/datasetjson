@@ -1,5 +1,6 @@
 #include "datasetjson.h"
 #include "yyjson.h"
+#include <zlib.h>
 
 #include <stdlib.h>
 #include <string.h>
@@ -592,4 +593,83 @@ SEXP C_ndjson_shape(SEXP lines_) {
   Rf_setAttrib(out, R_NamesSymbol, nms);
   UNPROTECT(3);
   return out;
+}
+
+/* ------------------------------------------------------------------------ *
+ * Dataset JSON Compressed (DSJC): inflate the zLib stream, then read the
+ * result as Dataset NDJSON.
+ * ------------------------------------------------------------------------ */
+
+/* Inflate `in` into a buffer allocated with R_alloc. Returns NULL on failure,
+   with *msg set. */
+static char *inflate_all(const unsigned char *in, size_t n, size_t *out_len,
+                         const char **msg) {
+  z_stream zs;
+  memset(&zs, 0, sizeof(zs));
+  if (inflateInit(&zs) != Z_OK) { *msg = "could not initialise zLib"; return NULL; }
+
+  size_t cap = n * 4 + 1024, len = 0;
+  char *out = (char *) malloc(cap);
+  if (!out) { inflateEnd(&zs); *msg = "out of memory"; return NULL; }
+
+  zs.next_in = (Bytef *) in;
+  zs.avail_in = (uInt) n;
+  int rc = Z_OK;
+  while (rc != Z_STREAM_END) {
+    if (len == cap) {
+      size_t ncap = cap * 2;
+      char *bigger = (char *) realloc(out, ncap);
+      if (!bigger) { free(out); inflateEnd(&zs); *msg = "out of memory"; return NULL; }
+      out = bigger; cap = ncap;
+    }
+    zs.next_out = (Bytef *) (out + len);
+    zs.avail_out = (uInt) (cap - len);
+    rc = inflate(&zs, Z_NO_FLUSH);
+    if (rc != Z_OK && rc != Z_STREAM_END) {
+      free(out); inflateEnd(&zs);
+      *msg = zs.msg ? zs.msg : "invalid or corrupt compressed data";
+      return NULL;
+    }
+    len = cap - zs.avail_out;
+    if (rc == Z_OK && zs.avail_in == 0 && zs.avail_out != 0) {
+      free(out); inflateEnd(&zs);
+      *msg = "compressed stream ended before it was complete";
+      return NULL;
+    }
+  }
+  inflateEnd(&zs);
+  *out_len = len;
+
+  /* hand back R-managed memory so an error later cannot leak the buffer */
+  char *res = (char *) R_alloc(len + 1, 1);
+  memcpy(res, out, len);
+  res[len] = '\0';
+  free(out);
+  return res;
+}
+
+static SEXP dsjc_core(const unsigned char *in, size_t n) {
+  size_t len = 0;
+  const char *msg = NULL;
+  char *txt = inflate_all(in, n, &len, &msg);
+  if (!txt) Rf_error("Could not read Dataset JSON Compressed content: %s", msg);
+  return ndjson_core(txt, len);
+}
+
+SEXP C_read_dsjc_file(SEXP path_) {
+  const char *path = CHAR(STRING_ELT(path_, 0));
+  FILE *fp = fopen(path, "rb");
+  if (!fp) Rf_error("Could not open '%s'", path);
+  if (fseek(fp, 0, SEEK_END) != 0) { fclose(fp); Rf_error("Could not read '%s'", path); }
+  long sz = ftell(fp);
+  if (sz < 0) { fclose(fp); Rf_error("Could not read '%s'", path); }
+  rewind(fp);
+  unsigned char *buf = (unsigned char *) R_alloc((size_t) sz + 1, 1);
+  size_t got = fread(buf, 1, (size_t) sz, fp);
+  fclose(fp);
+  return dsjc_core(buf, got);
+}
+
+SEXP C_read_dsjc_raw(SEXP raw_) {
+  return dsjc_core(RAW(raw_), (size_t) Rf_xlength(raw_));
 }

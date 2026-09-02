@@ -1,5 +1,6 @@
 #include "datasetjson.h"
 #include "yyjson.h"
+#include <zlib.h>
 
 #include <stdlib.h>
 #include <string.h>
@@ -318,4 +319,114 @@ SEXP C_write_dsndjson(SEXP meta, SEXP columns, SEXP data, SEXP as_decimal,
   free(b.dat);
   UNPROTECT(1);
   return out;
+}
+
+/* ------------------------------------------------------------------------ *
+ * Dataset JSON Compressed (DSJC): a zLib stream of Dataset NDJSON content,
+ * with no wrapper of its own. Rows are deflated as they are serialized rather
+ * than after, so a large dataset never needs its NDJSON held in full.
+ * ------------------------------------------------------------------------ */
+
+/* Compressed output goes either straight to a file or into a growing buffer
+   that becomes a raw vector. */
+typedef struct {
+  FILE *fp;        /* non-NULL when writing to disk */
+  strbuf *buf;     /* non-NULL when returning bytes */
+} zsink;
+
+static int zsink_put(zsink *s, const char *dat, size_t n) {
+  if (n == 0) return 1;
+  if (s->fp) return fwrite(dat, 1, n, s->fp) == n;
+  sb_append(s->buf, dat, n);
+  return 1;
+}
+
+/* Push `n` bytes through the deflate stream into the sink. */
+static int zpush(z_stream *zs, zsink *sink, const char *dat, size_t n, int flush) {
+  static char out[65536];
+  zs->next_in = (Bytef *) dat;
+  zs->avail_in = (uInt) n;
+  do {
+    zs->next_out = (Bytef *) out;
+    zs->avail_out = (uInt) sizeof(out);
+    int rc = deflate(zs, flush);
+    if (rc == Z_STREAM_ERROR) return 0;
+    size_t have = sizeof(out) - zs->avail_out;
+    if (!zsink_put(sink, out, have)) return 0;
+  } while (zs->avail_out == 0);
+  return zs->avail_in == 0;
+}
+
+SEXP C_write_dsjc(SEXP meta, SEXP columns, SEXP data, SEXP as_decimal,
+                  SEXP level_, SEXP path) {
+  yyjson_mut_val *root, *rows;
+  yyjson_mut_doc *doc = build_doc(meta, columns, data, as_decimal, 0, &root, &rows);
+
+  const int level = INTEGER(level_)[0];
+  const yyjson_write_flag flg = YYJSON_WRITE_NOFLAG;
+  yyjson_write_err err;
+
+  strbuf out = {NULL, 0, 0};
+  zsink sink = {NULL, NULL};
+  if (path != R_NilValue && Rf_xlength(path) > 0) {
+    const char *p = Rf_translateCharUTF8(STRING_ELT(path, 0));
+    sink.fp = fopen(p, "wb");
+    if (!sink.fp) { yyjson_mut_doc_free(doc); Rf_error("Could not open '%s' for writing", p); }
+  } else {
+    sink.buf = &out;
+  }
+
+  z_stream zs;
+  memset(&zs, 0, sizeof(zs));
+  /* 15 window bits selects the zLib wrapper and the 32KB window the
+     specification recommends */
+  if (deflateInit2(&zs, level, Z_DEFLATED, 15, 8, Z_DEFAULT_STRATEGY) != Z_OK) {
+    if (sink.fp) fclose(sink.fp);
+    yyjson_mut_doc_free(doc);
+    Rf_error("Could not initialise zLib compression");
+  }
+
+  int failed = 0;
+  const char *failmsg = NULL;
+  size_t len = 0;
+  char *txt = yyjson_mut_val_write_opts(root, flg, NULL, &len, &err);
+  if (!txt) { failed = 1; failmsg = err.msg; }
+  else {
+    if (!zpush(&zs, &sink, txt, len, Z_NO_FLUSH)) { failed = 1; failmsg = "compression error"; }
+    free(txt);
+  }
+
+  yyjson_mut_arr_iter rit;
+  yyjson_mut_arr_iter_init(rows, &rit);
+  yyjson_mut_val *row;
+  while (!failed && (row = yyjson_mut_arr_iter_next(&rit)) != NULL) {
+    txt = yyjson_mut_val_write_opts(row, flg, NULL, &len, &err);
+    if (!txt) { failed = 1; failmsg = err.msg; break; }
+    if (!zpush(&zs, &sink, "\n", 1, Z_NO_FLUSH) ||
+        !zpush(&zs, &sink, txt, len, Z_NO_FLUSH)) {
+      failed = 1; failmsg = "compression error";
+    }
+    free(txt);
+  }
+  if (!failed && !zpush(&zs, &sink, "\n", 1, Z_FINISH)) {
+    failed = 1; failmsg = "compression error";
+  }
+
+  deflateEnd(&zs);
+  yyjson_mut_doc_free(doc);
+
+  if (sink.fp) {
+    fclose(sink.fp);
+    if (failed) Rf_error("Failed to write Dataset JSON Compressed: %s",
+                         failmsg ? failmsg : "unknown error");
+    return R_NilValue;
+  }
+  if (failed) { free(out.dat); Rf_error("Failed to build Dataset JSON Compressed: %s",
+                                        failmsg ? failmsg : "unknown error"); }
+
+  SEXP res = PROTECT(Rf_allocVector(RAWSXP, (R_xlen_t) out.len));
+  if (out.len) memcpy(RAW(res), out.dat, out.len);
+  free(out.dat);
+  UNPROTECT(1);
+  return res;
 }
