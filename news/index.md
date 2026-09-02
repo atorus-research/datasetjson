@@ -2,10 +2,6 @@
 
 ## datasetjson 0.4.0
 
-- Updated
-  [`read_dataset_json()`](https://atorus-research.github.io/datasetjson/reference/read_dataset_json.md):
-  `format.sas` is now set from the `displayFormat` attribute on columns
-  ([\#87](https://github.com/atorus-research/datasetjson/issues/87))=
 - `decimals_as_floats` parameter removed from
   [`read_dataset_json()`](https://atorus-research.github.io/datasetjson/reference/read_dataset_json.md).
   Variables with `dataType = "decimal"` and `targetDataType = "decimal"`

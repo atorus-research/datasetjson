@@ -29,7 +29,7 @@ A data frame
 if (FALSE) { # \dontrun{
   validate_dataset_json('path/to/file.json')
   validate_dataset_json('https://www.somesite.com/file.json')
-
+} # }
 
 ds_json <- dataset_json(
   iris,
@@ -41,5 +41,8 @@ ds_json <- dataset_json(
 js <- write_dataset_json(ds_json)
 
 validate_dataset_json(js)
-} # }
+#> File is valid per the Dataset JSON v1.1.0 schema
+#> [1] instancePath schemaPath   keyword      params       message     
+#> [6] schema       parentSchema dataPath    
+#> <0 rows> (or 0-length row.names)
 ```
