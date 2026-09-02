@@ -17,12 +17,7 @@
 
 /* Shortest representation that still parses back to exactly x. This is what
    makes float_as_decimals lossless: R's format(digits = 16) is not. */
-static void render_decimal(double x, int digits, char *buf, size_t n) {
-  if (digits != NA_INTEGER) {
-    /* explicit precision: reproduces the historical fixed-digits behaviour */
-    snprintf(buf, n, "%.*g", digits, x);
-    return;
-  }
+static void shortest_round_trip(double x, char *buf, size_t n) {
   for (int prec = 15; prec <= 17; prec++) {
     snprintf(buf, n, "%.*g", prec, x);
     if (strtod(buf, NULL) == x) return;
@@ -45,7 +40,7 @@ static yyjson_mut_val *chr_val(yyjson_mut_doc *doc, SEXP s) {
 
 /* One cell, dispatched on the R vector type. */
 static yyjson_mut_val *cell(yyjson_mut_doc *doc, SEXP col, R_xlen_t i,
-                            int as_decimal, int digits, SEXP levels) {
+                            int as_decimal, SEXP levels) {
   if (levels != R_NilValue) {
     int code = INTEGER(col)[i];
     if (code == NA_INTEGER || code < 1 || code > Rf_length(levels)) {
@@ -68,7 +63,7 @@ static yyjson_mut_val *cell(yyjson_mut_doc *doc, SEXP col, R_xlen_t i,
     if (ISNA(v) || ISNAN(v)) return yyjson_mut_null(doc);
     if (as_decimal) {
       char buf[64];
-      render_decimal(v, digits, buf, sizeof(buf));
+      shortest_round_trip(v, buf, sizeof(buf));
       return yyjson_mut_strncpy(doc, buf, strlen(buf));
     }
     return yyjson_mut_real(doc, v);
@@ -113,7 +108,6 @@ static void add_kv(yyjson_mut_doc *doc, yyjson_mut_val *obj,
  * columns   list of per-column named lists (the `columns` metadata)
  * data      list of column vectors
  * as_decimal logical, one per column: write this REALSXP column as a string
- * digits_   integer(1); NA means "shortest representation that round-trips"
  * pretty    logical(1)
  * path      character(1) to write a file, or NULL to return a string
  */
@@ -121,11 +115,9 @@ static void add_kv(yyjson_mut_doc *doc, yyjson_mut_val *obj,
    the root for JSON and left standalone for NDJSON, where each row is its own
    line. */
 static yyjson_mut_doc *build_doc(SEXP meta, SEXP columns, SEXP data,
-                                 SEXP as_decimal, SEXP digits_,
-                                 int attach_rows,
+                                 SEXP as_decimal, int attach_rows,
                                  yyjson_mut_val **root_out,
                                  yyjson_mut_val **rows_out) {
-  const int digits = INTEGER(digits_)[0];
   R_xlen_t ncol_d = Rf_xlength(data);
   R_xlen_t nrow_d = ncol_d ? Rf_xlength(VECTOR_ELT(data, 0)) : 0;
 
@@ -196,7 +188,7 @@ static yyjson_mut_doc *build_doc(SEXP meta, SEXP columns, SEXP data,
     for (R_xlen_t i = 0; i < nrow; i++) {
       yyjson_mut_val *row = yyjson_mut_arr(doc);
       for (R_xlen_t j = 0; j < ncol; j++) {
-        yyjson_mut_arr_add_val(row, cell(doc, cols[j], i, dec[j] == TRUE, digits, levs[j]));
+        yyjson_mut_arr_add_val(row, cell(doc, cols[j], i, dec[j] == TRUE, levs[j]));
       }
       yyjson_mut_arr_add_val(rows, row);
     }
@@ -209,9 +201,9 @@ static yyjson_mut_doc *build_doc(SEXP meta, SEXP columns, SEXP data,
 }
 
 SEXP C_write_dsjson(SEXP meta, SEXP columns, SEXP data, SEXP as_decimal,
-                    SEXP digits_, SEXP pretty, SEXP path) {
+                    SEXP pretty, SEXP path) {
   yyjson_mut_val *root, *rows;
-  yyjson_mut_doc *doc = build_doc(meta, columns, data, as_decimal, digits_, 1,
+  yyjson_mut_doc *doc = build_doc(meta, columns, data, as_decimal, 1,
                                   &root, &rows);
 
   yyjson_write_flag flg = LOGICAL(pretty)[0] ? YYJSON_WRITE_PRETTY : YYJSON_WRITE_NOFLAG;
@@ -261,9 +253,9 @@ static void sb_append(strbuf *b, const char *s, size_t n) {
 }
 
 SEXP C_write_dsndjson(SEXP meta, SEXP columns, SEXP data, SEXP as_decimal,
-                      SEXP digits_, SEXP path) {
+                      SEXP path) {
   yyjson_mut_val *root, *rows;
-  yyjson_mut_doc *doc = build_doc(meta, columns, data, as_decimal, digits_, 0,
+  yyjson_mut_doc *doc = build_doc(meta, columns, data, as_decimal, 0,
                                   &root, &rows);
 
   /* NDJSON requires exactly one JSON document per line, so never pretty-print */

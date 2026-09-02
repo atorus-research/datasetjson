@@ -86,22 +86,40 @@ The result is the same, because both paths are exact. **`float_as_decimals` is a
 - Writing the `decimal` type is an extra step the consuming system has to be aware of, and Dataset JSON is still a young standard
 - Quoted numbers make for larger files with no gain in fidelity
 
-## The `digits` argument
+## A note on `digits`
 
-`digits` controls how many significant digits are used when rendering decimal strings. It defaults to `NULL`, meaning the shortest representation that still reads back as the same value - which is what makes the decimal path lossless, and keeps the output tidy:
+Earlier versions took a `digits` argument controlling how many significant
+digits were used when rendering decimals, defaulting to 16. That default was
+the source of the problem above: 17 significant digits are needed to
+round-trip a double, so 16 was quietly lossy, and no other setting was any
+better. Above 17 the output grew without becoming more accurate; below it,
+values simply did not come back.
+
+Decimals are now rendered at whatever precision reads back as the same value,
+which is both exact and compact:
 
 ```{r digits, warning=FALSE}
 cat(write_dataset_json(dsjson, float_as_decimals = TRUE, pretty = TRUE))
 ```
 
-Supplying a number fixes the precision instead. That is occasionally useful for matching another system's output, but it is lossy whenever the value needs more digits than you allow:
+`digits` is deprecated and ignored, and supplying it warns. If you need values
+at a fixed precision - to match another system's output, say - format the
+column to character yourself and declare it as `decimal`/`decimal` in the
+column metadata. The writer passes such columns through verbatim:
 
-```{r digits_fixed, warning=FALSE}
-fixed <- read_dataset_json(
-  write_dataset_json(dsjson, float_as_decimals = TRUE, digits = 8)
+```{r fixed_precision}
+fixed <- test_df
+fixed$float_col <- format(fixed$float_col, digits = 8, trim = TRUE)
+
+fixed_items <- test_items
+fixed_items$dataType[fixed_items$name == "float_col"] <- "decimal"
+fixed_items$targetDataType <- ifelse(fixed_items$name == "float_col",
+                                     "decimal", NA_character_)
+
+fixed_json <- write_dataset_json(
+  dataset_json(fixed, item_oid = "test_df", name = "test_df",
+               dataset_label = "test_df", columns = fixed_items)
 )
 
-test_df$float_col - fixed$float_col
+read_dataset_json(fixed_json)$float_col
 ```
-
-Note that 17 significant digits, not 16, is the round-trip guarantee for a double. If you do set `digits`, anything below 17 risks losing the last bits of a value.

@@ -29,12 +29,12 @@ full precision either way, and setting it raises a warning to that effect.
 See the \href{https://wiki.cdisc.org/display/PUB/Precision+and+Rounding}{Dataset JSON user guide} for more
 information. Defaults to FALSE}
 
-\item{digits}{The number of significant digits to render when writing
-decimals. Defaults to NULL, which uses the shortest representation that
-reads back as the same value. Supplying a number fixes the precision
-instead, and warns when it is below 17, the round-trip threshold for a
-double. It has no effect unless \code{float_as_decimals = TRUE}, and warns if
-supplied on its own.}
+\item{digits}{Deprecated and ignored. Decimals are written at
+whatever precision reads back as the same value, so there is no precision
+for this argument to control. It is ignored, and supplying it warns. If you
+need values rendered at a fixed precision, format the column to character
+yourself and declare it as \code{decimal}/\code{decimal} in the column metadata; the
+writer passes such columns through verbatim.}
 }
 \value{
 NULL when file written to disk, otherwise character string

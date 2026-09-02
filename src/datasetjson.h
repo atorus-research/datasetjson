@@ -11,8 +11,8 @@ SEXP C_read_dsndjson_file(SEXP path_);
 SEXP C_read_dsndjson_str(SEXP txt_);
 SEXP C_ndjson_shape(SEXP lines_);
 SEXP C_write_dsjson(SEXP meta, SEXP columns, SEXP data, SEXP as_decimal,
-                    SEXP digits_, SEXP pretty, SEXP path);
+                    SEXP pretty, SEXP path);
 SEXP C_write_dsndjson(SEXP meta, SEXP columns, SEXP data, SEXP as_decimal,
-                      SEXP digits_, SEXP path);
+                      SEXP path);
 
 #endif

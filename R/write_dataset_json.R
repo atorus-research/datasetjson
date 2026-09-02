@@ -13,12 +13,12 @@
 #'   See the [Dataset JSON user
 #'   guide](https://wiki.cdisc.org/display/PUB/Precision+and+Rounding) for more
 #'   information. Defaults to FALSE
-#' @param digits The number of significant digits to render when writing
-#'   decimals. Defaults to NULL, which uses the shortest representation that
-#'   reads back as the same value. Supplying a number fixes the precision
-#'   instead, and warns when it is below 17, the round-trip threshold for a
-#'   double. It has no effect unless `float_as_decimals = TRUE`, and warns if
-#'   supplied on its own.
+#' @param digits Deprecated and ignored. Decimals are written at
+#'   whatever precision reads back as the same value, so there is no precision
+#'   for this argument to control. It is ignored, and supplying it warns. If you
+#'   need values rendered at a fixed precision, format the column to character
+#'   yourself and declare it as `decimal`/`decimal` in the column metadata; the
+#'   writer passes such columns through verbatim.
 #'
 #' @return NULL when file written to disk, otherwise character string
 #' @export
@@ -60,7 +60,6 @@ write_dataset_json <- function(
     prepared$columns,
     prepared$data,
     prepared$as_decimal,
-    if (is.null(digits)) NA_integer_ else as.integer(digits),
     isTRUE(pretty),
     if (missing(file)) NULL else file
   )
@@ -167,6 +166,18 @@ prepare_dataset_for_write <- function(x, float_as_decimals = FALSE, digits = NUL
     "requires the `decimal` data type."
   )
 
+  if (!is.null(digits)) {
+    warning(
+      "`digits` is deprecated and ignored. Decimals are written at whatever ",
+      "precision reads back as the same value, so there is nothing for it to ",
+      "control - every setting below 17 significant digits only made the ",
+      "output less accurate. To render values at a fixed precision, format ",
+      "the column to character yourself and declare it as `decimal`",
+      "/`decimal` in the column metadata.",
+      call. = FALSE
+    )
+  }
+
   if (isTRUE(float_as_decimals) && !any(as_decimal)) {
     warning(
       "`float_as_decimals = TRUE` had no effect: this dataset has no float, ",
@@ -175,30 +186,7 @@ prepare_dataset_for_write <- function(x, float_as_decimals = FALSE, digits = NUL
       call. = FALSE
     )
   } else if (isTRUE(float_as_decimals)) {
-    # 17 significant digits is the round-trip guarantee for a double; anything
-    # less renders values that will not read back exactly
-    if (!is.null(digits) && digits < 17) {
-      warning(
-        sprintf(
-          paste0(
-            "`digits = %s` renders decimals at fixed precision and the values ",
-            "will not read back exactly - 17 significant digits are needed to ",
-            "round-trip a double. Omit `digits` for exact output. "
-          ),
-          digits
-        ),
-        advisory,
-        call. = FALSE
-      )
-    } else {
-      warning(advisory, call. = FALSE)
-    }
-  } else if (!is.null(digits)) {
-    warning(
-      "`digits` has no effect unless `float_as_decimals = TRUE`, and is ",
-      "ignored here. Numbers are written at full precision either way.",
-      call. = FALSE
-    )
+    warning(advisory, call. = FALSE)
   }
 
   # Populate the creation datetime

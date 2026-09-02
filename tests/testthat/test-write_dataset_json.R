@@ -398,7 +398,7 @@ test_that("float_as_decimals advises that it is no longer needed for precision",
   expect_silent(write_dataset_ndjson(dsjson))
 })
 
-test_that("digits is flagged when it is inert or lossy", {
+test_that("digits is deprecated, ignored, and warns", {
   dsjson <- dataset_json(
     head(iris, 3),
     item_oid = "test_df",
@@ -407,33 +407,54 @@ test_that("digits is flagged when it is inert or lossy", {
     columns = iris_items
   )
 
-  # digits does nothing without float_as_decimals, and says so
   expect_warning(
     write_dataset_json(dsjson, digits = 8),
-    "no effect unless `float_as_decimals = TRUE`",
+    "`digits` is deprecated and ignored",
     fixed = TRUE
   )
   expect_warning(
     write_dataset_ndjson(dsjson, digits = 8),
-    "no effect unless `float_as_decimals = TRUE`",
+    "`digits` is deprecated and ignored",
     fixed = TRUE
   )
-  # and it really is inert
+
+  # it changes nothing, on either path
   expect_identical(
     write_dataset_json(dsjson),
     suppressWarnings(write_dataset_json(dsjson, digits = 8))
   )
+  expect_identical(
+    suppressWarnings(write_dataset_json(dsjson, float_as_decimals = TRUE)),
+    suppressWarnings(
+      write_dataset_json(dsjson, float_as_decimals = TRUE, digits = 8))
+  )
 
-  # below the round-trip threshold the warning says the output is lossy
-  expect_warning(
-    write_dataset_json(dsjson, float_as_decimals = TRUE, digits = 8),
-    "will not read back exactly"
-  )
-  # at or above 17 it is exact, so only the float_as_decimals advisory applies
+  # supplied alongside float_as_decimals, both advisories are raised
   w <- capture_warnings(
-    write_dataset_json(dsjson, float_as_decimals = TRUE, digits = 17)
+    write_dataset_json(dsjson, float_as_decimals = TRUE, digits = 8))
+  expect_length(w, 2)
+  expect_true(any(grepl("deprecated and ignored", w)))
+  expect_true(any(grepl("no longer needed to protect against", w)))
+})
+
+test_that("fixed precision is still reachable by formatting the column", {
+  # the capability `digits` used to provide: format to character yourself and
+  # declare the column decimal/decimal, and the writer passes it through as-is
+  d <- head(iris, 2)
+  d$v <- format(c(143.66666666666699825, 2 / 3), digits = 8, trim = TRUE)
+  items <- dplyr::bind_rows(
+    iris_items,
+    data.frame(itemOID = "IT.v", name = "v", label = "V",
+               dataType = "decimal", targetDataType = "decimal")
   )
-  expect_false(any(grepl("will not read back exactly", w)))
+  ds <- dataset_json(d, item_oid = "t", name = "t", dataset_label = "t",
+                     columns = items)
+
+  js <- expect_silent(write_dataset_json(ds))
+  expect_true(grepl('"143.66666667"', js, fixed = TRUE))
+  expect_equal(read_dataset_json(js)$v, c(143.66666667, 0.66666667),
+               ignore_attr = TRUE)
+  expect_message(validate_dataset_json(js), "File is valid")
 })
 
 test_that("float_as_decimals reports when it had no effect", {
