@@ -117,8 +117,14 @@ static void add_kv(yyjson_mut_doc *doc, yyjson_mut_val *obj,
  * pretty    logical(1)
  * path      character(1) to write a file, or NULL to return a string
  */
-SEXP C_write_dsjson(SEXP meta, SEXP columns, SEXP data, SEXP as_decimal,
-                    SEXP digits_, SEXP pretty, SEXP path) {
+/* Build the document. `rows_out` receives the rows array; it is attached to
+   the root for JSON and left standalone for NDJSON, where each row is its own
+   line. */
+static yyjson_mut_doc *build_doc(SEXP meta, SEXP columns, SEXP data,
+                                 SEXP as_decimal, SEXP digits_,
+                                 int attach_rows,
+                                 yyjson_mut_val **root_out,
+                                 yyjson_mut_val **rows_out) {
   const int digits = INTEGER(digits_)[0];
   R_xlen_t ncol_d = Rf_xlength(data);
   R_xlen_t nrow_d = ncol_d ? Rf_xlength(VECTOR_ELT(data, 0)) : 0;
@@ -194,8 +200,19 @@ SEXP C_write_dsjson(SEXP meta, SEXP columns, SEXP data, SEXP as_decimal,
       }
       yyjson_mut_arr_add_val(rows, row);
     }
-    yyjson_mut_obj_add_val(doc, root, "rows", rows);
+    if (attach_rows) yyjson_mut_obj_add_val(doc, root, "rows", rows);
+    *rows_out = rows;
   }
+
+  *root_out = root;
+  return doc;
+}
+
+SEXP C_write_dsjson(SEXP meta, SEXP columns, SEXP data, SEXP as_decimal,
+                    SEXP digits_, SEXP pretty, SEXP path) {
+  yyjson_mut_val *root, *rows;
+  yyjson_mut_doc *doc = build_doc(meta, columns, data, as_decimal, digits_, 1,
+                                  &root, &rows);
 
   yyjson_write_flag flg = LOGICAL(pretty)[0] ? YYJSON_WRITE_PRETTY : YYJSON_WRITE_NOFLAG;
 
@@ -216,6 +233,97 @@ SEXP C_write_dsjson(SEXP meta, SEXP columns, SEXP data, SEXP as_decimal,
 
   SEXP out = PROTECT(Rf_ScalarString(Rf_mkCharLenCE(txt, (int) len, CE_UTF8)));
   free(txt);
+  UNPROTECT(1);
+  return out;
+}
+
+/* ------------------------------------------------------------------------ *
+ * Dataset NDJSON writer: the metadata object on line 1, one row array per
+ * line after it. Rows are serialized straight out one at a time, so nothing
+ * assembles the whole payload as a single string on the file path.
+ * ------------------------------------------------------------------------ */
+
+typedef struct { char *dat; size_t len, cap; } strbuf;
+
+static void sb_reserve(strbuf *b, size_t extra) {
+  if (b->len + extra <= b->cap) return;
+  size_t cap = b->cap ? b->cap : 1024;
+  while (cap < b->len + extra) cap *= 2;
+  char *p = (char *) realloc(b->dat, cap);
+  if (!p) { free(b->dat); b->dat = NULL; Rf_error("Out of memory building JSON"); }
+  b->dat = p; b->cap = cap;
+}
+
+static void sb_append(strbuf *b, const char *s, size_t n) {
+  sb_reserve(b, n);
+  memcpy(b->dat + b->len, s, n);
+  b->len += n;
+}
+
+SEXP C_write_dsndjson(SEXP meta, SEXP columns, SEXP data, SEXP as_decimal,
+                      SEXP digits_, SEXP path) {
+  yyjson_mut_val *root, *rows;
+  yyjson_mut_doc *doc = build_doc(meta, columns, data, as_decimal, digits_, 0,
+                                  &root, &rows);
+
+  /* NDJSON requires exactly one JSON document per line, so never pretty-print */
+  const yyjson_write_flag flg = YYJSON_WRITE_NOFLAG;
+  yyjson_write_err err;
+
+  FILE *fp = NULL;
+  if (path != R_NilValue && Rf_xlength(path) > 0) {
+    const char *p = Rf_translateCharUTF8(STRING_ELT(path, 0));
+    fp = fopen(p, "wb");
+    if (!fp) { yyjson_mut_doc_free(doc); Rf_error("Could not open '%s' for writing", p); }
+  }
+
+  /* Serialize into one buffer rather than calling the file writer per row -
+     300k separate writes is dramatically slower than a handful of large ones.
+     When writing to disk the buffer is flushed periodically so memory stays
+     bounded regardless of dataset size. */
+  strbuf b = {NULL, 0, 0};
+  const size_t FLUSH_AT = 8u << 20;
+  /* mutable arrays are linked lists - index access is O(n), so iterate */
+  yyjson_mut_arr_iter rit;
+  yyjson_mut_arr_iter_init(rows, &rit);
+  size_t len = 0;
+  int failed = 0;
+  const char *failmsg = NULL;
+
+  char *txt = yyjson_mut_val_write_opts(root, flg, NULL, &len, &err);
+  if (!txt) { failed = 1; failmsg = err.msg; }
+  else { sb_append(&b, txt, len); free(txt); }
+
+  yyjson_mut_val *row;
+  while (!failed && (row = yyjson_mut_arr_iter_next(&rit)) != NULL) {
+    txt = yyjson_mut_val_write_opts(row, flg, NULL, &len, &err);
+    if (!txt) { failed = 1; failmsg = err.msg; break; }
+    sb_append(&b, "\n", 1);
+    sb_append(&b, txt, len);
+    free(txt);
+    if (fp && b.len >= FLUSH_AT) {
+      if (fwrite(b.dat, 1, b.len, fp) != b.len) { failed = 1; failmsg = "write error"; break; }
+      b.len = 0;
+    }
+  }
+
+  if (fp) {
+    if (!failed) {
+      sb_append(&b, "\n", 1);
+      if (fwrite(b.dat, 1, b.len, fp) != b.len) { failed = 1; failmsg = "write error"; }
+    }
+    fclose(fp);
+    free(b.dat);
+    yyjson_mut_doc_free(doc);
+    if (failed) Rf_error("Failed to write Dataset NDJSON: %s", failmsg ? failmsg : "unknown error");
+    return R_NilValue;
+  }
+
+  yyjson_mut_doc_free(doc);
+  if (failed) { free(b.dat); Rf_error("Failed to serialize Dataset NDJSON: %s", failmsg ? failmsg : "unknown error"); }
+
+  SEXP out = PROTECT(Rf_ScalarString(Rf_mkCharLenCE(b.dat, (int) b.len, CE_UTF8)));
+  free(b.dat);
   UNPROTECT(1);
   return out;
 }

@@ -24,7 +24,7 @@ recommended you use pretty printing for submission purposes.}}
 \item{float_as_decimals}{If TRUE, Convert float variables to "decimal" data
 type in the JSON output. This will manually convert the numeric values
 using the \code{format()} function using the number of digits specified in
-\code{digits}, bypassing the \code{yyjsonr} handling of float values and writing the
+\code{digits}, writing the
 numbers out as JSON character strings. See the \href{https://wiki.cdisc.org/display/PUB/Precision+and+Rounding}{Dataset JSON user guide} for more
 information. Defaults to FALSE}
 

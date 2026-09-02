@@ -29,9 +29,9 @@ library, actively maintained. The Dataset-JSON-specific binding is ours.
       Closes the precision bug. Highest value; do this first.
 - [x] **2. Native writer** — serialize rows as arrays without the `unname()` trick
       and without `format()`-to-character for decimals
-- [ ] **3. NDJSON** — read + write, removing the R-level row-by-row fallback in
+- [x] **3. NDJSON** — read + write, removing the R-level row-by-row fallback in
       `write_dataset_ndjson.R`
-- [ ] **4. Drop the yyjsonr dependency**
+- [x] **4. Drop the yyjsonr dependency**
 
 ## Type mapping (CDISC Dataset-JSON v1.1)
 

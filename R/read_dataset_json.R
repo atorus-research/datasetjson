@@ -65,7 +65,20 @@ read_dataset_json <- function(file) {
     parsed <- .Call(C_read_dsjson_str, file)
   }
 
-  ds_json <- parsed
+  build_datasetjson(parsed)
+}
+
+#' Assemble a datasetjson object from the native parser output
+#'
+#' Shared by the JSON and NDJSON readers - both hand back the same list of
+#' metadata, column definitions and already-typed data columns.
+#'
+#' @param parsed The list returned by the C reader
+#'
+#' @return A datasetjson object
+#' @noRd
+build_datasetjson <- function(parsed) {
+ds_json <- parsed
   # C returns column metadata as a list of equal-length vectors
   ds_json$columns <- as.data.frame(ds_json$columns, stringsAsFactors = FALSE)
   items <- ds_json$columns
@@ -122,3 +135,4 @@ read_dataset_json <- function(file) {
 
   ds_attr
 }
+

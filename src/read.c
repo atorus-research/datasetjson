@@ -239,86 +239,70 @@ static void store(SEXP dest, col_type ct, R_xlen_t i, yyjson_val *v, tally *t) {
   }
 }
 
-static SEXP build_result(yyjson_doc *doc) {
-  yyjson_val *root = yyjson_doc_get_root(doc);
-  if (!root || !yyjson_is_obj(root)) {
-    Rf_error("Dataset JSON must be a JSON object at the top level");
-  }
+/* Classify every column and allocate a typed vector of `nrow` for each.
+   Returns the named list; fills `types`. Caller must PROTECT the result. */
+static SEXP alloc_columns(yyjson_val *cols, size_t ncol, size_t nrow,
+                          col_type *types) {
+  SEXP data = PROTECT(Rf_allocVector(VECSXP, (R_xlen_t) ncol));
+  SEXP dnms = PROTECT(Rf_allocVector(STRSXP, (R_xlen_t) ncol));
 
-  yyjson_val *cols = yyjson_obj_get(root, "columns");
-  yyjson_val *rows = yyjson_obj_get(root, "rows");
-  if (!cols || !yyjson_is_arr(cols)) Rf_error("`columns` is missing or not an array");
-  if (!rows || !yyjson_is_arr(rows)) Rf_error("`rows` is missing or not an array");
+  yyjson_arr_iter it;
+  yyjson_arr_iter_init(cols, &it);
+  yyjson_val *col;
+  size_t j = 0;
+  while ((col = yyjson_arr_iter_next(&it)) && j < ncol) {
+    yyjson_val *dtv  = yyjson_is_obj(col) ? yyjson_obj_get(col, "dataType") : NULL;
+    yyjson_val *tdtv = yyjson_is_obj(col) ? yyjson_obj_get(col, "targetDataType") : NULL;
+    yyjson_val *nmv  = yyjson_is_obj(col) ? yyjson_obj_get(col, "name") : NULL;
 
-  size_t ncol = yyjson_arr_size(cols);
-  size_t nrow = yyjson_arr_size(rows);
-  if (ncol == 0) Rf_error("`columns` is empty");
+    types[j] = classify(yyjson_is_str(dtv)  ? yyjson_get_str(dtv)  : NULL,
+                        yyjson_is_str(tdtv) ? yyjson_get_str(tdtv) : NULL);
 
-  int nprot = 0;
+    SEXPTYPE st = (types[j] == COL_STRING)  ? STRSXP
+                : (types[j] == COL_INTEGER) ? INTSXP
+                : (types[j] == COL_BOOL)    ? LGLSXP
+                                            : REALSXP;
+    SET_VECTOR_ELT(data, (R_xlen_t) j, Rf_allocVector(st, (R_xlen_t) nrow));
 
-  /* classify each column and allocate its vector */
-  col_type *types = (col_type *) R_alloc(ncol, sizeof(col_type));
-  SEXP data = PROTECT(Rf_allocVector(VECSXP, (R_xlen_t) ncol)); nprot++;
-  SEXP dnms = PROTECT(Rf_allocVector(STRSXP, (R_xlen_t) ncol)); nprot++;
-
-  {
-    yyjson_arr_iter it;
-    yyjson_arr_iter_init(cols, &it);
-    yyjson_val *col;
-    size_t j = 0;
-    while ((col = yyjson_arr_iter_next(&it)) && j < ncol) {
-      yyjson_val *dtv  = yyjson_is_obj(col) ? yyjson_obj_get(col, "dataType") : NULL;
-      yyjson_val *tdtv = yyjson_is_obj(col) ? yyjson_obj_get(col, "targetDataType") : NULL;
-      yyjson_val *nmv  = yyjson_is_obj(col) ? yyjson_obj_get(col, "name") : NULL;
-
-      types[j] = classify(yyjson_is_str(dtv)  ? yyjson_get_str(dtv)  : NULL,
-                          yyjson_is_str(tdtv) ? yyjson_get_str(tdtv) : NULL);
-
-      SEXPTYPE st = (types[j] == COL_STRING)  ? STRSXP
-                  : (types[j] == COL_INTEGER) ? INTSXP
-                  : (types[j] == COL_BOOL)    ? LGLSXP
-                                              : REALSXP;
-      SET_VECTOR_ELT(data, (R_xlen_t) j, Rf_allocVector(st, (R_xlen_t) nrow));
-
-      if (yyjson_is_str(nmv)) {
-        size_t len;
-        const char *s = val_str(nmv, &len);
-        SET_STRING_ELT(dnms, (R_xlen_t) j, Rf_mkCharLenCE(s, (int) len, CE_UTF8));
-      } else {
-        SET_STRING_ELT(dnms, (R_xlen_t) j, NA_STRING);
-      }
-      j++;
+    if (yyjson_is_str(nmv)) {
+      size_t len;
+      const char *s = val_str(nmv, &len);
+      SET_STRING_ELT(dnms, (R_xlen_t) j, Rf_mkCharLenCE(s, (int) len, CE_UTF8));
+    } else {
+      SET_STRING_ELT(dnms, (R_xlen_t) j, NA_STRING);
     }
+    j++;
   }
   Rf_setAttrib(data, R_NamesSymbol, dnms);
+  UNPROTECT(2);
+  return data;
+}
 
-  /* cache the destination SEXPs so the hot loop avoids VECTOR_ELT dispatch */
-  SEXP *dest = (SEXP *) R_alloc(ncol, sizeof(SEXP));
-  for (size_t j = 0; j < ncol; j++) dest[j] = VECTOR_ELT(data, (R_xlen_t) j);
-
-  tally t = {0, 0, 0, 0};
-
-  {
-    yyjson_arr_iter rit;
-    yyjson_arr_iter_init(rows, &rit);
-    yyjson_val *row;
-    R_xlen_t i = 0;
-    while ((row = yyjson_arr_iter_next(&rit))) {
-      if (!yyjson_is_arr(row)) {
-        Rf_error("Row %lld is not an array; Dataset JSON rows must be arrays of values",
-                 (long long) (i + 1));
-      }
-      yyjson_arr_iter cit;
-      yyjson_arr_iter_init(row, &cit);
-      for (size_t j = 0; j < ncol; j++) {
-        yyjson_val *v = yyjson_arr_iter_next(&cit);
-        if (!v) t.short_row++;
-        store(dest[j], types[j], i, v, &t);
-      }
-      i++;
-    }
+/* Fill row `i` of `dest` from a JSON array of values. */
+static void store_row(yyjson_val *row, SEXP *dest, const col_type *types,
+                      size_t ncol, R_xlen_t i, tally *t) {
+  yyjson_arr_iter cit;
+  yyjson_arr_iter_init(row, &cit);
+  for (size_t j = 0; j < ncol; j++) {
+    yyjson_val *v = yyjson_arr_iter_next(&cit);
+    if (!v) t->short_row++;
+    store(dest[j], types[j], i, v, t);
   }
+}
 
+static void warn_tally(const tally *t) {
+  if (t->bad_type)     Rf_warning("%lld value(s) did not match the declared column dataType and were set to NA", (long long) t->bad_type);
+  if (t->bad_decimal)  Rf_warning("%lld decimal value(s) could not be parsed as numbers", (long long) t->bad_decimal);
+  if (t->int_overflow) Rf_warning("%lld integer value(s) exceeded R's integer range and were set to NA", (long long) t->int_overflow);
+  if (t->short_row)    Rf_warning("%lld row(s) had fewer values than there are columns", (long long) t->short_row);
+}
+
+/* Assemble the list handed back to R: metadata scalars, column metadata and
+   the typed data columns. `root` is the object carrying the metadata (the
+   whole document for JSON, the first line for NDJSON). */
+static SEXP assemble(yyjson_val *root, yyjson_val *cols, size_t ncol, SEXP data) {
+  int nprot = 0;
+  PROTECT(data); nprot++;
   /* top-level metadata, shaped like the list callers already consume */
   static const char *META[] = {
     "datasetJSONCreationDateTime", "datasetJSONVersion", "fileOID",
@@ -362,13 +346,48 @@ static SEXP build_result(yyjson_doc *doc) {
   SET_STRING_ELT(onms, n_meta + 3, Rf_mkChar("data"));
 
   Rf_setAttrib(out, R_NamesSymbol, onms);
-
-  if (t.bad_type)     Rf_warning("%lld value(s) did not match the declared column dataType and were set to NA", (long long) t.bad_type);
-  if (t.bad_decimal)  Rf_warning("%lld decimal value(s) could not be parsed as numbers", (long long) t.bad_decimal);
-  if (t.int_overflow) Rf_warning("%lld integer value(s) exceeded R's integer range and were set to NA", (long long) t.int_overflow);
-  if (t.short_row)    Rf_warning("%lld row(s) had fewer values than there are columns", (long long) t.short_row);
-
   UNPROTECT(nprot);
+  return out;
+}
+
+static SEXP build_result(yyjson_doc *doc) {
+  yyjson_val *root = yyjson_doc_get_root(doc);
+  if (!root || !yyjson_is_obj(root)) {
+    Rf_error("Dataset JSON must be a JSON object at the top level");
+  }
+
+  yyjson_val *cols = yyjson_obj_get(root, "columns");
+  yyjson_val *rows = yyjson_obj_get(root, "rows");
+  if (!cols || !yyjson_is_arr(cols)) Rf_error("`columns` is missing or not an array");
+  if (!rows || !yyjson_is_arr(rows)) Rf_error("`rows` is missing or not an array");
+
+  size_t ncol = yyjson_arr_size(cols);
+  size_t nrow = yyjson_arr_size(rows);
+  if (ncol == 0) Rf_error("`columns` is empty");
+
+  col_type *types = (col_type *) R_alloc(ncol, sizeof(col_type));
+  SEXP data = PROTECT(alloc_columns(cols, ncol, nrow, types));
+
+  SEXP *dest = (SEXP *) R_alloc(ncol, sizeof(SEXP));
+  for (size_t j = 0; j < ncol; j++) dest[j] = VECTOR_ELT(data, (R_xlen_t) j);
+
+  tally t = {0, 0, 0, 0};
+  yyjson_arr_iter rit;
+  yyjson_arr_iter_init(rows, &rit);
+  yyjson_val *row;
+  R_xlen_t i = 0;
+  while ((row = yyjson_arr_iter_next(&rit))) {
+    if (!yyjson_is_arr(row)) {
+      Rf_error("Row %lld is not an array; Dataset JSON rows must be arrays of values",
+               (long long) (i + 1));
+    }
+    store_row(row, dest, types, ncol, i, &t);
+    i++;
+  }
+
+  SEXP out = PROTECT(assemble(root, cols, ncol, data));
+  warn_tally(&t);
+  UNPROTECT(2);
   return out;
 }
 
@@ -400,4 +419,131 @@ SEXP C_read_dsjson_str(SEXP txt_) {
   yyjson_doc_free(doc);
   UNPROTECT(1);
   return out;
+}
+
+/* ------------------------------------------------------------------------ *
+ * Dataset NDJSON: line 1 is the metadata object, lines 2..n are row arrays.
+ * ------------------------------------------------------------------------ */
+
+typedef struct { const char *ptr; size_t len; } line;
+
+/* Split on \n, trimming a trailing \r and dropping blank lines. */
+static line *split_lines(const char *buf, size_t len, size_t *nlines) {
+  size_t cap = 64, n = 0;
+  line *out = (line *) R_alloc(cap, sizeof(line));
+  size_t i = 0;
+  while (i < len) {
+    const char *nl = (const char *) memchr(buf + i, '\n', len - i);
+    size_t stop = nl ? (size_t) (nl - buf) : len;
+    size_t start = i, end = stop;
+    if (end > start && buf[end - 1] == '\r') end--;
+    /* skip lines that are entirely whitespace */
+    size_t k = start;
+    while (k < end && (buf[k] == ' ' || buf[k] == '\t')) k++;
+    if (k < end) {
+      if (n == cap) {
+        size_t ncap = cap * 2;
+        line *bigger = (line *) R_alloc(ncap, sizeof(line));
+        memcpy(bigger, out, n * sizeof(line));
+        out = bigger; cap = ncap;
+      }
+      out[n].ptr = buf + start;
+      out[n].len = end - start;
+      n++;
+    }
+    if (!nl) break;
+    i = stop + 1;
+  }
+  *nlines = n;
+  return out;
+}
+
+static SEXP ndjson_core(const char *buf, size_t len) {
+  size_t nlines = 0;
+  line *lines = split_lines(buf, len, &nlines);
+  if (nlines == 0) Rf_error("Dataset NDJSON file is empty");
+
+  yyjson_read_err err;
+  yyjson_doc *mdoc = yyjson_read_opts((char *) lines[0].ptr, lines[0].len,
+                                      0, NULL, &err);
+  if (!mdoc) Rf_error("Failed to parse the metadata line: %s (at byte %lu)",
+                      err.msg, (unsigned long) err.pos);
+
+  yyjson_val *root = yyjson_doc_get_root(mdoc);
+  if (!root || !yyjson_is_obj(root)) {
+    yyjson_doc_free(mdoc);
+    Rf_error("The first NDJSON line must be a JSON object of dataset metadata");
+  }
+  yyjson_val *cols = yyjson_obj_get(root, "columns");
+  if (!cols || !yyjson_is_arr(cols)) {
+    yyjson_doc_free(mdoc);
+    Rf_error("`columns` is missing from the metadata line or is not an array");
+  }
+  size_t ncol = yyjson_arr_size(cols);
+  if (ncol == 0) { yyjson_doc_free(mdoc); Rf_error("`columns` is empty"); }
+
+  size_t nrow = nlines - 1;
+  col_type *types = (col_type *) R_alloc(ncol, sizeof(col_type));
+  SEXP data = PROTECT(alloc_columns(cols, ncol, nrow, types));
+
+  SEXP *dest = (SEXP *) R_alloc(ncol, sizeof(SEXP));
+  for (size_t j = 0; j < ncol; j++) dest[j] = VECTOR_ELT(data, (R_xlen_t) j);
+
+  /* One pooled arena, re-initialised per line, keeps row parsing malloc-free.
+     Sized off the longest line; if a read still fails we fall back to malloc. */
+  size_t maxlen = 0;
+  for (size_t l = 1; l < nlines; l++) if (lines[l].len > maxlen) maxlen = lines[l].len;
+  size_t pool_sz = maxlen * 8 + 4096;
+  void *pool = R_alloc(pool_sz, 1);
+
+  tally t = {0, 0, 0, 0};
+  for (size_t l = 1; l < nlines; l++) {
+    yyjson_alc alc;
+    yyjson_doc *rdoc = NULL;
+    if (pool && yyjson_alc_pool_init(&alc, pool, pool_sz)) {
+      rdoc = yyjson_read_opts((char *) lines[l].ptr, lines[l].len, 0, &alc, &err);
+    }
+    if (!rdoc) {
+      rdoc = yyjson_read_opts((char *) lines[l].ptr, lines[l].len, 0, NULL, &err);
+      if (!rdoc) {
+        yyjson_doc_free(mdoc);
+        Rf_error("Failed to parse data line %lu: %s", (unsigned long) (l + 1), err.msg);
+      }
+    }
+    yyjson_val *row = yyjson_doc_get_root(rdoc);
+    if (!row || !yyjson_is_arr(row)) {
+      yyjson_doc_free(mdoc);
+      Rf_error("NDJSON line %lu is not an array of values", (unsigned long) (l + 1));
+    }
+    store_row(row, dest, types, ncol, (R_xlen_t) (l - 1), &t);
+    /* pooled docs own no heap memory; freeing a malloc-backed one is required */
+  }
+
+  SEXP out = PROTECT(assemble(root, cols, ncol, data));
+  yyjson_doc_free(mdoc);
+  warn_tally(&t);
+  UNPROTECT(2);
+  return out;
+}
+
+SEXP C_read_dsndjson_file(SEXP path_) {
+  const char *path = CHAR(STRING_ELT(path_, 0));
+  FILE *fp = fopen(path, "rb");
+  if (!fp) Rf_error("Could not open '%s'", path);
+  if (fseek(fp, 0, SEEK_END) != 0) { fclose(fp); Rf_error("Could not read '%s'", path); }
+  long sz = ftell(fp);
+  if (sz < 0) { fclose(fp); Rf_error("Could not read '%s'", path); }
+  rewind(fp);
+
+  char *buf = (char *) R_alloc((size_t) sz + 1, 1);
+  size_t got = fread(buf, 1, (size_t) sz, fp);
+  fclose(fp);
+  buf[got] = '\0';
+
+  return ndjson_core(buf, got);
+}
+
+SEXP C_read_dsndjson_str(SEXP txt_) {
+  SEXP s = STRING_ELT(txt_, 0);
+  return ndjson_core(CHAR(s), (size_t) LENGTH(s));
 }

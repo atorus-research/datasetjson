@@ -8,7 +8,7 @@
 #' @param float_as_decimals If TRUE, Convert float variables to "decimal" data
 #'   type in the JSON output. This will manually convert the numeric values
 #'   using the `format()` function using the number of digits specified in
-#'   `digits`, bypassing the `yyjsonr` handling of float values and writing the
+#'   `digits`, writing the
 #'   numbers out as JSON character strings. See the [Dataset JSON user
 #'   guide](https://wiki.cdisc.org/display/PUB/Precision+and+Rounding) for more
 #'   information. Defaults to FALSE
@@ -39,6 +39,41 @@ write_dataset_json <- function(
   float_as_decimals = FALSE,
   digits = NULL
 ) {
+  prepared <- prepare_dataset_for_write(x, float_as_decimals)
+
+  if (!missing(file)) {
+    # Make sure the output path exists
+    if (!dir.exists(dirname(file))) {
+      stop("Folder supplied to `file` does not exist", call. = FALSE)
+    }
+  }
+
+  # Serialize natively. Numbers go through yyjson's writer, which emits the
+  # shortest representation that parses back to the same double.
+  .Call(
+    C_write_dsjson,
+    prepared$meta,
+    prepared$columns,
+    prepared$data,
+    prepared$as_decimal,
+    if (is.null(digits)) NA_integer_ else as.integer(digits),
+    isTRUE(pretty),
+    if (missing(file)) NULL else file
+  )
+}
+
+#' Shared preparation for the JSON and NDJSON writers
+#'
+#' Validates the date/time column types, renders them to character, flags the
+#' columns to be written as decimal strings, and assembles the metadata in the
+#' order the standard recommends.
+#'
+#' @param x A datasetjson object
+#' @param float_as_decimals Flag float columns to be written as decimal strings
+#'
+#' @return A list with `meta`, `columns`, `data` and `as_decimal`
+#' @noRd
+prepare_dataset_for_write <- function(x, float_as_decimals = FALSE) {
   stopifnot_datasetjson(x)
 
   meta <- attributes(x)
@@ -145,24 +180,11 @@ write_dataset_json <- function(
 
   temp <- remove_nulls(temp)
 
-  if (!missing(file)) {
-    # Make sure the output path exists
-    if (!dir.exists(dirname(file))) {
-      stop("Folder supplied to `file` does not exist", call. = FALSE)
-    }
-  }
-
-  # Serialize natively. Numbers go through yyjson's writer, which emits the
-  # shortest representation that parses back to the same double.
-  .Call(
-    C_write_dsjson,
-    temp,
-    unname(meta$columns),
-    unclass(x)[names(x)],
-    as_decimal,
-    if (is.null(digits)) NA_integer_ else as.integer(digits),
-    isTRUE(pretty),
-    if (missing(file)) NULL else file
+  list(
+    meta = temp,
+    columns = unname(meta$columns),
+    data = unclass(x)[names(x)],
+    as_decimal = as_decimal
   )
 }
 
