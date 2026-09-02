@@ -1,0 +1,59 @@
+8/14/26, 12:11 PM                                                                  Precision and Rounding - PUBLIC - Wiki
+
+
+                                                                           🔒 Wiki Security Update 🔒
+
+ Pages / Welcome to CDISC WIKI / Dataset-JSON v1.1 User's Guide
+
+ Precision and Rounding
+ Created by Lex Jansen, last updated by Lorraine Sobson on Dec 04, 2024 • 2 minute read
+
+
+ Overview
+ During the Dataset-JSON as Alternative Transport Format for Regulatory Submissions pilot, a few participants reported that precision mismatches sometimes
+ occurred when comparing floating point values with many digits after the decimal. Pilot workshop participants, particularly the R programmers, noted that this was not
+ a bug or an issue with Dataset-JSON but instead represented well-known floating point and rounding dynamics. Ultimately, floating point and rounding strategies did
+ not adversely impact the statistical analysis. Still, it does require programmers to be aware of the impact of the differences, particularly when comparing the source
+ dataset to the receiver's dataset. During the pilot, this issue was categorized as an interoperability finding, as it becomes relevant when a sender and receiver use
+ different technologies to process their datasets.
+ Two pharmaverse blogs explore these interoperability dynamics:
+         Pharmaverse blog on Rounding - An exploration of some commonly used rounding methods and their corresponding functions in SAS and R, with a focus on
+         "round half up" and reliable solutions for numerical precision challenges.
+         Pharmaverse blog on Floating point - The untold story of how admiral deals with floating points.
+ Developers of software tools typically choose 1 of the available JSON libraries to handle the encoding and decoding of JSON content. Developers and users of these
+ tools would do well to understand that JSON libraries often interpret a number to be an integer or a double. Those numbers interpreted as a double are represented
+ using a floating point implementation. Thus, by the time the software application gets the raw data it has already been converted to a floating point and, if the receiver
+ is using different technology than the sender, there is a distinct possibility that there are some differences in the later numbers after the decimal.
+
+
+
+ Decimal Data Type
+ Although the pilot findings on precision and rounding did not point to a problem with Dataset-JSON, the Dataset-JSON Team opted to add the Decimal datatype. The
+ Decimal datatype has been available in ODM for many years. The basic premise for this datatype is to represent the number in Dataset-JSON as a string (a quoted
+ set of numeric characters) to prevent JSON libraries from interpreting the number as a float before the software application gets access to it.
+ To use decimal in Dataset-JSON, set the dataType to decimal and the targetDataType to decimal. This instructs conversion software to convert the number it reads
+ from a native dataset into a string in Dataset-JSON. It also instructs the receiver to convert the number as a string into the decimal datatype or closest approximation
+ available in the receiving technology. Note that not all technologies support an explicit decimal datatype.
+
+
+ Use of Decimal in Clinical Research
+ While Python does support the Decimal datatype, R and SAS do not. For most clinical research use cases, a data type such as integer or double will suffice. The most
+ common use cases should not require the decimal data type. However, it is available for instances where absolute precision is needed and supported by the receiving
+
+https://wiki.cdisc.org/spaces/PUB/pages/236372261/Precision+and+Rounding                                                                                                    1/2
+
+8/14/26, 12:11 PM                                                                         Precision and Rounding - PUBLIC - Wiki
+ system.
+
+                                                                                                                                                                              No labels
+
+
+
+                                                          Powered by a free Atlassian Confluence Community License granted to CDISC. Evaluate Confluence today.
+                                                             This Confluence installation runs a Free Gliffy License - Evaluate the Gliffy Confluence Plugin for your Wiki!
+
+
+
+
+https://wiki.cdisc.org/spaces/PUB/pages/236372261/Precision+and+Rounding                                                                                                             2/2
+
