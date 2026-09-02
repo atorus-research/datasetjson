@@ -102,6 +102,15 @@ read_dataset_json <- function(file) {
   # Apply variable labels
   d[names(d)] <- lapply(items$name, set_col_attr, d, 'label', items)
 
+  # Apply SAS format from displayFormat
+  if (!is.null(items$displayFormat)) {
+  # Iterate only over columns that have a displayFormat value
+  for (nm in items$name[!is.na(items$displayFormat)]) {
+    # Set format.sas directly from items metadata (recognized by haven and SAS-aware tools)
+    attr(d[[nm]], 'format.sas') <- items$displayFormat[items$name == nm]
+  }
+}
+
   ds_attr <- dataset_json(
     d,
     file_oid = ds_json$fileOID,
