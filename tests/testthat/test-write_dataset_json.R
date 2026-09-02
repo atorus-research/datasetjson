@@ -335,7 +335,7 @@ test_that("float_as_decimals writes NA as null not padded string", {
   expect_false(grepl(" +NA", json_out))
   expect_true(grepl("null", json_out))
 
-  out <- read_dataset_json(json_out, decimals_as_float = TRUE)
+  out <- read_dataset_json(json_out)
   expect_true(is.na(out$float_col[2]))
 })
 
