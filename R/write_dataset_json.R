@@ -97,7 +97,14 @@ write_dataset_json <- function(
             "If dataType is time and targetDataType is integer, the input variable type must be a lubridate Period, an hms difftime, or a data.table ITime object"
           )
         }
-        x[y$name] <- strftime(as.numeric(x[[y$name]]), "%H:%M:%S", tz = 'UTC')
+        x[y$name] <- strftime(
+          as.POSIXlt(
+            as.numeric(x[[y$name]]),
+            tz = 'UTC',
+            origin = "1970-01-01"
+          ),
+          "%H:%M:%S",
+        )
       }
     } else if (
       float_as_decimals && y$dataType %in% c("float", 'double', 'decimal')
