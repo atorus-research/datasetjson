@@ -13,10 +13,12 @@
 #'   See the [Dataset JSON user
 #'   guide](https://wiki.cdisc.org/display/PUB/Precision+and+Rounding) for more
 #'   information. Defaults to FALSE
-#' @param digits When using `float_as_decimals`, the number of significant
-#'   digits to render. Defaults to NULL, which uses the shortest representation
-#'   that reads back as the same value. Supplying a number fixes the precision
-#'   instead, which is lossy below 17 digits.
+#' @param digits The number of significant digits to render when writing
+#'   decimals. Defaults to NULL, which uses the shortest representation that
+#'   reads back as the same value. Supplying a number fixes the precision
+#'   instead, and warns when it is below 17, the round-trip threshold for a
+#'   double. It has no effect unless `float_as_decimals = TRUE`, and warns if
+#'   supplied on its own.
 #'
 #' @return NULL when file written to disk, otherwise character string
 #' @export
@@ -41,7 +43,7 @@ write_dataset_json <- function(
   float_as_decimals = FALSE,
   digits = NULL
 ) {
-  prepared <- prepare_dataset_for_write(x, float_as_decimals)
+  prepared <- prepare_dataset_for_write(x, float_as_decimals, digits)
 
   if (!missing(file)) {
     # Make sure the output path exists
@@ -75,15 +77,39 @@ write_dataset_json <- function(
 #'
 #' @return A list with `meta`, `columns`, `data` and `as_decimal`
 #' @noRd
-prepare_dataset_for_write <- function(x, float_as_decimals = FALSE) {
+prepare_dataset_for_write <- function(x, float_as_decimals = FALSE, digits = NULL) {
   stopifnot_datasetjson(x)
 
+  advisory <- paste0(
+    "As of datasetjson 0.4.0 numbers are written and read at full precision, ",
+    "so `float_as_decimals = TRUE` is no longer needed to protect against ",
+    "rounding and `FALSE` is preferred. Set it only when the receiving system ",
+    "requires the `decimal` data type."
+  )
+
   if (isTRUE(float_as_decimals)) {
+    # 17 significant digits is the round-trip guarantee for a double; anything
+    # less renders values that will not read back exactly
+    if (!is.null(digits) && digits < 17) {
+      warning(
+        sprintf(
+          paste0(
+            "`digits = %s` renders decimals at fixed precision and the values ",
+            "will not read back exactly - 17 significant digits are needed to ",
+            "round-trip a double. Omit `digits` for exact output. "
+          ),
+          digits
+        ),
+        advisory,
+        call. = FALSE
+      )
+    } else {
+      warning(advisory, call. = FALSE)
+    }
+  } else if (!is.null(digits)) {
     warning(
-      "As of datasetjson 0.4.0 numbers are written and read at full precision, ",
-      "so `float_as_decimals = TRUE` is no longer needed to protect against ",
-      "rounding and `FALSE` is preferred. Set it only when the receiving system ",
-      "requires the `decimal` data type.",
+      "`digits` has no effect unless `float_as_decimals = TRUE`, and is ",
+      "ignored here. Numbers are written at full precision either way.",
       call. = FALSE
     )
   }

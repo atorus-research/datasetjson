@@ -14,9 +14,12 @@
 #'   interoperability choice; it is not needed for precision, as numbers are
 #'   written at full precision either way, and setting it raises a warning to
 #'   that effect.
-#' @param digits When using `float_as_decimals`, the number of significant
-#'   digits to render. Defaults to `NULL`, which uses the shortest
-#'   representation that reads back as the same value.
+#' @param digits The number of significant digits to render when writing
+#'   decimals. Defaults to `NULL`, which uses the shortest representation that
+#'   reads back as the same value. Supplying a number fixes the precision
+#'   instead, and warns when it is below 17, the round-trip threshold for a
+#'   double. It has no effect unless `float_as_decimals = TRUE`, and warns if
+#'   supplied on its own.
 #'
 #' @return NULL when writing to a file, otherwise a character string
 #' @export
@@ -39,7 +42,7 @@ write_dataset_ndjson <- function(
   float_as_decimals = FALSE,
   digits = NULL
 ) {
-  prepared <- prepare_dataset_for_write(x, float_as_decimals)
+  prepared <- prepare_dataset_for_write(x, float_as_decimals, digits)
 
   if (!missing(file)) {
     if (!dir.exists(dirname(file))) {

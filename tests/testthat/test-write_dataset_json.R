@@ -397,3 +397,41 @@ test_that("float_as_decimals advises that it is no longer needed for precision",
   expect_silent(write_dataset_json(dsjson))
   expect_silent(write_dataset_ndjson(dsjson))
 })
+
+test_that("digits is flagged when it is inert or lossy", {
+  dsjson <- dataset_json(
+    head(iris, 3),
+    item_oid = "test_df",
+    name = "test_df",
+    dataset_label = "test_df",
+    columns = iris_items
+  )
+
+  # digits does nothing without float_as_decimals, and says so
+  expect_warning(
+    write_dataset_json(dsjson, digits = 8),
+    "no effect unless `float_as_decimals = TRUE`",
+    fixed = TRUE
+  )
+  expect_warning(
+    write_dataset_ndjson(dsjson, digits = 8),
+    "no effect unless `float_as_decimals = TRUE`",
+    fixed = TRUE
+  )
+  # and it really is inert
+  expect_identical(
+    write_dataset_json(dsjson),
+    suppressWarnings(write_dataset_json(dsjson, digits = 8))
+  )
+
+  # below the round-trip threshold the warning says the output is lossy
+  expect_warning(
+    write_dataset_json(dsjson, float_as_decimals = TRUE, digits = 8),
+    "will not read back exactly"
+  )
+  # at or above 17 it is exact, so only the float_as_decimals advisory applies
+  w <- capture_warnings(
+    write_dataset_json(dsjson, float_as_decimals = TRUE, digits = 17)
+  )
+  expect_false(any(grepl("will not read back exactly", w)))
+})

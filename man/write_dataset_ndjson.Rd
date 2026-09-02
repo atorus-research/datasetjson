@@ -18,9 +18,12 @@ interoperability choice; it is not needed for precision, as numbers are
 written at full precision either way, and setting it raises a warning to
 that effect.}
 
-\item{digits}{When using \code{float_as_decimals}, the number of significant
-digits to render. Defaults to \code{NULL}, which uses the shortest
-representation that reads back as the same value.}
+\item{digits}{The number of significant digits to render when writing
+decimals. Defaults to \code{NULL}, which uses the shortest representation that
+reads back as the same value. Supplying a number fixes the precision
+instead, and warns when it is below 17, the round-trip threshold for a
+double. It has no effect unless \code{float_as_decimals = TRUE}, and warns if
+supplied on its own.}
 }
 \value{
 NULL when writing to a file, otherwise a character string
