@@ -600,60 +600,56 @@ SEXP C_ndjson_shape(SEXP lines_) {
  * result as Dataset NDJSON.
  * ------------------------------------------------------------------------ */
 
-/* Inflate `in` into a buffer allocated with R_alloc. Returns NULL on failure,
-   with *msg set. */
-static char *inflate_all(const unsigned char *in, size_t n, size_t *out_len,
-                         const char **msg) {
+/* Inflate the whole stream into an R-managed raw vector.
+   Inflating into R memory rather than malloc means the buffer needs no copy
+   before parsing and cannot leak if parsing later raises an error - which
+   matters at scale, where the copy alone cost as much resident memory as the
+   decompressed content. */
+static SEXP dsjc_core(const unsigned char *in, size_t n) {
   z_stream zs;
   memset(&zs, 0, sizeof(zs));
-  if (inflateInit(&zs) != Z_OK) { *msg = "could not initialise zLib"; return NULL; }
+  if (inflateInit(&zs) != Z_OK) Rf_error("Could not initialise zLib");
 
-  size_t cap = n * 4 + 1024, len = 0;
-  char *out = (char *) malloc(cap);
-  if (!out) { inflateEnd(&zs); *msg = "out of memory"; return NULL; }
+  /* zLib streams carry no uncompressed size, so this is an estimate; text of
+     this shape typically compresses to under a third */
+  R_xlen_t cap = (R_xlen_t) n * 4 + 1024;
+  PROTECT_INDEX pi;
+  SEXP buf;
+  PROTECT_WITH_INDEX(buf = Rf_allocVector(RAWSXP, cap), &pi);
+
+  size_t len = 0;
+  int rc = Z_OK;
+  const char *msg = NULL;
 
   zs.next_in = (Bytef *) in;
   zs.avail_in = (uInt) n;
-  int rc = Z_OK;
   while (rc != Z_STREAM_END) {
-    if (len == cap) {
-      size_t ncap = cap * 2;
-      char *bigger = (char *) realloc(out, ncap);
-      if (!bigger) { free(out); inflateEnd(&zs); *msg = "out of memory"; return NULL; }
-      out = bigger; cap = ncap;
+    if ((R_xlen_t) len == cap) {
+      cap *= 2;
+      REPROTECT(buf = Rf_xlengthgets(buf, cap), pi);
     }
-    zs.next_out = (Bytef *) (out + len);
-    zs.avail_out = (uInt) (cap - len);
+    zs.next_out = (Bytef *) (RAW(buf) + len);
+    zs.avail_out = (uInt) ((size_t) cap - len);
     rc = inflate(&zs, Z_NO_FLUSH);
     if (rc != Z_OK && rc != Z_STREAM_END) {
-      free(out); inflateEnd(&zs);
-      *msg = zs.msg ? zs.msg : "invalid or corrupt compressed data";
-      return NULL;
+      msg = zs.msg ? zs.msg : "invalid or corrupt compressed data";
+      break;
     }
-    len = cap - zs.avail_out;
+    len = (size_t) cap - zs.avail_out;
     if (rc == Z_OK && zs.avail_in == 0 && zs.avail_out != 0) {
-      free(out); inflateEnd(&zs);
-      *msg = "compressed stream ended before it was complete";
-      return NULL;
+      msg = "compressed stream ended before it was complete";
+      break;
     }
   }
   inflateEnd(&zs);
-  *out_len = len;
+  if (msg) {
+    UNPROTECT(1);
+    Rf_error("Could not read Dataset JSON Compressed content: %s", msg);
+  }
 
-  /* hand back R-managed memory so an error later cannot leak the buffer */
-  char *res = (char *) R_alloc(len + 1, 1);
-  memcpy(res, out, len);
-  res[len] = '\0';
-  free(out);
-  return res;
-}
-
-static SEXP dsjc_core(const unsigned char *in, size_t n) {
-  size_t len = 0;
-  const char *msg = NULL;
-  char *txt = inflate_all(in, n, &len, &msg);
-  if (!txt) Rf_error("Could not read Dataset JSON Compressed content: %s", msg);
-  return ndjson_core(txt, len);
+  SEXP out = PROTECT(ndjson_core((const char *) RAW(buf), len));
+  UNPROTECT(2);
+  return out;
 }
 
 SEXP C_read_dsjc_file(SEXP path_) {
