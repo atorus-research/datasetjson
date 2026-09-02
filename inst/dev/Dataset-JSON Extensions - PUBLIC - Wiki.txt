@@ -1,0 +1,98 @@
+8/14/26, 12:11 PM                                                                  Dataset-JSON Extensions - PUBLIC - Wiki
+
+
+                                                                            🔒 Wiki Security Update 🔒
+
+ Pages / Welcome to CDISC WIKI / Dataset-JSON v1.1 User's Guide
+
+ Dataset-JSON Extensions
+ Created by Lex Jansen, last updated by Omar Garcia Calderon on Nov 25, 2024 • 2 minute read
+
+
+ Introduction
+ The CDISC ODM is a very extensible standard, aided mostly by the XML schema. The functionality to provide extensions to the Dataset-JSON specification allows
+ creators and consumers of the format the ability to provide extra relevant metadata that is key to establishing semantic interoperability. JSON is not as straightforward
+ to "extend" the schema as XML; in fact, the specification is classed as a constraint language and can be viewed as being subtractive rather than additive. Given the
+ need for an extension mechanism, this section provides guidance as to how that could be achieved.
+ Key to this are:
+         How to declare a set of extensions (a namespace)
+         How to declare and document an extension
+         How to populate extensions
+ Prior to this it is useful to define what types of extensions could be created:
+      1. Specifying default precision for floating point numbers (applies to all values)
+      2. Null symbol (designates what source system uses for null values)
+      3. Source system aspects (e.g., SAS TAS, CAS, Viya)
+      4. Maximum character length in the source system
+ These are assumed to apply to all datapoints in the file; the key intent of the extension mechanism is to communicate what characteristics were applied when the
+ Dataset-JSON file was exported from the source system.
+ The sourceSystem object is a good place to locate the extension metadata, as the assumption is that these need to be communicated from the source system. These
+ are optional; tool creators should not assume these will be present.
+
+  {
+        "sourceSystem": {
+             "name": "SomeSystem",
+             "version": "SomeVersion",
+             "systemExtensions": [
+                    {
+                        "namespace": "http://www.example.com/namespace",
+                        "extensions" : [
+                            {
+
+https://wiki.cdisc.org/spaces/PUB/pages/236371033/Dataset-JSON+Extensions                                                                                                1/3
+
+8/14/26, 12:11 PM                                                              Dataset-JSON Extensions - PUBLIC - Wiki
+
+                                    "name": "DEFAULTPRECISION",
+                                    "definition": "Default precision applied to all floating point variables",
+                                    "value": "5"
+                            },
+                            {
+                                    "name": "NULLCHAR",
+                                    "definition": "What rune/symbol has been used for Null data values",
+                                    "value": "na"
+                            },
+                                {
+                                    "name": "MAXLENGTH",
+                                    "definition": "Maximum character length in source system",
+                                    "value": "100"
+                            }
+                        ]
+                    }
+             ]
+        }
+  }
+
+
+
+
+ Extension Constraints
+ Similarly to the ODM, constraints are required on the extension schema and intent.
+ Requirements for extensions to the Dataset-JSON model are:
+      1. Vendors must supply an updated Dataset-JSON schema fully describing their extended Dataset-JSON format.
+      2. The extension may add new attributes, but may not render any standard Dataset-JSON attribute obsolete. Extensions cannot be used for information that is
+         normally expressed using other Dataset-JSON attributes.
+      3. For extensions represented in Dataset-JSON, all new attributes must use a distinct "namespace" attribute to ensure that there are no naming conflicts with
+         other extensions. Because JSON does not support namespaces, extensions represented in Dataset-JSON must ensure no naming conflicts exist with the
+         Dataset-JSON standard as well as any other extensions involved in the targeted use cases.
+      4. Removing all extensions from an extended Dataset-JSON file must result in a meaningful and accurate standard Dataset-JSON file.
+      5. Implementers should be able to produce Dataset-JSON files free of any extensions upon request.
+      6. Applications that use extended Dataset-JSON files must also accept standard Dataset-JSON files.
+
+                                                                                                                                                              No labels
+
+
+
+
+https://wiki.cdisc.org/spaces/PUB/pages/236371033/Dataset-JSON+Extensions                                                                                             2/3
+
+8/14/26, 12:11 PM                                                                       Dataset-JSON Extensions - PUBLIC - Wiki
+
+
+                                                          Powered by a free Atlassian Confluence Community License granted to CDISC. Evaluate Confluence today.
+                                                            This Confluence installation runs a Free Gliffy License - Evaluate the Gliffy Confluence Plugin for your Wiki!
+
+
+
+
+https://wiki.cdisc.org/spaces/PUB/pages/236371033/Dataset-JSON+Extensions                                                                                                    3/3
+

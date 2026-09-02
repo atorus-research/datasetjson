@@ -1,0 +1,69 @@
+8/14/26, 12:10 PM                                                                   Character Encoding and Escaping - PUBLIC - Wiki
+
+
+                                                                            🔒 Wiki Security Update 🔒
+
+ Pages / Welcome to CDISC WIKI / Dataset-JSON v1.1 User's Guide
+
+ Character Encoding and Escaping
+ Created by Lex Jansen, last updated by Lorraine Sobson on Aug 27, 2024 • 2 minute read
+
+
+ Dataset-JSON Encoding
+ JSON uses UTF-8 encoding by default and does support other Unicode encodings (e.g., UTF-16, UTF-32). Since it supports Unicode, Dataset-JSON can represent
+ any language and alphabet. UTF-8 is implemented in all modern operating systems and is the most widely supported encoding scheme used on the internet. The
+ JSON standard specification requires UTF-8 support for decoders.
+
+
+
+ JSON Escape Characters 
+ Certain characters hold special meanings in JSON. For instance, double quotes are used to define string values. To include a double quote within a string, escape it
+ with a backslash to ensure it is not interpreted as the end of the string. Here are some commonly used escape sequences in JSON:
+        \" : Escaped double quote
+        \\ : Escaped backslash
+        \/ : Escaped forward slash (optional)
+        \b : Backspace
+        \f : Form feed
+        \n : Newline
+        \r : Carriage return
+        \t : Horizontal tab
+        \uXXXX : Unicode escape sequence for special characters
+
+
+ JSON Escape Example
+
+  {"description": "Please include \"Hello, World!\" in your first Dataset-JSON exercise."}
+
+
+
+
+ SAS V5 Transport Format Encoding
+ SAS V5 transport format (XPORT) is a binary format designed for data exchange between SAS systems. To improve interoperability, the binary format uses an
+ encoding scheme compatible with big-endian and little-endian systems. SAS XPORT supports US ASCII encoding for character formats and IBM Integer and Double
+ for numeric formats. Since SAS XPORT supports US ASCII character encoding, multibyte characters are not supported.
+
+https://wiki.cdisc.org/spaces/PUB/pages/236372259/Character+Encoding+and+Escaping                                                                                       1/2
+
+8/14/26, 12:10 PM                                                                   Character Encoding and Escaping - PUBLIC - Wiki
+ Note that SAS recently changed the SAS XPORT specification from "All character data are stored in ASCII, regardless of the operating system" to "All character data
+ is stored in the Windows encoding that is compatible with the SAS session encoding that is used to create the file.” Although technically character data can be stored
+ in encodings other than ASCII, there is no method of conveying encoding information other than documenting it with the delivery of the transport file.
+
+
+
+ Encoding and Decoding
+ Software tools that receive Dataset-JSON content should check the dataset to ensure it conforms to the stated encoding scheme, typically UTF-8. Software systems
+ that detect encoding issues should throw an error.
+
+                                                                                                                                                                             No labels
+
+
+
+                                                          Powered by a free Atlassian Confluence Community License granted to CDISC. Evaluate Confluence today.
+                                                            This Confluence installation runs a Free Gliffy License - Evaluate the Gliffy Confluence Plugin for your Wiki!
+
+
+
+
+https://wiki.cdisc.org/spaces/PUB/pages/236372259/Character+Encoding+and+Escaping                                                                                                   2/2
+

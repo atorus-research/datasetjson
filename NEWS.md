@@ -1,6 +1,9 @@
 # datasetjson 0.4.0
 
-- Updated `read_dataset_json()`: `format.sas` is now set from the `displayFormat` attribute on columns (#87)
+- Updated `read_dataset_json()`: `format.sas` is now set from the `displayFormat` attribute on columns (#87)=
+- `decimals_as_floats` parameter removed from `read_dataset_json()`. Variables with `dataType = "decimal"` and `targetDataType = "decimal"` are now always converted to numeric on read, per the Dataset JSON v1.1 specification.
+- Fixed a bug in the `converting_files` vignette where `extract_xpt_meta()` could return `-Inf` for the `length` field of empty or all-NA string columns; minimum length is now 1 (#71)
+- Fixed a bug where `write_dataset_json()` with `float_as_decimals = TRUE` would write `NA` values as padded strings (e.g., `"    NA"`) instead of JSON `null` (#76)
 
 # datasetjson 0.3.0
 

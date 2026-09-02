@@ -1,0 +1,190 @@
+8/14/26, 11:01 AM                                                                             Alignment of Dataset-JSON with Define-XML - PUBLIC - Wiki
+
+                                                                                                 🔒 Wiki Security Update 🔒
+
+ Pages / Welcome to CDISC WIKI / Dataset-JSON v1.1 User's Guide
+
+ Alignment of Dataset-JSON with Define-XML
+ Created by Lex Jansen, last updated by Lorraine Sobson on Dec 05, 2024 • 3 minute read
+
+
+ Introduction
+ This section provides recommendations to be followed when a Dataset-JSON v1.1 file includes reference to an associated Define-XML document; that is, when the metaDataRef top-level attribute is included. These
+ recommendations are independent of the context the data is intended for. In other words, the data exchange could be for submission on any other exchange purpose. Alignment recommendations expressed in the tables in this
+ section are the same for any value of the ODM/@Context attribute.
+ Some recommendations may be more applicable to an operational process of transferring data from a source database directly in Dataset-JSON v1.1 format, or its NDJSON representation, rather than when converting existing SAS
+ Version 5 transport files to Dataset-JSON v1.1 data exchange format.
+
+
+
+ Alignment of Top-level Metadata Attributes
+
+  Attribute                             Usagea       Conditionb                                                                                    Notes                Examplesc
+
+  datasetJSONCreationDateTime                        datasetJSONCreationDateTime gt ODM/@CreationDateTime                                          It is assumed:           In Dataset-JSON file:
+                                                                                                                                                                            "datasetJSONCreationDateTime": "2024-08-
+                                                                                                                                                       the Define-          19T10:01:06"
+                                                                                                                                                       XML                  In referenced Define-XML document:
+                                                                                                                                                       document
+                                                                                                                                                       referenced in
+                                                                                                                                                       the Dataset-
+                                                                                                                                                       JSON
+                                                                                                                                                       document is
+                                                                                                                                                       the actual
+                                                                                                                                                       Define-XML
+                                                                                                                                                       document
+                                                                                                                                                       available at
+                                                                                                                                                       the moment
+                                                                                                                                                       the Dataset-
+                                                                                                                                                       JSON
+                                                                                                                                                       document is
+                                                                                                                                                       created.
+                                                                                                                                                       the Define-
+                                                                                                                                                       XML
+                                                                                                                                                       document
+                                                                                                                                                       referenced in
+                                                                                                                                                       the Dataset-
+                                                                                                                                                       JSON
+                                                                                                                                                       document
+                                                                                                                                                       reflects the
+                                                                                                                                                       metadata
+                                                                                                                                                       used to
+                                                                                                                                                       further
+                                                                                                                                                       interpret the
+                                                                                                                                                       data, or to
+                                                                                                                                                       process the
+                                                                                                                                                       data in a
+                                                                                                                                                       source or
+                                                                                                                                                       target
+                                                                                                                                                       database.
+                                                                                                                                                   It is always
+                                                                                                                                                   recommend to
+                                                                                                                                                  have the                                         
+https://wiki.cdisc.org/spaces/PUB/pages/236368187/Alignment+of+Dataset-JSON+with+Define-XML                                                                                                                                    1/3
+
+8/14/26, 11:01 AM                                                                     Alignment of Dataset-JSON with Define-XML - PUBLIC - Wiki
+
+
+                                                                                                                                      metadata early in
+                                                                                                                                      the development
+                                                                                                                                      process rather
+                                                                                                                                      than at the end.
+
+  dbLastModifiedDateTime       Optional   dbLastModifiedDateTime le ODM/@AsOfDateTime, when ODM/@AsOfDateTime is provided             To properly          dbLastModifiedDateTime="2020-08-21T09:14:28"
+                                          and the source database is created from the metadata included in the Define-XML.            interpret the
+                                                                                                                                      date/time the
+                                                                                                                                      source database
+                                                                                                                                      was last modified
+                                                                                                                                      requires
+                                                                                                                                      understanding
+                                                                                                                                      the meaning of
+                                                                                                                                      the source
+                                                                                                                                      database
+                                                                                                                                      referenced.
+                                                                                                                                      Refer to the
+                                                                                                                                      sourceSystem
+                                                                                                                                      attribute in the
+                                                                                                                                      Top-level
+                                                                                                                                      Metadata
+                                                                                                                                      Attributes section
+                                                                                                                                      of the Dataset-
+                                                                                                                                      JSON v1.1
+                                                                                                                                      Specification; see
+                                                                                                                                      also Section
+                                                                                                                                      7, Use of
+                                                                                                                                      sourceSystem.
+
+  studyOID                     Required   studyOID eq ODM/Study/@OID
+
+  metaDataVersionOID           Required   metaDataVersionOID eq ODM/Study/MetaDataVersion/@OID, when metaDataRef is provided.         Operationally,
+                                                                                                                                      one could have
+                                                                                                                                      multiple
+                                                                                                                                      MetaDataVersion
+                                                                                                                                      references for a
+                                                                                                                                      study and users
+                                                                                                                                      rendering
+                                                                                                                                      operational
+                                                                                                                                      tabular data as
+                                                                                                                                      Dataset-JSON
+                                                                                                                                      files would need
+                                                                                                                                      to package the
+                                                                                                                                      data accordingly.
+
+  metaDataRef                             metaDataVersionOID eq ODM/Study/MetaDataVersion/@OID on the Define-XML document
+                                          referenced by the metaDataRef resolved value, when the metaDataRef attribute is provided.
+
+  itemGroupOID                            itemGroupOID in //ODM/Study/MetaDataVersion/ItemGroupDef/@OID                               Under
+                                                                                                                                      corresponding
+                                                                                                                                      MetaDataVersion.
+
+  records                                 records gt 0 except when //ODM/Study/MetaDataVersion/ItemGroupDef/@def:HasNoData="Yes"      Under
+                                                                                                                                      corresponding
+                                                                                                                                      MetaDataVersion.
+
+  name                                    name eq //ODM/Study/MetaDataVersion/ItemGroupDef/[@OID=itemGroupOID]/@Name                  Under
+                                                                                                                                      corresponding
+                                                                                                                                      MetaDataVersion.
+
+
+                                                                                                                                                                                   
+https://wiki.cdisc.org/spaces/PUB/pages/236368187/Alignment+of+Dataset-JSON+with+Define-XML                                                                                                               2/3
+
+8/14/26, 11:01 AM                                                                                       Alignment of Dataset-JSON with Define-XML - PUBLIC - Wiki
+
+
+
+  label                                             label eq                                                                                                           Under
+                                                    //ODM/Study/MetaDataVersion/ItemGroupDef/[@OID=itemGroupOID]/Description/TranslatedText                            corresponding
+                                                                                                                                                                       MetaDataVersion.
+
+  columns                                           columns.ItemOID array eq                                                                                           Under
+                                                    //ODM/Study/MetaDataVersion/ItemGroupDef/[@OID=itemGroupOID]/ItemRef ordered by                                    corresponding
+                                                    OrderNumber                                                                                                        MetaDataVersion.
+
+ aAttributes where the Usage column is not populated are Required under the Dataset-JSON v1.1 standard, and left blank on this table to differentiate from the Required indication added to the use case in the User Guide.
+
+ bAlignment with the referenced Define-XML document referenced by metaDataRef.
+
+ cExamples provided on this table are just for cases not illustrated in full examples in the GitHub repository.
+
+
+
+
+ Alignment of Column Metadata Attributes
+
+  Attribute           Usagea          Conditionb                                                                                                                           Notes
+
+  itemOID                             itemOID in //ODM/Study/MetaDataVersion/ItemDef/@OID                                                                                  Under corresponding MetaDataVersion.
+
+  name                                name eq //ODM/Study/MetaDataVersion/ItemDef/@Name                                                                                    Under corresponding MetaDataVersion.
+
+  label                               label eq //ODM/Study/MetaDataVersion/ItemDef/Description/TranslatedText                                                              Under corresponding MetaDataVersion.
+
+  dataType
+
+  targetDataType      Conditional
+
+  length              Optional        length le //ODM/Study/MetaDataVersion/ItemDef/@Length                                                                                Under corresponding MetaDataVersion.
+
+  displayFormat       Conditional
+
+  keySequence         Optional        keySequence eq /ODM/Study/MetaDataVersion/ItemRef/@KeySequence, when ItemRef/@ItemOID=ItemDef/@OID
+
+ aAttributes where the Usage column is not populated are Required under the Dataset-JSON v1.1 standard, and left blank on this table to differentiate from the Required indication added to the use case in the User Guide.
+
+ bAlignment with the referenced Define-XML document referenced by metaDataRef.
+
+
+                                                                                                                                                                                                                              No labels
+
+
+
+                                                    Powered by a free Atlassian Confluence Community License granted to CDISC. Evaluate Confluence today.
+                                                      This Confluence installation runs a Free Gliffy License - Evaluate the Gliffy Confluence Plugin for your Wiki!
+
+
+
+
+                                                                                                                                                                                                                 
+https://wiki.cdisc.org/spaces/PUB/pages/236368187/Alignment+of+Dataset-JSON+with+Define-XML                                                                                                                                         3/3
+
