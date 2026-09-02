@@ -25,8 +25,9 @@
 read_dataset_ndjson <- function(file) {
   if (path_is_url(file)) {
     parsed <- .Call(C_read_dsndjson_str, read_from_url(file))
-  } else if (length(file) == 1 && !any(grepl("\n", file, fixed = TRUE)) &&
-             file.exists(file)) {
+  } else if (
+    length(file) == 1 && !any(grepl("\n", file, fixed = TRUE)) && file.exists(file)
+  ) {
     parsed <- .Call(C_read_dsndjson_file, file)
   } else {
     parsed <- .Call(C_read_dsndjson_str, paste(file, collapse = "\n"))

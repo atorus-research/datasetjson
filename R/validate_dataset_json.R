@@ -39,7 +39,11 @@ validate_dataset_json <- function(x) {
   }
 
   if (!requireNamespace("jsonvalidate", quietly = TRUE)) {
-    stop("Package 'jsonvalidate' is required for this function. Install it with install.packages('jsonvalidate')", call. = FALSE)
+    stop(
+      "Package 'jsonvalidate' is required for this function. ",
+      "Install it with install.packages('jsonvalidate')",
+      call. = FALSE
+    )
   }
   v <- jsonvalidate::json_validate(js, schema_1_1_0, engine="ajv", verbose=TRUE)
   if (!v) {
@@ -87,7 +91,11 @@ validate_dataset_json <- function(x) {
 #' validate_dataset_ndjson(nd)
 validate_dataset_ndjson <- function(x) {
   if (!requireNamespace("jsonvalidate", quietly = TRUE)) {
-    stop("Package 'jsonvalidate' is required for this function. Install it with install.packages('jsonvalidate')", call. = FALSE)
+    stop(
+      "Package 'jsonvalidate' is required for this function. ",
+      "Install it with install.packages('jsonvalidate')",
+      call. = FALSE
+    )
   }
 
   if (path_is_url(x)) {

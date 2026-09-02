@@ -78,7 +78,7 @@ read_dataset_json <- function(file) {
 #' @return A datasetjson object
 #' @noRd
 build_datasetjson <- function(parsed) {
-ds_json <- parsed
+  ds_json <- parsed
   # C returns column metadata as a list of equal-length vectors
   ds_json$columns <- as.data.frame(ds_json$columns, stringsAsFactors = FALSE)
   items <- ds_json$columns
@@ -100,12 +100,13 @@ ds_json <- parsed
 
   # Apply SAS format from displayFormat
   if (!is.null(items$displayFormat)) {
-  # Iterate only over columns that have a displayFormat value
-  for (nm in items$name[!is.na(items$displayFormat)]) {
-    # Set format.sas directly from items metadata (recognized by haven and SAS-aware tools)
-    attr(d[[nm]], 'format.sas') <- items$displayFormat[items$name == nm]
+    # Iterate only over columns that have a displayFormat value
+    for (nm in items$name[!is.na(items$displayFormat)]) {
+      # Set format.sas directly from items metadata (recognized by haven and
+      # SAS-aware tools)
+      attr(d[[nm]], 'format.sas') <- items$displayFormat[items$name == nm]
+    }
   }
-}
 
   ds_attr <- dataset_json(
     d,
@@ -127,7 +128,10 @@ ds_json <- parsed
   # Apply records and column attribute
   if (is.null(ds_json$records)) ds_json$records <- nrow(d)
   if (ds_json$records != nrow(d)) {
-    warning("The number of rows in the data does not match the number of records recorded in the metadata.")
+    warning(
+      "The number of rows in the data does not match the number of records ",
+      "recorded in the metadata."
+    )
   }
 
   attr(ds_attr, 'records') <- ds_json$records
@@ -135,4 +139,3 @@ ds_json <- parsed
 
   ds_attr
 }
-
