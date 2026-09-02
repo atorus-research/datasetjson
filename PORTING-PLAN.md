@@ -25,9 +25,9 @@ library, actively maintained. The Dataset-JSON-specific binding is ours.
 
 - [x] **0. Vendor + infrastructure** — `src/yyjson.{c,h}`, `Makevars`, `init.c`,
       `useDynLib`, `inst/COPYRIGHTS`
-- [ ] **1. Native reader** — schema-directed parse into typed vectors.
+- [x] **1. Native reader** — schema-directed parse into typed vectors.
       Closes the precision bug. Highest value; do this first.
-- [ ] **2. Native writer** — serialize rows as arrays without the `unname()` trick
+- [x] **2. Native writer** — serialize rows as arrays without the `unname()` trick
       and without `format()`-to-character for decimals
 - [ ] **3. NDJSON** — read + write, removing the R-level row-by-row fallback in
       `write_dataset_ndjson.R`

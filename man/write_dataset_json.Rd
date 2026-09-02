@@ -9,7 +9,7 @@ write_dataset_json(
   file,
   pretty = FALSE,
   float_as_decimals = FALSE,
-  digits = 16
+  digits = NULL
 )
 }
 \arguments{

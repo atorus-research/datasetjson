@@ -5,6 +5,7 @@
 static const R_CallMethodDef CallEntries[] = {
   {"C_read_dsjson_file", (DL_FUNC) &C_read_dsjson_file, 1},
   {"C_read_dsjson_str",  (DL_FUNC) &C_read_dsjson_str,  1},
+  {"C_write_dsjson",     (DL_FUNC) &C_write_dsjson,     7},
   {NULL, NULL, 0}
 };
 

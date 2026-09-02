@@ -37,11 +37,15 @@ write_dataset_json <- function(
   file,
   pretty = FALSE,
   float_as_decimals = FALSE,
-  digits = 16
+  digits = NULL
 ) {
   stopifnot_datasetjson(x)
 
   meta <- attributes(x)
+
+  # Columns to serialize as decimal strings rather than JSON numbers. The
+  # values themselves are rendered in C, at whatever precision round-trips.
+  as_decimal <- rep(FALSE, length(meta$columns))
 
   # Find all date, datetime and time columns and convert to character
   for (i in seq_along(meta$columns)) {
@@ -111,9 +115,7 @@ write_dataset_json <- function(
     ) {
       meta$columns[[i]]['dataType'] <- "decimal"
       meta$columns[[i]]["targetDataType"] <- "decimal"
-      formatted <- format(x[y$name], digits = digits)
-      formatted[is.na(x[y$name])] <- NA
-      x[y$name] <- formatted
+      as_decimal[i] <- TRUE
     }
   }
 
@@ -138,14 +140,10 @@ write_dataset_json <- function(
     "itemGroupOID",
     "records",
     "name",
-    "label",
-    "columns"
+    "label"
   )]
 
   temp <- remove_nulls(temp)
-
-  # add data rows
-  temp$rows <- unname(x)
 
   if (!missing(file)) {
     # Make sure the output path exists
@@ -154,26 +152,18 @@ write_dataset_json <- function(
     }
   }
 
-  # Create the JSON text
-  json_opts <- yyjsonr::opts_write_json(
-    pretty = pretty,
-    auto_unbox = TRUE,
+  # Serialize natively. Numbers go through yyjson's writer, which emits the
+  # shortest representation that parses back to the same double.
+  .Call(
+    C_write_dsjson,
+    temp,
+    unname(meta$columns),
+    unclass(x)[names(x)],
+    as_decimal,
+    if (is.null(digits)) NA_integer_ else as.integer(digits),
+    isTRUE(pretty),
+    if (missing(file)) NULL else file
   )
-
-  if (!missing(file)) {
-    # Write file to disk
-    yyjsonr::write_json_file(
-      temp,
-      filename = file,
-      opts = json_opts
-    )
-  } else {
-    # Print to console
-    yyjsonr::write_json_str(
-      temp,
-      opts = json_opts
-    )
-  }
 }
 
 stop_write_error <- function(varname, msg) {
