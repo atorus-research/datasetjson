@@ -6,4 +6,5 @@ NULL
 
 #' @keywords internal
 #' @family internal
+#' @useDynLib datasetjson, .registration = TRUE
 "_PACKAGE"

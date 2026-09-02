@@ -1,0 +1,9 @@
+The datasetjson package includes the yyjson C library in src/yyjson.c and
+src/yyjson.h.
+
+  yyjson - https://github.com/ibireme/yyjson (version 0.12.0)
+  Copyright (c) 2020 YaoYuan
+  Released under the MIT License; the full text is in src/yyjson-LICENSE.
+
+All other code in this package is released under the Apache License (>= 2) as
+recorded in DESCRIPTION and LICENSE.md.

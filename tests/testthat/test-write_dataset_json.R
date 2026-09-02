@@ -296,8 +296,9 @@ test_that("float_as_decimal works on read and write", {
   out1 <- read_dataset_json(json_out1)
   out2 <- read_dataset_json(json_out2)
 
-  # Expect precision to fall apart around 7 decimal place
-  expect_true(all(abs(out1$float_col - test_df$float_col) > 0.0000001))
+  # Numbers are parsed to double in C, so a plain read is now exact too and
+  # float_as_decimals is an interop choice rather than a precision workaround
+  expect_equal(out1$float_col, test_df$float_col, ignore_attr = TRUE)
 
   # Should be rectified by manual decimal conversions
   expect_equal(out2$float_col, test_df$float_col, ignore_attr = TRUE)

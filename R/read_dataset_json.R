@@ -54,50 +54,32 @@
 #' dat <- read_dataset_json(js)
 read_dataset_json <- function(file) {
 
-  json_opts <- yyjsonr::opts_read_json(
-    promote_num_to_string = TRUE
-  )
-
   if (path_is_url(file)) {
     # Url?
-    file_contents <- read_from_url(file)
-    ds_json <- yyjsonr::read_json_str(
-      file_contents,
-      opts = json_opts
-    )
+    parsed <- .Call(C_read_dsjson_str, read_from_url(file))
   } else if (file.exists(file)) {
     # File on disk?
-    ds_json <- yyjsonr::read_json_file(
-      file,
-      opts = json_opts
-    )
+    parsed <- .Call(C_read_dsjson_file, file)
   } else {
     # Direct file contents?
-    ds_json <- yyjsonr::read_json_str(
-      file,
-      opts = json_opts
-    )
+    parsed <- .Call(C_read_dsjson_str, file)
   }
 
-  # Pull the data and items
-  d <- as.data.frame(ds_json$rows)
+  ds_json <- parsed
+  # C returns column metadata as a list of equal-length vectors
+  ds_json$columns <- as.data.frame(ds_json$columns, stringsAsFactors = FALSE)
   items <- ds_json$columns
 
-  # Start setting attributes
-  colnames(d) <- items$name
+  # Columns arrive from C already typed from the `columns` metadata - integers
+  # as integer, float/double/decimal as double parsed in C. Numbers never pass
+  # through as.double(), which is not correctly rounded (see #97).
+  d <- ds_json$data
+  attr(d, "row.names") <- .set_row_names(length(d[[1L]]))
+  class(d) <- "data.frame"
 
-  # Process type conversions
+  # Date/time class construction stays in R; C delivers the primitive type
   dt <- items$dataType
   tdt <- items$targetDataType
-  int_cols <- dt == "integer"
-  # targetDataType is optional - if NULL, no decimal/decimal conversions are needed
-  decimal_cols <- if (is.null(tdt)) rep(FALSE, length(dt)) else (dt == "decimal" & !is.na(tdt) & tdt == "decimal")
-  dbl_cols <- dt %in% c("float", "double") | decimal_cols
-  bool_cols <- dt == "boolean"
-  d[int_cols] <- lapply(d[int_cols], as.integer)
-  d[dbl_cols] <- lapply(d[dbl_cols], as.double)
-  d[bool_cols] <- lapply(d[bool_cols], as.logical)
-
   d <- date_time_conversions(d, dt, tdt)
 
   # Apply variable labels
@@ -130,7 +112,8 @@ read_dataset_json <- function(file) {
   )
 
   # Apply records and column attribute
-  if(ds_json$records != nrow(d)) {
+  if (is.null(ds_json$records)) ds_json$records <- nrow(d)
+  if (ds_json$records != nrow(d)) {
     warning("The number of rows in the data does not match the number of records recorded in the metadata.")
   }
 

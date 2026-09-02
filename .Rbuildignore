@@ -21,3 +21,4 @@
 ^\.devcontainer$
 ^data-raw$
 ^inst/dev$
+^PORTING-PLAN\.md$
