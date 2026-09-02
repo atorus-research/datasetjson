@@ -119,6 +119,7 @@ df_to_list_rows <- function(x) {
 #' @return A data.frame with converted columns
 #' @noRd
 date_time_conversions <- function(d, dt, tdt){
+  if (is.null(tdt)) return(d)
   date_cols <- dt %in% c("date") & tdt %in% "integer"
   datetime_cols <- dt %in% c("datetime") & tdt %in% "integer"
   time_cols <- dt %in% c("time") & tdt %in% "integer"

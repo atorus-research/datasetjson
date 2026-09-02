@@ -34,7 +34,6 @@
 #'these fields.
 #'
 #'@param file File path or URL of a Dataset JSON file
-#' @param decimals_as_floats Convert variables of "decimal" type to float
 #'
 #'@return A dataframe with additional attributes attached containing the
 #'  DatasetJSON metadata.
@@ -53,7 +52,7 @@
 #' ds_json <- dataset_json(iris, "IG.IRIS", "IRIS", "Iris", columns=iris_items)
 #' js <- write_dataset_json(ds_json)
 #' dat <- read_dataset_json(js)
-read_dataset_json <- function(file, decimals_as_floats=FALSE) {
+read_dataset_json <- function(file) {
 
   json_opts <- yyjsonr::opts_read_json(
     promote_num_to_string = TRUE
@@ -91,13 +90,9 @@ read_dataset_json <- function(file, decimals_as_floats=FALSE) {
   dt <- items$dataType
   tdt <- items$targetDataType
   int_cols <- dt == "integer"
-  if (decimals_as_floats) {
-    flt_cols <- dt %in% c("float", "double")
-    dec_cols <- dt == "decimal" & tdt == "decimal"
-    dbl_cols <- flt_cols | dec_cols
-  } else {
-    dbl_cols <- dt %in% c("float", "double")
-  }
+  # targetDataType is optional - if NULL, no decimal/decimal conversions are needed
+  decimal_cols <- if (is.null(tdt)) rep(FALSE, length(dt)) else (dt == "decimal" & !is.na(tdt) & tdt == "decimal")
+  dbl_cols <- dt %in% c("float", "double") | decimal_cols
   bool_cols <- dt == "boolean"
   d[int_cols] <- lapply(d[int_cols], as.integer)
   d[dbl_cols] <- lapply(d[dbl_cols], as.double)
@@ -107,6 +102,15 @@ read_dataset_json <- function(file, decimals_as_floats=FALSE) {
 
   # Apply variable labels
   d[names(d)] <- lapply(items$name, set_col_attr, d, 'label', items)
+
+  # Apply SAS format from displayFormat
+  if (!is.null(items$displayFormat)) {
+  # Iterate only over columns that have a displayFormat value
+  for (nm in items$name[!is.na(items$displayFormat)]) {
+    # Set format.sas directly from items metadata (recognized by haven and SAS-aware tools)
+    attr(d[[nm]], 'format.sas') <- items$displayFormat[items$name == nm]
+  }
+}
 
   ds_attr <- dataset_json(
     d,
