@@ -122,6 +122,44 @@ cat(nd)
 
 The two formats are interchangeable - reading `iris.json` and `iris.ndjson` written from the same object gives you the same dataframe, with the same attributes.
 
+## Compressed files
+
+Dataset JSON files are text, and text of this shape compresses very well. The standard defines a compressed representation, DSJC, which is simply the NDJSON content of a dataset as a zLib stream - no header, no wrapper, nothing but the compressed bytes. Files use the `.dsjc` extension.
+
+`write_dataset_dsjc()`, `read_dataset_dsjc()` and `validate_dataset_dsjc()` mirror the other two sets of functions:
+
+```{r dsjc, eval=FALSE}
+write_dataset_dsjc(ds_json, file = "iris.dsjc")
+
+dat <- read_dataset_dsjc("iris.dsjc")
+```
+
+Because a DSJC file is a plain zLib stream, any zLib implementation can read it, and a stream produced by another tool reads here. The example files shipped with the package show the size difference on a small dataset:
+
+```{r dsjc_size}
+sizes <- vapply(
+  c("dm.json", "dm.ndjson", "dm.dsjc"),
+  function(f) file.size(datasetjson_example(f)),
+  numeric(1)
+)
+
+sizes
+```
+
+The saving grows with the dataset. On a 300,000 row file the NDJSON is 26 MB and the DSJC around 11 MB.
+
+`level` controls the compression, from 0 (none) to 9. It defaults to 9, which the standard recommends for data exchange, but the top of the range earns little: on that same 26 MB dataset, level 1 wrote in a fifth of the time for a file only 4% larger. Reading is unaffected by the level a file was written at.
+
+With no `file` argument, `write_dataset_dsjc()` returns a raw vector rather than a character string, since the format is binary:
+
+```{r dsjc_raw}
+bytes <- write_dataset_dsjc(ds_json)
+
+head(bytes)
+```
+
+Rows are compressed as they are written, so producing a large file never holds the whole uncompressed dataset in memory.
+
 The data frame that's read in is itself a `datasetjson` object and carries a number of attributes. For example, opening the dataframe within the RStudio IDE will present the variable labels. Additionally, the extra metadata provided in a Dataset JSON file is available. The attributes provided follow the naming convention of the Dataset JSON standard. 
 
 ## Working with the metadata
