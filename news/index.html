@@ -49,7 +49,10 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.4.0" id="datasetjson-040">datasetjson 0.4.0<a class="anchor" aria-label="anchor" href="#datasetjson-040"></a></h2>
-<ul><li>Fixed a bug in the <code>converting_files</code> vignette where <code>extract_xpt_meta()</code> could return <code>-Inf</code> for the <code>length</code> field of empty or all-NA string columns; minimum length is now 1 (<a href="https://github.com/atorus-research/datasetjson/issues/71" class="external-link">#71</a>)</li>
+<ul><li>Updated <code><a href="../reference/read_dataset_json.html">read_dataset_json()</a></code>: <code>format.sas</code> is now set from the <code>displayFormat</code> attribute on columns (<a href="https://github.com/atorus-research/datasetjson/issues/87" class="external-link">#87</a>)=</li>
+<li>
+<code>decimals_as_floats</code> parameter removed from <code><a href="../reference/read_dataset_json.html">read_dataset_json()</a></code>. Variables with <code>dataType = "decimal"</code> and <code>targetDataType = "decimal"</code> are now always converted to numeric on read, per the Dataset JSON v1.1 specification.</li>
+<li>Fixed a bug in the <code>converting_files</code> vignette where <code>extract_xpt_meta()</code> could return <code>-Inf</code> for the <code>length</code> field of empty or all-NA string columns; minimum length is now 1 (<a href="https://github.com/atorus-research/datasetjson/issues/71" class="external-link">#71</a>)</li>
 <li>Fixed a bug where <code><a href="../reference/write_dataset_json.html">write_dataset_json()</a></code> with <code>float_as_decimals = TRUE</code> would write <code>NA</code> values as padded strings (e.g., <code>"    NA"</code>) instead of JSON <code>null</code> (<a href="https://github.com/atorus-research/datasetjson/issues/76" class="external-link">#76</a>)</li>
 </ul></div>
     <div class="section level2">

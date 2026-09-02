@@ -2,6 +2,15 @@
 
 ## datasetjson 0.4.0
 
+- Updated
+  [`read_dataset_json()`](https://atorus-research.github.io/datasetjson/reference/read_dataset_json.md):
+  `format.sas` is now set from the `displayFormat` attribute on columns
+  ([\#87](https://github.com/atorus-research/datasetjson/issues/87))=
+- `decimals_as_floats` parameter removed from
+  [`read_dataset_json()`](https://atorus-research.github.io/datasetjson/reference/read_dataset_json.md).
+  Variables with `dataType = "decimal"` and `targetDataType = "decimal"`
+  are now always converted to numeric on read, per the Dataset JSON v1.1
+  specification.
 - Fixed a bug in the `converting_files` vignette where
   `extract_xpt_meta()` could return `-Inf` for the `length` field of
   empty or all-NA string columns; minimum length is now 1

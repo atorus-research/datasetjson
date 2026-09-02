@@ -171,15 +171,18 @@ technology. Note that not all technologies support an explicit decimal
 datatype.</p>
 </blockquote>
 <p>In order to address this problem, we’ve added the options
-<code>floats_as_decimals</code> and <code>digits</code> to
-<code><a href="../reference/write_dataset_json.html">write_dataset_json()</a></code> and <code>decimals_as_floats</code> to
-<code><a href="../reference/read_dataset_json.html">read_dataset_json()</a></code>.</p>
+<code>float_as_decimals</code> and <code>digits</code> to
+<code><a href="../reference/write_dataset_json.html">write_dataset_json()</a></code>. When
+<code>float_as_decimals = TRUE</code>, the columns are written as
+<code>decimal</code>/<code>decimal</code> in the JSON, and
+<code><a href="../reference/read_dataset_json.html">read_dataset_json()</a></code> will automatically convert them back to
+numeric on read per the Dataset JSON v1.1 specification.</p>
 <p>Considering the example before, here’s how these options can
 help.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">json_out</span> <span class="op">&lt;-</span><span class="fu"><a href="../reference/write_dataset_json.html">write_dataset_json</a></span><span class="op">(</span><span class="va">dsjson</span>, float_as_decimals <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">json_out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/write_dataset_json.html">write_dataset_json</a></span><span class="op">(</span><span class="va">dsjson</span>, float_as_decimals <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_dataset_json.html">read_dataset_json</a></span><span class="op">(</span><span class="va">json_out</span>, decimals_as_floats <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_dataset_json.html">read_dataset_json</a></span><span class="op">(</span><span class="va">json_out</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">test_df</span><span class="op">$</span><span class="va">float_col</span> <span class="op">-</span> <span class="va">out</span><span class="op">$</span><span class="va">float_col</span></span>
 <span><span class="co">#&gt; [1] 0 0 0 0 0</span></span>
@@ -187,8 +190,8 @@ help.</p>
 <span><span class="co">#&gt; [1] "Test column long decimal"</span></span></code></pre></div>
 <p>By manually handling how the decimal precision is rendered, the
 values were able to serialize and re-import more effectively.</p>
-<p>There are a few reasons we’ve chosen to NOT make this default
-behavior:</p>
+<p>There are a few reasons we’ve chosen to NOT make
+<code>float_as_decimals</code> default behavior:</p>
 <ul>
 <li>This inherently adds overhead, because we convert the values prior
 to letting <code>yyjsonr</code> serialize them</li>
