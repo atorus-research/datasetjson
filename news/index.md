@@ -1,5 +1,13 @@
 # Changelog
 
+## datasetjson 0.4.0
+
+- Fixed a bug where
+  [`write_dataset_json()`](https://atorus-research.github.io/datasetjson/reference/write_dataset_json.md)
+  with `float_as_decimals = TRUE` would write `NA` values as padded
+  strings (e.g., `" NA"`) instead of JSON `null`
+  ([\#76](https://github.com/atorus-research/datasetjson/issues/76))
+
 ## datasetjson 0.3.0
 
 CRAN release: 2025-01-30
