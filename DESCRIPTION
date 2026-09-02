@@ -12,6 +12,8 @@ Authors@R: c(
            family = "Masel",
            email = "nmasel@its.jnj.com",
            role = "aut"),
+    person(given = "Atorus Research, Inc.",
+           role = "cph"),
     person(given = "Yao",
            family = "Yuan",
            role = "cph",

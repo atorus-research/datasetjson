@@ -29,6 +29,7 @@ Authors:
 
 Other contributors:
 \itemize{
+  \item Atorus Research, Inc. [copyright holder]
   \item Yao Yuan (Author of the bundled yyjson C library) [copyright holder]
 }
 
