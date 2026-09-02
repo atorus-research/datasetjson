@@ -27,6 +27,11 @@ Authors:
   \item Nicholas Masel \email{nmasel@its.jnj.com}
 }
 
+Other contributors:
+\itemize{
+  \item Yao Yuan (Author of the bundled yyjson C library) [copyright holder]
+}
+
 }
 \concept{internal}
 \keyword{internal}

@@ -126,7 +126,19 @@ build_datasetjson <- function(parsed) {
   )
 
   # Apply records and column attribute
-  if (is.null(ds_json$records)) ds_json$records <- nrow(d)
+  if (is.null(ds_json$records)) {
+    # `records` is required by the Dataset JSON standard, so its absence means
+    # the source file is incomplete. Fall back to the row count, but say so -
+    # without it there is nothing to check the data against.
+    warning(
+      "The source file does not contain a `records` value, which the Dataset ",
+      "JSON standard requires. It has been set to the number of rows read (",
+      nrow(d), "), so the row count could not be verified against the file ",
+      "metadata.",
+      call. = FALSE
+    )
+    ds_json$records <- nrow(d)
+  }
   if (ds_json$records != nrow(d)) {
     warning(
       "The number of rows in the data does not match the number of records ",
