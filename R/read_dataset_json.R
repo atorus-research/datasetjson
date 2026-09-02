@@ -113,8 +113,6 @@ read_dataset_json <- function(file, decimals_as_floats=FALSE) {
   for (nm in items$name[!is.na(items$displayFormat)]) {
     # Set format.sas directly from items metadata (recognized by haven and SAS-aware tools)
     attr(d[[nm]], 'format.sas') <- items$displayFormat[items$name == nm]
-    # Remove displayFormat to avoid duplication with format.sas
-    attr(d[[nm]], 'displayFormat') <- NULL
   }
 }
 
