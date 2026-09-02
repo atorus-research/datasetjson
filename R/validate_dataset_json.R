@@ -79,6 +79,9 @@ validate_dataset_json <- function(x) {
 #' @export
 #'
 #' @examples
+#' # Validate a file on disk
+#' validate_dataset_ndjson(datasetjson_example("dm.ndjson"))
+#'
 #' ds_json <- dataset_json(
 #'   iris,
 #'   item_oid = "IG.IRIS",
@@ -86,9 +89,8 @@ validate_dataset_json <- function(x) {
 #'   dataset_label = "Iris",
 #'   columns = iris_items
 #' )
-#' nd <- write_dataset_ndjson(ds_json)
 #'
-#' validate_dataset_ndjson(nd)
+#' validate_dataset_ndjson(write_dataset_ndjson(ds_json))
 validate_dataset_ndjson <- function(x) {
   if (!requireNamespace("jsonvalidate", quietly = TRUE)) {
     stop(

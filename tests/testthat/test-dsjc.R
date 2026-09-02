@@ -119,24 +119,50 @@ test_that("numbers survive the compressed path bit-exactly", {
   expect_identical(as.double(read_dataset_dsjc(write_dataset_dsjc(ds))$V), v)
 })
 
-test_that("the shipped example file reads back as the JSON it came from", {
-  from_json <- read_dataset_json(datasetjson_example("dm.json"))
-  from_dsjc <- read_dataset_dsjc(datasetjson_example("dm.dsjc"))
+test_that("the three shipped example files agree with each other", {
+  # dm.ndjson and dm.dsjc are generated from dm.json in data-raw, so all three
+  # must read back to the same dataset
+  reads <- list(
+    json   = read_dataset_json(datasetjson_example("dm.json")),
+    ndjson = read_dataset_ndjson(datasetjson_example("dm.ndjson")),
+    dsjc   = read_dataset_dsjc(datasetjson_example("dm.dsjc"))
+  )
 
-  expect_equal(as.data.frame(from_json), as.data.frame(from_dsjc),
-               ignore_attr = "datasetJSONCreationDateTime")
+  for (nm in c("ndjson", "dsjc")) {
+    expect_equal(as.data.frame(reads[[nm]]), as.data.frame(reads$json),
+                 ignore_attr = "datasetJSONCreationDateTime", info = nm)
+    a <- attributes(reads$json)
+    b <- attributes(reads[[nm]])
+    a$datasetJSONCreationDateTime <- b$datasetJSONCreationDateTime <- NULL
+    expect_equal(b, a, info = nm)
+  }
 
-  a <- attributes(from_json)
-  b <- attributes(from_dsjc)
-  a$datasetJSONCreationDateTime <- b$datasetJSONCreationDateTime <- NULL
-  expect_equal(a, b)
-
+  expect_message(validate_dataset_ndjson(datasetjson_example("dm.ndjson")),
+                 "File is valid")
   expect_message(validate_dataset_dsjc(datasetjson_example("dm.dsjc")),
                  "File is valid")
 
-  # it is meaningfully smaller than the JSON it came from
+  # the compressed form is meaningfully smaller than either uncompressed one
   expect_lt(file.size(datasetjson_example("dm.dsjc")),
             file.size(datasetjson_example("dm.json")) / 2)
+  expect_lt(file.size(datasetjson_example("dm.dsjc")),
+            file.size(datasetjson_example("dm.ndjson")) / 2)
+
+  # and dm.dsjc really is dm.ndjson compressed. Each file carries the moment it
+  # was written, so that one field is normalised before comparing.
+  blank_created <- function(x) {
+    sub('"datasetJSONCreationDateTime":"[^"]*"',
+        '"datasetJSONCreationDateTime":"X"', x)
+  }
+  dsjc_path <- datasetjson_example("dm.dsjc")
+  inflated <- rawToChar(memDecompress(
+    readBin(dsjc_path, "raw", file.size(dsjc_path)), type = "gzip"))
+  ndjson_text <- paste0(
+    paste(readLines(datasetjson_example("dm.ndjson"), warn = FALSE),
+          collapse = "\n"),
+    "\n")
+
+  expect_identical(blank_created(inflated), blank_created(ndjson_text))
 })
 
 test_that("DSJC can be read from a URL", {

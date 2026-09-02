@@ -19,6 +19,10 @@
 #' @export
 #'
 #' @examples
+#' # Read one of the example files shipped with the package
+#' dm <- read_dataset_ndjson(datasetjson_example("dm.ndjson"))
+#'
+#' # Or from NDJSON text held in memory
 #' ds_json <- dataset_json(
 #'   iris,
 #'   item_oid = "IG.IRIS",
@@ -26,8 +30,7 @@
 #'   dataset_label = "Iris",
 #'   columns = iris_items
 #' )
-#' nd <- write_dataset_ndjson(ds_json)
-#' dat <- read_dataset_ndjson(nd)
+#' dat <- read_dataset_ndjson(write_dataset_ndjson(ds_json))
 read_dataset_ndjson <- function(file) {
   if (path_is_url(file)) {
     parsed <- .Call(C_read_dsndjson_str, read_from_url(file))

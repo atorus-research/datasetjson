@@ -20,6 +20,9 @@ NDJSON v1.1.0 schema, and each subsequent line is checked to be a JSON array
 carrying one value per declared column.
 }
 \examples{
+# Validate a file on disk
+validate_dataset_ndjson(datasetjson_example("dm.ndjson"))
+
 ds_json <- dataset_json(
   iris,
   item_oid = "IG.IRIS",
@@ -27,7 +30,6 @@ ds_json <- dataset_json(
   dataset_label = "Iris",
   columns = iris_items
 )
-nd <- write_dataset_ndjson(ds_json)
 
-validate_dataset_ndjson(nd)
+validate_dataset_ndjson(write_dataset_ndjson(ds_json))
 }
