@@ -5,16 +5,17 @@
 #' @param pretty If TRUE, write with readable formatting. *Note: The Dataset
 #'   JSON standard prefers compressed formatting without line feeds. It is not
 #'   recommended you use pretty printing for submission purposes.*
-#' @param float_as_decimals If TRUE, Convert float variables to "decimal" data
-#'   type in the JSON output. This will manually convert the numeric values
-#'   using the `format()` function using the number of digits specified in
-#'   `digits`, writing the
-#'   numbers out as JSON character strings. See the [Dataset JSON user
+#' @param float_as_decimals If TRUE, write float variables as the "decimal"
+#'   data type, quoting the numbers as JSON strings rather than writing them as
+#'   JSON numbers. This is an interoperability choice for systems that expect
+#'   the decimal type; it is not needed for precision, as numbers are written at
+#'   full precision either way. See the [Dataset JSON user
 #'   guide](https://wiki.cdisc.org/display/PUB/Precision+and+Rounding) for more
 #'   information. Defaults to FALSE
-#' @param digits When using `float_as_decimals`, the number of digits to use
-#'   when writing out floats. Going higher than 16 may start writing otherwise
-#'   sufficiently precise decimals (i.e. .2) to long strings.
+#' @param digits When using `float_as_decimals`, the number of significant
+#'   digits to render. Defaults to NULL, which uses the shortest representation
+#'   that reads back as the same value. Supplying a number fixes the precision
+#'   instead, which is lossy below 17 digits.
 #'
 #' @return NULL when file written to disk, otherwise character string
 #' @export

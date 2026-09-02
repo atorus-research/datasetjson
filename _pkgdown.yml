@@ -34,11 +34,14 @@ reference:
 - contents:
   - starts_with("set")
 - title: Read, Write, and Validate
-  desc: Functions to read, write, and validate Dataset JSON files
+  desc: Functions to read, write, and validate Dataset JSON and Dataset NDJSON files
 - contents:
   - read_dataset_json
   - write_dataset_json
   - validate_dataset_json
+  - read_dataset_ndjson
+  - write_dataset_ndjson
+  - validate_dataset_ndjson
 - title: Helper Functions
   desc: Additional helpers
 - contents:
@@ -49,6 +52,7 @@ reference:
 - contents:
   - iris_items
   - schema_1_1_0
+  - schema_ndjson_1_1_0
 articles:
 - title: Vignettes
   navbar: Vignettes

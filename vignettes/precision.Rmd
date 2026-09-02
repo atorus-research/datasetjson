@@ -14,9 +14,9 @@ knitr::opts_chunk$set(
 )
 ```
 
-Numeric precision and issues with floating point decimals is a common problem to come across when working with data. Dataset JSON is not immune to these issues. Instead of writing out direct binary representations of the floating point numbers, which will vary depending on the system being used and the standard followed, Dataset JSON writes out character representations of these numbers. As such, when the numbers are serialized from numeric to character, and then read back into numeric format, you may come across precision issues.
+Numeric precision and issues with floating point decimals are a common problem when working with data. Dataset JSON is not immune to these issues. Instead of writing out direct binary representations of floating point numbers, which vary depending on the system being used and the standard followed, Dataset JSON writes out character representations of these numbers. Whenever a number is serialized to text and parsed back, precision can be lost.
 
-Consider the following example:
+**{datasetjson}** parses and serializes numbers in C, using the [yyjson](https://github.com/ibireme/yyjson) library that ships with the package. Numbers are written using the shortest text that reads back as the same value, and read straight into a double without passing through R's `as.double()`. The practical effect is that a value survives a write and read unchanged:
 
 ```{r example}
 library(datasetjson)
@@ -55,11 +55,13 @@ out <- read_dataset_json(json_out)
 test_df$float_col - out$float_col
 ```
 
-In this case, we start seeing differences at the 7th decimal point. To look at a specific value, the input of `143.66666666666699825` is written out in the JSON file as `143.666666666667`. This issue isn't unique to R either. If you're ever converted numeric to character and back to numeric in SAS, you'll likely have encountered a similar problem.
+Every difference is exactly zero: the values that came back are bit-for-bit the values that went in, and that holds across the full range of double precision, from `1e-300` to `1e+300`.
 
-In the **{datasetjson}** package, the **{yyjsonr}** package is doing the heavy lifting of serializing the R numeric value into a character string. The underlying C library has some [recent updates](https://github.com/ibireme/yyjson/commit/6d416047822d86d53a3a0b45a6a5abf28383a1dc) to work on improving read output number precision which we hope will improve the handling.
+This has not always been true. Before version 0.4.0 the numbers were converted to text by the JSON library in use at the time, at a fixed six decimal places. Values were rounded at around the seventh decimal, and anything smaller than roughly `5e-7` was read back as exactly `0`. If you have files written by an earlier version of the package, the data in them is fine - the loss happened on read, so re-reading them with this version recovers the original values.
 
-Another way to handle numeric precision issues is to use the "decimal" types that's available in the Dataset JSON standard. From the [user guide](https://wiki.cdisc.org/display/PUB/Precision+and+Rounding), this can be described as follows:
+## The decimal data type
+
+The Dataset JSON standard also offers a "decimal" type. From the [user guide](https://wiki.cdisc.org/display/PUB/Precision+and+Rounding):
 
 > ## Decimal Data Type
 >
@@ -67,9 +69,7 @@ Another way to handle numeric precision issues is to use the "decimal" types tha
 >
 > To use decimal in Dataset-JSON, set the dataType to decimal and the targetDataType to decimal. This instructs conversion software to convert the number it reads from a native dataset into a string in Dataset-JSON. It also instructs the receiver to convert the number as a string into the decimal datatype or closest approximation available in the receiving technology. Note that not all technologies support an explicit decimal datatype.
 
-In order to address this problem, we've added the options `float_as_decimals` and `digits` to `write_dataset_json()`. When `float_as_decimals = TRUE`, the columns are written as `decimal`/`decimal` in the JSON, and `read_dataset_json()` will automatically convert them back to numeric on read per the Dataset JSON v1.1 specification.
-
-Considering the example before, here's how these options can help.
+`write_dataset_json()` supports this through `float_as_decimals`. When set, float columns are written as `decimal`/`decimal` and the values are quoted, and `read_dataset_json()` converts them back to numeric on read per the specification.
 
 ```{r conversion}
 json_out <- write_dataset_json(dsjson, float_as_decimals = TRUE)
@@ -79,19 +79,27 @@ out <- read_dataset_json(json_out)
 test_df$float_col - out$float_col
 ```
 
-By manually handling how the decimal precision is rendered, the values were able to serialize and re-import more effectively. 
+The result is the same, because both paths are exact. **`float_as_decimals` is an interoperability choice, not a precision workaround.** Reach for it when the system receiving your file needs numbers presented as strings; leave it off otherwise. It remains off by default for two reasons:
 
-There are a few reasons we've chosen to NOT make `float_as_decimals` default behavior:
+- Writing the `decimal` type is an extra step the consuming system has to be aware of, and Dataset JSON is still a young standard
+- Quoted numbers make for larger files with no gain in fidelity
 
-- This inherently adds overhead, because we convert the values prior to letting `yyjsonr` serialize them
-- We're changing the way the metadata is writing to use the `decimal` type. While the standard supports the use of the `decimal` type, it's an extra step that that the consuming system needs to be aware of, and Dataset JSON is still a young standard. 
-- Our hope is that the `yyjson` C package grows to make this extra step less necessary
+## The `digits` argument
 
-As one last note, we default our choice of decimal precision to use 16 digits. The reason we've chosen to do this is as follows:
+`digits` controls how many significant digits are used when rendering decimal strings. It defaults to `NULL`, meaning the shortest representation that still reads back as the same value - which is what makes the decimal path lossless, and keeps the output tidy:
 
 ```{r digits}
-print(format(.2, digits=16))
-print(format(.2, digits=17))
+cat(write_dataset_json(dsjson, float_as_decimals = TRUE, pretty = TRUE))
 ```
 
-After a certain point, displaying extra digits is just going to show the where floating point values start to break down. 16 digits balances preserving the precision of output without turning low precision numbers into overly precise ones.
+Supplying a number fixes the precision instead. That is occasionally useful for matching another system's output, but it is lossy whenever the value needs more digits than you allow:
+
+```{r digits_fixed}
+fixed <- read_dataset_json(
+  write_dataset_json(dsjson, float_as_decimals = TRUE, digits = 8)
+)
+
+test_df$float_col - fixed$float_col
+```
+
+Note that 17 significant digits, not 16, is the round-trip guarantee for a double. If you do set `digits`, anything below 17 risks losing the last bits of a value.

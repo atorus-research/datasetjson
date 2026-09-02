@@ -271,3 +271,53 @@ test_that("float_as_decimal works with NDJSON", {
   # Should be rectified by manual decimal conversions
   expect_equal(out2$float_col, test_df$float_col, ignore_attr = TRUE)
 })
+
+test_that("validate_dataset_ndjson works correctly", {
+  # Valid reference file
+  expect_message(
+    validate_dataset_ndjson(test_path("testdata/dm.ndjson")),
+    "File is valid per the Dataset NDJSON v1.1.0 schema"
+  )
+
+  # Valid generated NDJSON
+  ds_json <- dataset_json(
+    iris[1:3, ],
+    item_oid = "IG.IRIS",
+    name = "IRIS",
+    dataset_label = "Iris",
+    columns = iris_items
+  )
+  ndjson_str <- write_dataset_ndjson(ds_json)
+  expect_message(
+    validate_dataset_ndjson(ndjson_str),
+    "File is valid per the Dataset NDJSON v1.1.0 schema"
+  )
+
+  # A row with the wrong number of values is reported against its line
+  lines <- strsplit(ndjson_str, "\n")[[1]]
+  lines[3] <- "[1, 2]"
+  expect_warning(
+    validate_dataset_ndjson(paste(lines, collapse = "\n")),
+    "File contains errors!"
+  )
+  errs <- suppressWarnings(validate_dataset_ndjson(paste(lines, collapse = "\n")))
+  expect_equal(errs$line, 3L)
+  expect_match(errs$message, "Expected 5 values, got 2")
+
+  # A line that is not valid JSON at all
+  lines[3] <- "[1, 2"
+  errs <- suppressWarnings(validate_dataset_ndjson(paste(lines, collapse = "\n")))
+  expect_equal(errs$message, "Invalid JSON")
+
+  # Metadata line that does not meet the schema
+  bad_meta <- c('{"datasetJSONVersion": "1.1.0"}', "[1, 2, 3, 4, 5]")
+  expect_warning(
+    validate_dataset_ndjson(paste(bad_meta, collapse = "\n")),
+    "File contains errors!"
+  )
+
+  # Empty input
+  expect_warning(validate_dataset_ndjson(""), "File contains errors!")
+  errs <- suppressWarnings(validate_dataset_ndjson(""))
+  expect_equal(errs$message, "File is empty")
+})

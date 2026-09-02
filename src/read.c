@@ -547,3 +547,45 @@ SEXP C_read_dsndjson_str(SEXP txt_) {
   SEXP s = STRING_ELT(txt_, 0);
   return ndjson_core(CHAR(s), (size_t) LENGTH(s));
 }
+
+/* Structural check used by validate_dataset_ndjson(): how many columns the
+   metadata line declares, and how many values each data line carries.
+   NA marks a line that is not valid JSON; -1 marks valid JSON that is not an
+   array. */
+SEXP C_ndjson_shape(SEXP lines_) {
+  R_xlen_t n = Rf_xlength(lines_);
+  SEXP lens = PROTECT(Rf_allocVector(INTSXP, n > 0 ? n - 1 : 0));
+  int ncol = NA_INTEGER;
+  yyjson_read_err err;
+
+  for (R_xlen_t i = 0; i < n; i++) {
+    SEXP s = STRING_ELT(lines_, i);
+    if (s == NA_STRING) {
+      if (i > 0) INTEGER(lens)[i - 1] = NA_INTEGER;
+      continue;
+    }
+    yyjson_doc *d = yyjson_read_opts((char *) CHAR(s), (size_t) LENGTH(s), 0, NULL, &err);
+    if (!d) {
+      if (i > 0) INTEGER(lens)[i - 1] = NA_INTEGER;
+      continue;
+    }
+    yyjson_val *root = yyjson_doc_get_root(d);
+    if (i == 0) {
+      yyjson_val *cols = (root && yyjson_is_obj(root)) ? yyjson_obj_get(root, "columns") : NULL;
+      if (cols && yyjson_is_arr(cols)) ncol = (int) yyjson_arr_size(cols);
+    } else {
+      INTEGER(lens)[i - 1] = (root && yyjson_is_arr(root)) ? (int) yyjson_arr_size(root) : -1;
+    }
+    yyjson_doc_free(d);
+  }
+
+  SEXP out = PROTECT(Rf_allocVector(VECSXP, 2));
+  SEXP nms = PROTECT(Rf_allocVector(STRSXP, 2));
+  SET_VECTOR_ELT(out, 0, Rf_ScalarInteger(ncol));
+  SET_VECTOR_ELT(out, 1, lens);
+  SET_STRING_ELT(nms, 0, Rf_mkChar("ncol"));
+  SET_STRING_ELT(nms, 1, Rf_mkChar("lengths"));
+  Rf_setAttrib(out, R_NamesSymbol, nms);
+  UNPROTECT(3);
+  return out;
+}
