@@ -1,6 +1,7 @@
 # datasetjson 0.4.0
 
 - Fixed a bug in the `converting_files` vignette where `extract_xpt_meta()` could return `-Inf` for the `length` field of empty or all-NA string columns; minimum length is now 1 (#71)
+- Fixed a bug where `write_dataset_json()` with `float_as_decimals = TRUE` would write `NA` values as padded strings (e.g., `"    NA"`) instead of JSON `null` (#76)
 
 # datasetjson 0.3.0
 
