@@ -435,3 +435,27 @@ test_that("digits is flagged when it is inert or lossy", {
   )
   expect_false(any(grepl("will not read back exactly", w)))
 })
+
+test_that("float_as_decimals reports when it had no effect", {
+  # no float, double or decimal columns for the flag to act on
+  d <- data.frame(SUBJ = c("A", "B"), SEQ = 1:2, FLAG = c("Y", "N"),
+                  stringsAsFactors = FALSE)
+  items <- data.frame(
+    itemOID = paste0("IT.", names(d)), name = names(d), label = names(d),
+    dataType = c("string", "integer", "string"), stringsAsFactors = FALSE
+  )
+  ds <- dataset_json(d, item_oid = "t", name = "t", dataset_label = "t",
+                     columns = items)
+
+  expect_warning(
+    write_dataset_json(ds, float_as_decimals = TRUE),
+    "had no effect"
+  )
+  # and it really is a no-op, so the advisory would have been misleading
+  expect_identical(
+    write_dataset_json(ds),
+    suppressWarnings(write_dataset_json(ds, float_as_decimals = TRUE))
+  )
+  w <- capture_warnings(write_dataset_json(ds, float_as_decimals = TRUE))
+  expect_false(any(grepl("no longer needed to protect against", w)))
+})

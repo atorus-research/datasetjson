@@ -80,40 +80,6 @@ write_dataset_json <- function(
 prepare_dataset_for_write <- function(x, float_as_decimals = FALSE, digits = NULL) {
   stopifnot_datasetjson(x)
 
-  advisory <- paste0(
-    "As of datasetjson 0.4.0 numbers are written and read at full precision, ",
-    "so `float_as_decimals = TRUE` is no longer needed to protect against ",
-    "rounding and `FALSE` is preferred. Set it only when the receiving system ",
-    "requires the `decimal` data type."
-  )
-
-  if (isTRUE(float_as_decimals)) {
-    # 17 significant digits is the round-trip guarantee for a double; anything
-    # less renders values that will not read back exactly
-    if (!is.null(digits) && digits < 17) {
-      warning(
-        sprintf(
-          paste0(
-            "`digits = %s` renders decimals at fixed precision and the values ",
-            "will not read back exactly - 17 significant digits are needed to ",
-            "round-trip a double. Omit `digits` for exact output. "
-          ),
-          digits
-        ),
-        advisory,
-        call. = FALSE
-      )
-    } else {
-      warning(advisory, call. = FALSE)
-    }
-  } else if (!is.null(digits)) {
-    warning(
-      "`digits` has no effect unless `float_as_decimals = TRUE`, and is ",
-      "ignored here. Numbers are written at full precision either way.",
-      call. = FALSE
-    )
-  }
-
   meta <- attributes(x)
 
   # Columns to serialize as decimal strings rather than JSON numbers. The
@@ -190,6 +156,49 @@ prepare_dataset_for_write <- function(x, float_as_decimals = FALSE, digits = NUL
       meta$columns[[i]]["targetDataType"] <- "decimal"
       as_decimal[i] <- TRUE
     }
+  }
+
+  # Advisories are raised here rather than up front, because whether
+  # `float_as_decimals` applied to anything depends on the column types
+  advisory <- paste0(
+    "As of datasetjson 0.4.0 numbers are written and read at full precision, ",
+    "so `float_as_decimals = TRUE` is no longer needed to protect against ",
+    "rounding and `FALSE` is preferred. Set it only when the receiving system ",
+    "requires the `decimal` data type."
+  )
+
+  if (isTRUE(float_as_decimals) && !any(as_decimal)) {
+    warning(
+      "`float_as_decimals = TRUE` had no effect: this dataset has no float, ",
+      "double or decimal columns. The output is identical to ",
+      "`float_as_decimals = FALSE`.",
+      call. = FALSE
+    )
+  } else if (isTRUE(float_as_decimals)) {
+    # 17 significant digits is the round-trip guarantee for a double; anything
+    # less renders values that will not read back exactly
+    if (!is.null(digits) && digits < 17) {
+      warning(
+        sprintf(
+          paste0(
+            "`digits = %s` renders decimals at fixed precision and the values ",
+            "will not read back exactly - 17 significant digits are needed to ",
+            "round-trip a double. Omit `digits` for exact output. "
+          ),
+          digits
+        ),
+        advisory,
+        call. = FALSE
+      )
+    } else {
+      warning(advisory, call. = FALSE)
+    }
+  } else if (!is.null(digits)) {
+    warning(
+      "`digits` has no effect unless `float_as_decimals = TRUE`, and is ",
+      "ignored here. Numbers are written at full precision either way.",
+      call. = FALSE
+    )
   }
 
   # Populate the creation datetime
