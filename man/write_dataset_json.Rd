@@ -25,7 +25,8 @@ recommended you use pretty printing for submission purposes.}}
 data type, quoting the numbers as JSON strings rather than writing them as
 JSON numbers. This is an interoperability choice for systems that expect
 the decimal type; it is not needed for precision, as numbers are written at
-full precision either way. See the \href{https://wiki.cdisc.org/display/PUB/Precision+and+Rounding}{Dataset JSON user guide} for more
+full precision either way, and setting it raises a warning to that effect.
+See the \href{https://wiki.cdisc.org/display/PUB/Precision+and+Rounding}{Dataset JSON user guide} for more
 information. Defaults to FALSE}
 
 \item{digits}{When using \code{float_as_decimals}, the number of significant

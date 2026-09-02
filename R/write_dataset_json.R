@@ -9,7 +9,8 @@
 #'   data type, quoting the numbers as JSON strings rather than writing them as
 #'   JSON numbers. This is an interoperability choice for systems that expect
 #'   the decimal type; it is not needed for precision, as numbers are written at
-#'   full precision either way. See the [Dataset JSON user
+#'   full precision either way, and setting it raises a warning to that effect.
+#'   See the [Dataset JSON user
 #'   guide](https://wiki.cdisc.org/display/PUB/Precision+and+Rounding) for more
 #'   information. Defaults to FALSE
 #' @param digits When using `float_as_decimals`, the number of significant
@@ -76,6 +77,16 @@ write_dataset_json <- function(
 #' @noRd
 prepare_dataset_for_write <- function(x, float_as_decimals = FALSE) {
   stopifnot_datasetjson(x)
+
+  if (isTRUE(float_as_decimals)) {
+    warning(
+      "As of datasetjson 0.4.0 numbers are written and read at full precision, ",
+      "so `float_as_decimals = TRUE` is no longer needed to protect against ",
+      "rounding and `FALSE` is preferred. Set it only when the receiving system ",
+      "requires the `decimal` data type.",
+      call. = FALSE
+    )
+  }
 
   meta <- attributes(x)
 

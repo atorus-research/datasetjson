@@ -291,7 +291,7 @@ test_that("float_as_decimal works on read and write", {
   )
 
   json_out1 <- write_dataset_json(dsjson, float_as_decimals = FALSE)
-  json_out2 <- write_dataset_json(dsjson, float_as_decimals = TRUE)
+  json_out2 <- suppressWarnings(write_dataset_json(dsjson, float_as_decimals = TRUE))
 
   out1 <- read_dataset_json(json_out1)
   out2 <- read_dataset_json(json_out2)
@@ -330,7 +330,7 @@ test_that("float_as_decimals writes NA as null not padded string", {
     columns = test_items
   )
 
-  json_out <- write_dataset_json(dsjson, float_as_decimals = TRUE)
+  json_out <- suppressWarnings(write_dataset_json(dsjson, float_as_decimals = TRUE))
 
   # NA should be written as JSON null, not a padded string like "    NA"
   expect_false(grepl(" +NA", json_out))
@@ -373,4 +373,27 @@ test_that("Decimal won't convert unless target data type is set", {
   out <- read_dataset_json(json_out)
 
   expect_true(inherits(out$float_col, "character"))
+})
+
+test_that("float_as_decimals advises that it is no longer needed for precision", {
+  dsjson <- dataset_json(
+    head(iris, 3),
+    item_oid = "test_df",
+    name = "test_df",
+    dataset_label = "test_df",
+    columns = iris_items
+  )
+
+  expect_warning(
+    write_dataset_json(dsjson, float_as_decimals = TRUE),
+    "no longer needed to protect against"
+  )
+  expect_warning(
+    write_dataset_ndjson(dsjson, float_as_decimals = TRUE),
+    "no longer needed to protect against"
+  )
+
+  # the default path stays quiet
+  expect_silent(write_dataset_json(dsjson))
+  expect_silent(write_dataset_ndjson(dsjson))
 })

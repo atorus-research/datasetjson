@@ -71,6 +71,8 @@ The Dataset JSON standard also offers a "decimal" type. From the [user guide](ht
 
 `write_dataset_json()` supports this through `float_as_decimals`. When set, float columns are written as `decimal`/`decimal` and the values are quoted, and `read_dataset_json()` converts them back to numeric on read per the specification.
 
+Because this is no longer needed to protect precision, setting it warns:
+
 ```{r conversion}
 json_out <- write_dataset_json(dsjson, float_as_decimals = TRUE)
 
@@ -88,13 +90,13 @@ The result is the same, because both paths are exact. **`float_as_decimals` is a
 
 `digits` controls how many significant digits are used when rendering decimal strings. It defaults to `NULL`, meaning the shortest representation that still reads back as the same value - which is what makes the decimal path lossless, and keeps the output tidy:
 
-```{r digits}
+```{r digits, warning=FALSE}
 cat(write_dataset_json(dsjson, float_as_decimals = TRUE, pretty = TRUE))
 ```
 
 Supplying a number fixes the precision instead. That is occasionally useful for matching another system's output, but it is lossy whenever the value needs more digits than you allow:
 
-```{r digits_fixed}
+```{r digits_fixed, warning=FALSE}
 fixed <- read_dataset_json(
   write_dataset_json(dsjson, float_as_decimals = TRUE, digits = 8)
 )

@@ -15,7 +15,8 @@ NDJSON is returned as a character string.}
 \item{float_as_decimals}{If TRUE, write float variables as "decimal" data
 types, serialized as JSON strings rather than numbers. This is an
 interoperability choice; it is not needed for precision, as numbers are
-written at full precision either way.}
+written at full precision either way, and setting it raises a warning to
+that effect.}
 
 \item{digits}{When using \code{float_as_decimals}, the number of significant
 digits to render. Defaults to \code{NULL}, which uses the shortest

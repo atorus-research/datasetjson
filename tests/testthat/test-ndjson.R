@@ -260,7 +260,7 @@ test_that("float_as_decimal works with NDJSON", {
   )
 
   ndjson_out1 <- write_dataset_ndjson(dsjson, float_as_decimals = FALSE)
-  ndjson_out2 <- write_dataset_ndjson(dsjson, float_as_decimals = TRUE)
+  ndjson_out2 <- suppressWarnings(write_dataset_ndjson(dsjson, float_as_decimals = TRUE))
 
   out1 <- read_dataset_ndjson(ndjson_out1)
   out2 <- read_dataset_ndjson(ndjson_out2)
