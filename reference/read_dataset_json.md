@@ -8,7 +8,7 @@ JSON file.
 ## Usage
 
 ``` r
-read_dataset_json(file)
+read_dataset_json(file, decimals_as_floats = FALSE)
 ```
 
 ## Arguments
@@ -16,6 +16,10 @@ read_dataset_json(file)
 - file:
 
   File path or URL of a Dataset JSON file
+
+- decimals_as_floats:
+
+  Convert variables of "decimal" type to float
 
 ## Value
 

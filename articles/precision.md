@@ -98,21 +98,18 @@ can be described as follows:
 > explicit decimal datatype.
 
 In order to address this problem, we’ve added the options
-`float_as_decimals` and `digits` to
-[`write_dataset_json()`](https://atorus-research.github.io/datasetjson/reference/write_dataset_json.md).
-When `float_as_decimals = TRUE`, the columns are written as
-`decimal`/`decimal` in the JSON, and
-[`read_dataset_json()`](https://atorus-research.github.io/datasetjson/reference/read_dataset_json.md)
-will automatically convert them back to numeric on read per the Dataset
-JSON v1.1 specification.
+`floats_as_decimals` and `digits` to
+[`write_dataset_json()`](https://atorus-research.github.io/datasetjson/reference/write_dataset_json.md)
+and `decimals_as_floats` to
+[`read_dataset_json()`](https://atorus-research.github.io/datasetjson/reference/read_dataset_json.md).
 
 Considering the example before, here’s how these options can help.
 
 ``` r
 
-json_out <- write_dataset_json(dsjson, float_as_decimals = TRUE)
+json_out <-write_dataset_json(dsjson, float_as_decimals = TRUE)
 
-out <- read_dataset_json(json_out)
+out <- read_dataset_json(json_out, decimals_as_floats = TRUE)
 
 test_df$float_col - out$float_col
 #> [1] 0 0 0 0 0
@@ -123,8 +120,7 @@ test_df$float_col - out$float_col
 By manually handling how the decimal precision is rendered, the values
 were able to serialize and re-import more effectively.
 
-There are a few reasons we’ve chosen to NOT make `float_as_decimals`
-default behavior:
+There are a few reasons we’ve chosen to NOT make this default behavior:
 
 - This inherently adds overhead, because we convert the values prior to
   letting `yyjsonr` serialize them
