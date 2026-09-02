@@ -88,6 +88,28 @@ read_from_url <- function(path) {
   paste(x, collapse = "\n")
 }
 
+#' Read binary data from a URL
+#'
+#' `read_from_url()` reads lines, which would corrupt a compressed stream. This
+#' pulls the bytes through unchanged.
+#'
+#' @param path A URL
+#'
+#' @return A raw vector
+#' @noRd
+read_raw_from_url <- function(path) {
+  con <- url(path, open = "rb", method = "libcurl")
+  on.exit(close(con), add = TRUE)
+
+  chunks <- list()
+  repeat {
+    chunk <- readBin(con, "raw", n = 1048576L)
+    if (length(chunk) == 0L) break
+    chunks[[length(chunks) + 1L]] <- chunk
+  }
+  if (length(chunks) == 0L) raw() else unlist(chunks, use.names = FALSE)
+}
+
 #' Convert an dataframe into a named list of rows without NAs
 #'
 #' The variable attributes are stored as named lists within the output

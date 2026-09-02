@@ -89,21 +89,21 @@ write_dataset_dsjc <- function(
 #' @export
 #'
 #' @examples
+#' # Read one of the example files shipped with the package
+#' dm <- read_dataset_dsjc(datasetjson_example("dm.dsjc"))
+#'
+#' # Or from bytes held in memory
 #' ds_json <- dataset_json(iris, "IG.IRIS", "IRIS", "Iris", columns = iris_items)
-#' bytes <- write_dataset_dsjc(ds_json)
-#' dat <- read_dataset_dsjc(bytes)
+#' dat <- read_dataset_dsjc(write_dataset_dsjc(ds_json))
 read_dataset_dsjc <- function(file) {
   if (is.raw(file)) {
     parsed <- .Call(C_read_dsjc_raw, file)
   } else if (path_is_url(file)) {
-    stop(
-      "Reading DSJC from a URL is not supported yet; download the file first.",
-      call. = FALSE
-    )
+    parsed <- .Call(C_read_dsjc_raw, read_raw_from_url(file))
   } else if (length(file) == 1 && file.exists(file)) {
     parsed <- .Call(C_read_dsjc_file, file)
   } else {
-    stop("`file` must be a path to an existing file or a raw vector",
+    stop("`file` must be a path or URL of an existing file, or a raw vector",
          call. = FALSE)
   }
 
@@ -117,22 +117,24 @@ read_dataset_dsjc <- function(file) {
 #' checked against the Dataset NDJSON v1.1.0 schema, and each subsequent line
 #' must be a JSON array carrying one value per declared column.
 #'
-#' @param x File path of a DSJC file, or a raw vector holding the compressed
-#'   bytes
+#' @param x File path or URL of a DSJC file, or a raw vector holding the
+#'   compressed bytes
 #'
 #' @return A data frame of errors, empty when the file is valid
 #' @export
 #'
 #' @examples
-#' ds_json <- dataset_json(iris, "IG.IRIS", "IRIS", "Iris", columns = iris_items)
-#' validate_dataset_dsjc(write_dataset_dsjc(ds_json))
+#' validate_dataset_dsjc(datasetjson_example("dm.dsjc"))
 validate_dataset_dsjc <- function(x) {
   if (is.raw(x)) {
     bytes <- x
+  } else if (length(x) == 1 && path_is_url(x)) {
+    bytes <- read_raw_from_url(x)
   } else if (length(x) == 1 && !is.raw(x) && file.exists(x)) {
     bytes <- readBin(x, "raw", file.size(x))
   } else {
-    stop("`x` must be a path to an existing file or a raw vector", call. = FALSE)
+    stop("`x` must be a path or URL of an existing file, or a raw vector",
+         call. = FALSE)
   }
 
   txt <- tryCatch(

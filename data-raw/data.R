@@ -127,6 +127,15 @@ stopifnot(!inherits(
 ))
 usethis::use_data(schema_ndjson_1_1_0, overwrite = TRUE)
 
+# Example files shipped in inst/extdata for datasetjson_example()
+#
+# dm.json is the CDISC-published Dataset JSON example. The compressed form is
+# generated from it so the three representations stay in step.
+dm_example <- read_dataset_json(
+  system.file("extdata", "dm.json", package = "datasetjson")
+)
+write_dataset_dsjc(dm_example, file.path("inst", "extdata", "dm.dsjc"))
+
 # Test data metadata
 
 save_metadata <- function(df) {

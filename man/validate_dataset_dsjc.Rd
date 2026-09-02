@@ -7,8 +7,8 @@
 validate_dataset_dsjc(x)
 }
 \arguments{
-\item{x}{File path of a DSJC file, or a raw vector holding the compressed
-bytes}
+\item{x}{File path or URL of a DSJC file, or a raw vector holding the
+compressed bytes}
 }
 \value{
 A data frame of errors, empty when the file is valid
@@ -20,6 +20,5 @@ checked against the Dataset NDJSON v1.1.0 schema, and each subsequent line
 must be a JSON array carrying one value per declared column.
 }
 \examples{
-ds_json <- dataset_json(iris, "IG.IRIS", "IRIS", "Iris", columns = iris_items)
-validate_dataset_dsjc(write_dataset_dsjc(ds_json))
+validate_dataset_dsjc(datasetjson_example("dm.dsjc"))
 }

@@ -21,7 +21,10 @@ Dataset NDJSON content. The object returned is the same one
 uncompressed file, metadata attributes included.
 }
 \examples{
+# Read one of the example files shipped with the package
+dm <- read_dataset_dsjc(datasetjson_example("dm.dsjc"))
+
+# Or from bytes held in memory
 ds_json <- dataset_json(iris, "IG.IRIS", "IRIS", "Iris", columns = iris_items)
-bytes <- write_dataset_dsjc(ds_json)
-dat <- read_dataset_dsjc(bytes)
+dat <- read_dataset_dsjc(write_dataset_dsjc(ds_json))
 }
