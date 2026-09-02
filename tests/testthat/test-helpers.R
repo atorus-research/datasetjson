@@ -1,3 +1,19 @@
+test_that("datasetjson_example lists files when called with no arguments", {
+  files <- datasetjson_example()
+  expect_type(files, "character")
+  expect_true("dm.json" %in% files)
+})
+
+test_that("datasetjson_example returns a valid path for a known file", {
+  path <- datasetjson_example("dm.json")
+  expect_true(file.exists(path))
+  expect_true(endsWith(path, "dm.json"))
+})
+
+test_that("datasetjson_example errors for unknown file", {
+  expect_error(datasetjson_example("nonexistent.json"))
+})
+
 test_that("Column metadata can extract properly", {
   ds_json <- dataset_json(
     iris,

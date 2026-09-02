@@ -50,10 +50,11 @@ these fields.
 }
 \examples{
 # Read from disk
+dat <- read_dataset_json(datasetjson_example("dm.json"))
+
+# Read from a URL
 \dontrun{
-  dat <- read_dataset_json("path/to/file.json")
- # Read file from URL
-  dat <- dataset_json('https://www.somesite.com/file.json')
+  dat <- read_dataset_json('https://www.somesite.com/file.json')
 }
 
 # Read from an already imported character vector

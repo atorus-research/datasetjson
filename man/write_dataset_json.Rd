@@ -50,7 +50,5 @@ ds_json <- dataset_json(
 js <- write_dataset_json(ds_json)
 
 # Write to disk
-\dontrun{
-  write_dataset_json(ds_json, "path/to/file.json")
-}
+write_dataset_json(ds_json, tempfile(fileext = ".json"))
 }

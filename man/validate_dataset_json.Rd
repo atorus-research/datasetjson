@@ -19,9 +19,11 @@ parameters necessary to retrieve the error information of an invalid JSON
 file per the Dataset JSON schema.
 }
 \examples{
+# Validate a file on disk
+validate_dataset_json(datasetjson_example("dm.json"))
 
+# Validate from a URL
 \dontrun{
-  validate_dataset_json('path/to/file.json')
   validate_dataset_json('https://www.somesite.com/file.json')
 
 
