@@ -26,6 +26,10 @@ returns for the equivalent \code{.json} file, including all of the metadata
 attached as attributes. See \code{read_dataset_json()} for the full list.
 }
 \examples{
+# Read one of the example files shipped with the package
+dm <- read_dataset_ndjson(datasetjson_example("dm.ndjson"))
+
+# Or from NDJSON text held in memory
 ds_json <- dataset_json(
   iris,
   item_oid = "IG.IRIS",
@@ -33,6 +37,5 @@ ds_json <- dataset_json(
   dataset_label = "Iris",
   columns = iris_items
 )
-nd <- write_dataset_ndjson(ds_json)
-dat <- read_dataset_ndjson(nd)
+dat <- read_dataset_ndjson(write_dataset_ndjson(ds_json))
 }

@@ -25,6 +25,12 @@ uncompressed file, metadata attributes included.
 dm <- read_dataset_dsjc(datasetjson_example("dm.dsjc"))
 
 # Or from bytes held in memory
-ds_json <- dataset_json(iris, "IG.IRIS", "IRIS", "Iris", columns = iris_items)
+ds_json <- dataset_json(
+  iris,
+  item_oid = "IG.IRIS",
+  name = "IRIS",
+  dataset_label = "Iris",
+  columns = iris_items
+)
 dat <- read_dataset_dsjc(write_dataset_dsjc(ds_json))
 }
