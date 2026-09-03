@@ -88,24 +88,17 @@ The result is the same, because both paths are exact. **`float_as_decimals` is a
 
 ## A note on `digits`
 
-Earlier versions took a `digits` argument controlling how many significant
-digits were used when rendering decimals, defaulting to 16. That default was
-the source of the problem above: 17 significant digits are needed to
-round-trip a double, so 16 was quietly lossy, and no other setting was any
-better. Above 17 the output grew without becoming more accurate; below it,
-values simply did not come back.
-
-Decimals are now rendered at whatever precision reads back as the same value,
-which is both exact and compact:
+`digits` is deprecated and ignored. Decimals are written at whatever precision
+reads back as the same value, so there is nothing left for it to control, and
+supplying it warns.
 
 ```{r digits, warning=FALSE}
 cat(write_dataset_json(dsjson, float_as_decimals = TRUE, pretty = TRUE))
 ```
 
-`digits` is deprecated and ignored, and supplying it warns. If you need values
-at a fixed precision - to match another system's output, say - format the
-column to character yourself and declare it as `decimal`/`decimal` in the
-column metadata. The writer passes such columns through verbatim:
+If you need values at a fixed precision - to match another system's output, say
+- format the column to character yourself and declare it as `decimal`/`decimal`
+in the column metadata. The writer passes such columns through verbatim:
 
 ```{r fixed_precision}
 fixed <- test_df

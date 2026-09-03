@@ -113,11 +113,24 @@ write_dataset_ndjson(ds_json, file = "iris.ndjson")
 dat <- read_dataset_ndjson("iris.ndjson")
 ```
 
+As with `write_dataset_json()`, leaving out `file` returns the content instead, which shows the shape of the format - the metadata object first, then one array per row:
+
+```{r ndjson_char}
+nd <- write_dataset_ndjson(ds_json)
+cat(nd)
+```
+
 The two formats are interchangeable - reading `iris.json` and `iris.ndjson` written from the same object gives you the same dataframe, with the same attributes.
 
 The data frame that's read in is itself a `datasetjson` object and carries a number of attributes. For example, opening the dataframe within the RStudio IDE will present the variable labels. Additionally, the extra metadata provided in a Dataset JSON file is available. The attributes provided follow the naming convention of the Dataset JSON standard. 
 
-We've provided some helper functions to leverage this data further. If you'd like to grab the column metadata from the `columns` element, you can use the function `get_column_metadata()`
+## Working with the metadata
+
+Everything above is what you need to read and write Dataset JSON files. The two
+functions in this section are optional conveniences for working with the column
+metadata once a file is read, and can be skipped on a first pass.
+
+If you'd like to grab the column metadata from the `columns` element, you can use the function `get_column_metadata()`
 
 ```{r column_metadata}
 get_column_metadata(dat)

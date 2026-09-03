@@ -19,7 +19,13 @@
 #' @export
 #'
 #' @examples
-#' ds_json <- dataset_json(iris, "IG.IRIS", "IRIS", "Iris", columns = iris_items)
+#' ds_json <- dataset_json(
+#'   iris,
+#'   item_oid = "IG.IRIS",
+#'   name = "IRIS",
+#'   dataset_label = "Iris",
+#'   columns = iris_items
+#' )
 #' nd <- write_dataset_ndjson(ds_json)
 #' dat <- read_dataset_ndjson(nd)
 read_dataset_ndjson <- function(file) {

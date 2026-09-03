@@ -44,4 +44,9 @@ nd <- write_dataset_ndjson(ds_json)
 
 # Write to disk
 write_dataset_ndjson(ds_json, tempfile(fileext = ".ndjson"))
+
+# float_as_decimals writes floats as the "decimal" type, quoting the numbers.
+# It is an interoperability choice for systems that require that type - it is
+# not needed for precision, and setting it warns to say so.
+nd <- suppressWarnings(write_dataset_ndjson(ds_json, float_as_decimals = TRUE))
 }

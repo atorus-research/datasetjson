@@ -36,6 +36,15 @@
 #'
 #' # Write to disk
 #' write_dataset_json(ds_json, tempfile(fileext = ".json"))
+#'
+#' # float_as_decimals writes floats as the "decimal" type, quoting the numbers.
+#' # It is an interoperability choice for systems that require that type - it is
+#' # not needed for precision, and setting it warns to say so.
+#' js <- suppressWarnings(write_dataset_json(ds_json, float_as_decimals = TRUE))
+#'
+#' # `digits` is deprecated and ignored; decimals are written at whatever
+#' # precision reads back as the same value
+#' js <- suppressWarnings(write_dataset_json(ds_json, digits = 16))
 write_dataset_json <- function(
   x,
   file,
