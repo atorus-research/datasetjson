@@ -17,7 +17,10 @@ test_that("DSJC is a plain zLib stream of the NDJSON content", {
   # zLib (RFC 1950) header, level 9
   expect_identical(as.integer(bytes[1:2]), c(120L, 218L))
 
-  # the content is byte-for-byte what write_dataset_ndjson() puts in a file
+  # the content is byte-for-byte what write_dataset_ndjson() puts in a file.
+  # R's type = "gzip" covers both RFC 1952 (gzip, 0x1F 0x8B) and RFC 1950
+  # (zLib, 0x78 0xDA); DSJC is the latter, so this inflates it correctly
+  # despite the argument's name.
   f <- withr::local_tempfile(fileext = ".ndjson")
   write_dataset_ndjson(ds, f)
   expect_identical(
@@ -73,16 +76,61 @@ test_that("a stream compressed by another tool reads correctly", {
 test_that("corrupt compressed input is reported, not crashed on", {
   ds <- make_ds(head(iris, 20))
 
+  # inflate() returns Z_DATA_ERROR: the stream is structurally broken
   damaged <- write_dataset_dsjc(ds)
   damaged[50:60] <- as.raw(0)
   expect_error(read_dataset_dsjc(damaged),
                "Could not read Dataset JSON Compressed content")
 
-  truncated <- write_dataset_dsjc(ds)[1:40]
-  expect_error(read_dataset_dsjc(truncated),
+  # inflate() returns Z_OK with no input left and no Z_STREAM_END: the stream is
+  # well formed as far as it goes but stops early. Any prefix of a valid deflate
+  # stream is a valid partial stream, so both a heavy truncation and the loss of
+  # just the trailing checksum land here rather than on the error above.
+  full <- write_dataset_dsjc(ds)
+  expect_error(read_dataset_dsjc(full[seq_len(40)]),
+               "ended before it was complete")
+  expect_error(read_dataset_dsjc(full[seq_len(length(full) - 4L)]),
+               "ended before it was complete")
+  expect_error(read_dataset_dsjc(full[seq_len(length(full) - 1L)]),
                "ended before it was complete")
 
   expect_error(read_dataset_dsjc("no/such/file.dsjc"), "must be a path")
+})
+
+test_that("float_as_decimals works through the compressed path", {
+  # prepare_dataset_for_write() is shared, but write_dataset_dsjc() passes
+  # as_decimal to its own C entry point, so the flag needs covering here too
+  ds <- make_ds(head(iris, 5))
+
+  expect_warning(write_dataset_dsjc(ds, float_as_decimals = TRUE),
+                 "no longer needed to protect against")
+  bytes <- suppressWarnings(write_dataset_dsjc(ds, float_as_decimals = TRUE))
+
+  # the numbers really are quoted inside the compressed content, and the column
+  # metadata really did flip to decimal/decimal
+  content <- rawToChar(memDecompress(bytes, type = "gzip"))
+  expect_true(grepl('"dataType":"decimal","targetDataType":"decimal"', content,
+                    fixed = TRUE))
+  expect_true(grepl('["5.1","3.5"', content, fixed = TRUE))
+
+  # and it reads back to the same data as the plain compressed path
+  expect_equal(as.data.frame(read_dataset_dsjc(bytes)),
+               as.data.frame(read_dataset_dsjc(write_dataset_dsjc(ds))),
+               ignore_attr = TRUE)
+
+  # values survive the decimal encoding through compression bit-exactly
+  v <- c(143.66666666666699825, 2 / 3, 1 / 3)
+  d <- data.frame(SUBJ = c("a", "b", "c"), V = v, stringsAsFactors = FALSE)
+  items <- data.frame(
+    itemOID = c("IT.SUBJ", "IT.V"), name = c("SUBJ", "V"),
+    label = c("Subject", "Value"), dataType = c("string", "float"),
+    stringsAsFactors = FALSE
+  )
+  dsv <- dataset_json(d, item_oid = "t", name = "t", dataset_label = "t",
+                      columns = items)
+  back <- read_dataset_dsjc(
+    suppressWarnings(write_dataset_dsjc(dsv, float_as_decimals = TRUE)))
+  expect_identical(as.double(back$V), v)
 })
 
 test_that("DSJC content validates as Dataset NDJSON", {
