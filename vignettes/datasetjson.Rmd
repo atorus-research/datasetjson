@@ -54,7 +54,7 @@ This data frame has 7 columns, 4 of which are strictly required. This is defined
 | name           | Required        | Variable name                                                                                                                  |
 | label          | Required        | Variable description                                                                                                           |
 | dataType       | Required        | Type of the variable. Allowed values: "string", "integer", "decimal", "float", "double", "boolean", "datetime", "date", "time", "URI". See ODM types for details. |
-| targetDataType | Required        | Type of the variable. Allowed values: "integer", "decimal". Indicates the data type into which the receiving system must transform the associated Dataset-JSON variable. |
+| targetDataType | Optional        | Allowed values: "integer", "decimal". Indicates the data type into which the receiving system must transform the variable. Only specify it when it differs from `dataType` and the data needs transforming - for example `integer` for the numeric dates and times used in ADaM, or `decimal` where a number is carried as a string. |
 | length         | Optional        | Variable length                                                                                                                |
 | displayFormat  | Optional        | Display format supports data visualization of numeric float and date values.                                               |
 | keySequence    | Optional        | Indicates that this item is a key variable in the dataset structure. It also provides an ordering for the keys.                |
