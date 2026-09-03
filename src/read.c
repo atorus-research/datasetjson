@@ -264,12 +264,16 @@ static SEXP alloc_columns(yyjson_val *cols, size_t ncol, size_t nrow,
                                             : REALSXP;
     SET_VECTOR_ELT(data, (R_xlen_t) j, Rf_allocVector(st, (R_xlen_t) nrow));
 
-    if (yyjson_is_str(nmv)) {
+    if (!yyjson_is_str(nmv)) {
+      /* `name` is required by the standard, and without it the column cannot be
+         placed in the data frame - fail here rather than deeper in R */
+      UNPROTECT(2);
+      Rf_error("Column %d in `columns` has no `name`", (int) (j + 1));
+    }
+    {
       size_t len;
       const char *s = val_str(nmv, &len);
       SET_STRING_ELT(dnms, (R_xlen_t) j, Rf_mkCharLenCE(s, (int) len, CE_UTF8));
-    } else {
-      SET_STRING_ELT(dnms, (R_xlen_t) j, NA_STRING);
     }
     j++;
   }
