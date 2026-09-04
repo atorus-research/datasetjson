@@ -148,13 +148,15 @@ prepare_dataset_for_write <- function(x, float_as_decimals = FALSE, digits = NUL
             "If dataType is time and targetDataType is integer, the input variable type must be a lubridate Period, an hms difftime, or a data.table ITime object"
           )
         }
+        # as.POSIXlt() only defaults `origin` from R 4.3.0, and this package
+        # supports R >= 4.0, so it is supplied explicitly
         x[y$name] <- strftime(
           as.POSIXlt(
             as.numeric(x[[y$name]]),
             tz = 'UTC',
             origin = "1970-01-01"
           ),
-          "%H:%M:%S",
+          "%H:%M:%S"
         )
       }
     } else if (

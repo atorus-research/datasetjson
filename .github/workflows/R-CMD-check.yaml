@@ -32,6 +32,12 @@ jobs:
           - {os: ubuntu-22.04, r: 'devel', rspm: "https://packagemanager.posit.co/cran/__linux__/jammy/latest"}
           - {os: ubuntu-latest,  r: 'devel', http-user-agent: 'release'}
           - {os: ubuntu-latest,  r: 'release'}
+          # DESCRIPTION declares R (>= 4.0), which nothing above exercises.
+          # oldrel-3 is currently R 4.2 - below 4.3.0, where as.POSIXct()/
+          # as.POSIXlt() gained a default `origin` - so it catches the modern
+          # idioms that quietly break on the versions we claim to support.
+          - {os: ubuntu-latest,  r: 'oldrel-1'}
+          - {os: ubuntu-latest,  r: 'oldrel-3'}
 
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
