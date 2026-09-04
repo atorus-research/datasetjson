@@ -3,8 +3,8 @@
 
 <!-- badges: start -->
 
-[<img src="https://img.shields.io/codecov/c/github/atorus-research/datasetjson">](https://app.codecov.io/gh/atorus-research/datasetjson)
-[<img src="https://img.shields.io/badge/License-APACHE2-blue.svg">](https://github.com/atorus-research/datasetjson/blob/main/LICENSE.md)
+[<img src="https://img.shields.io/codecov/c/github/atorus-research/datasetjson" alt="Code coverage">](https://app.codecov.io/gh/atorus-research/datasetjson)
+[<img src="https://img.shields.io/badge/License-APACHE2-blue.svg" alt="License: Apache 2.0">](https://github.com/atorus-research/datasetjson/blob/main/LICENSE.md)
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 <!-- badges: end -->
@@ -99,7 +99,7 @@ cat(js_text)
 ```
 
     ## {
-    ##     "datasetJSONCreationDateTime": "2026-09-03T20:28:51",
+    ##     "datasetJSONCreationDateTime": "2026-09-03T20:52:31",
     ##     "datasetJSONVersion": "1.1.0",
     ##     "fileOID": "/some/path",
     ##     "dbLastModifiedDateTime": "2025-01-21T13:34:50",

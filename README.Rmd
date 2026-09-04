@@ -10,8 +10,8 @@ library(datasetjson)
 # **datasetjson** <img src="man/figures/logo.svg" align="right" alt="" width="120" />
 
 <!-- badges: start -->
-[<img src="https://img.shields.io/codecov/c/github/atorus-research/datasetjson">](https://app.codecov.io/gh/atorus-research/datasetjson)
-[<img src="https://img.shields.io/badge/License-APACHE2-blue.svg">](https://github.com/atorus-research/datasetjson/blob/main/LICENSE.md)
+[<img src="https://img.shields.io/codecov/c/github/atorus-research/datasetjson" alt="Code coverage">](https://app.codecov.io/gh/atorus-research/datasetjson)
+[<img src="https://img.shields.io/badge/License-APACHE2-blue.svg" alt="License: Apache 2.0">](https://github.com/atorus-research/datasetjson/blob/main/LICENSE.md)
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 <!-- badges: end -->
 

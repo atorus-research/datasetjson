@@ -2,7 +2,7 @@
 title: "Dates, Times, and Datetimes"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{date_time_datetime}
+  %\VignetteIndexEntry{Dates, Times, and Datetimes}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
