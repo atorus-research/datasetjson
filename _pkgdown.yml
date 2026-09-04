@@ -50,6 +50,7 @@ reference:
 - contents:
   - set_variable_attributes
   - get_column_metadata
+  - datasetjson_example
 - title: Data Objects
   desc: Data objects stored in the datasetjson package
 - contents:

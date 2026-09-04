@@ -2,7 +2,7 @@
 title: "Numeric Precision"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{precision}
+  %\VignetteIndexEntry{Numeric Precision}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
