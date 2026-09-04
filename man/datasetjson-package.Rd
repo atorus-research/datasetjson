@@ -6,6 +6,8 @@
 \alias{datasetjson-package}
 \title{datasetjson: Read and Write CDISC Dataset JSON Files}
 \description{
+\if{html}{\figure{logo.svg}{options: style='float: right' alt='logo' width='120'}}
+
 Read, construct and write CDISC (Clinical Data Interchange Standards Consortium) Dataset JSON (JavaScript Object Notation) files, while validating per the Dataset JSON schema file, as described in CDISC (2023) \url{https://www.cdisc.org/standards/data-exchange/dataset-json}.
 }
 \seealso{
@@ -21,7 +23,14 @@ Useful links:
 
 Authors:
 \itemize{
+  \item Mike Stackhouse \email{mike.stackhouse@atorusresearch.com} (\href{https://orcid.org/0000-0001-6030-723X}{ORCID})
   \item Nicholas Masel \email{nmasel@its.jnj.com}
+}
+
+Other contributors:
+\itemize{
+  \item Atorus Research, Inc. [copyright holder]
+  \item Yao Yuan (Author of the bundled yyjson C library) [copyright holder]
 }
 
 }

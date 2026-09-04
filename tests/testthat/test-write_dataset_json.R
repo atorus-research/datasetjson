@@ -291,13 +291,14 @@ test_that("float_as_decimal works on read and write", {
   )
 
   json_out1 <- write_dataset_json(dsjson, float_as_decimals = FALSE)
-  json_out2 <- write_dataset_json(dsjson, float_as_decimals = TRUE)
+  json_out2 <- suppressWarnings(write_dataset_json(dsjson, float_as_decimals = TRUE))
 
   out1 <- read_dataset_json(json_out1)
   out2 <- read_dataset_json(json_out2)
 
-  # Expect precision to fall apart around 7 decimal place
-  expect_true(all(abs(out1$float_col - test_df$float_col) > 0.0000001))
+  # Numbers are parsed to double in C, so a plain read is now exact too and
+  # float_as_decimals is an interop choice rather than a precision workaround
+  expect_equal(out1$float_col, test_df$float_col, ignore_attr = TRUE)
 
   # Should be rectified by manual decimal conversions
   expect_equal(out2$float_col, test_df$float_col, ignore_attr = TRUE)
@@ -329,7 +330,7 @@ test_that("float_as_decimals writes NA as null not padded string", {
     columns = test_items
   )
 
-  json_out <- write_dataset_json(dsjson, float_as_decimals = TRUE)
+  json_out <- suppressWarnings(write_dataset_json(dsjson, float_as_decimals = TRUE))
 
   # NA should be written as JSON null, not a padded string like "    NA"
   expect_false(grepl(" +NA", json_out))
@@ -372,4 +373,110 @@ test_that("Decimal won't convert unless target data type is set", {
   out <- read_dataset_json(json_out)
 
   expect_true(inherits(out$float_col, "character"))
+})
+
+test_that("float_as_decimals advises that it is no longer needed for precision", {
+  dsjson <- dataset_json(
+    head(iris, 3),
+    item_oid = "test_df",
+    name = "test_df",
+    dataset_label = "test_df",
+    columns = iris_items
+  )
+
+  expect_warning(
+    write_dataset_json(dsjson, float_as_decimals = TRUE),
+    "no longer needed to protect against"
+  )
+  expect_warning(
+    write_dataset_ndjson(dsjson, float_as_decimals = TRUE),
+    "no longer needed to protect against"
+  )
+
+  # the default path stays quiet
+  expect_silent(write_dataset_json(dsjson))
+  expect_silent(write_dataset_ndjson(dsjson))
+})
+
+test_that("digits is deprecated, ignored, and warns", {
+  dsjson <- dataset_json(
+    head(iris, 3),
+    item_oid = "test_df",
+    name = "test_df",
+    dataset_label = "test_df",
+    columns = iris_items
+  )
+
+  expect_warning(
+    write_dataset_json(dsjson, digits = 8),
+    "`digits` is deprecated and ignored",
+    fixed = TRUE
+  )
+  expect_warning(
+    write_dataset_ndjson(dsjson, digits = 8),
+    "`digits` is deprecated and ignored",
+    fixed = TRUE
+  )
+
+  # it changes nothing, on either path
+  expect_identical(
+    write_dataset_json(dsjson),
+    suppressWarnings(write_dataset_json(dsjson, digits = 8))
+  )
+  expect_identical(
+    suppressWarnings(write_dataset_json(dsjson, float_as_decimals = TRUE)),
+    suppressWarnings(
+      write_dataset_json(dsjson, float_as_decimals = TRUE, digits = 8))
+  )
+
+  # supplied alongside float_as_decimals, both advisories are raised
+  w <- capture_warnings(
+    write_dataset_json(dsjson, float_as_decimals = TRUE, digits = 8))
+  expect_length(w, 2)
+  expect_true(any(grepl("deprecated and ignored", w)))
+  expect_true(any(grepl("no longer needed to protect against", w)))
+})
+
+test_that("fixed precision is still reachable by formatting the column", {
+  # the capability `digits` used to provide: format to character yourself and
+  # declare the column decimal/decimal, and the writer passes it through as-is
+  d <- head(iris, 2)
+  d$v <- format(c(143.66666666666699825, 2 / 3), digits = 8, trim = TRUE)
+  items <- dplyr::bind_rows(
+    iris_items,
+    data.frame(itemOID = "IT.v", name = "v", label = "V",
+               dataType = "decimal", targetDataType = "decimal")
+  )
+  ds <- dataset_json(d, item_oid = "t", name = "t", dataset_label = "t",
+                     columns = items)
+
+  js <- expect_silent(write_dataset_json(ds))
+  expect_true(grepl('"143.66666667"', js, fixed = TRUE))
+  expect_equal(read_dataset_json(js)$v, c(143.66666667, 0.66666667),
+               ignore_attr = TRUE)
+  expect_message(validate_dataset_json(js), "File is valid")
+})
+
+test_that("float_as_decimals reports when it had no effect", {
+  # no float, double or decimal columns for the flag to act on
+  d <- data.frame(SUBJ = c("A", "B"), SEQ = 1:2, FLAG = c("Y", "N"),
+                  stringsAsFactors = FALSE)
+  items <- data.frame(
+    itemOID = paste0("IT.", names(d)), name = names(d), label = names(d),
+    dataType = c("string", "integer", "string"), stringsAsFactors = FALSE
+  )
+  ds <- dataset_json(d, item_oid = "t", name = "t", dataset_label = "t",
+                     columns = items)
+
+  expect_warning(
+    write_dataset_json(ds, float_as_decimals = TRUE),
+    "had no effect"
+  )
+  # and it really is a no-op, so the advisory would have been misleading
+  expect_identical(
+    write_dataset_json(ds),
+    suppressWarnings(write_dataset_json(ds, float_as_decimals = TRUE))
+  )
+  w <- capture_warnings(write_dataset_json(ds, float_as_decimals = TRUE))
+  expect_false(any(grepl("no longer needed to protect against", w)))
 })

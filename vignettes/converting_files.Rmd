@@ -8,9 +8,12 @@ vignette: >
 ---
 
 ```{r, include = FALSE}
+# haven is a suggested package rather than a hard dependency, and every chunk
+# below builds on the dataset it reads, so skip them all if it is unavailable
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  eval = requireNamespace("haven", quietly = TRUE)
 )
 ```
 
@@ -89,8 +92,11 @@ json_file_content <- write_dataset_json(ds_json)
 Just for good measure, we can confirm the metadata we just created is compliant with the schema.
 
 ``` {r}
-# Check schema compliance
-validate_dataset_json(json_file_content)
+# Check schema compliance. jsonvalidate is a suggested package rather than a
+# hard dependency, so guard the call.
+if (requireNamespace("jsonvalidate", quietly = TRUE)) {
+  validate_dataset_json(json_file_content)
+}
 ```
 
 ## Bulk File Conversion

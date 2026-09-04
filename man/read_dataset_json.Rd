@@ -58,7 +58,13 @@ dat <- read_dataset_json(datasetjson_example("dm.json"))
 }
 
 # Read from an already imported character vector
-ds_json <- dataset_json(iris, "IG.IRIS", "IRIS", "Iris", columns=iris_items)
+ds_json <- dataset_json(
+  iris,
+  item_oid = "IG.IRIS",
+  name = "IRIS",
+  dataset_label = "Iris",
+  columns = iris_items
+)
 js <- write_dataset_json(ds_json)
 dat <- read_dataset_json(js)
 }

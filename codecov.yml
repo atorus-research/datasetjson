@@ -1,0 +1,17 @@
+# The yyjson C library is vendored unmodified from ibireme/yyjson. It is not
+# our code and is not exercised directly by our tests, so measuring it would
+# swamp the figure for the code that is ours.
+ignore:
+  - "src/yyjson.c"
+  - "src/yyjson.h"
+
+coverage:
+  status:
+    project:
+      default:
+        target: auto
+        threshold: 1%
+    patch:
+      default:
+        target: 90%
+        threshold: 5%

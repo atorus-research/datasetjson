@@ -21,3 +21,6 @@
 ^\.devcontainer$
 ^data-raw$
 ^inst/dev$
+^\.git$
+^\.covrignore$
+^codecov\.yml$

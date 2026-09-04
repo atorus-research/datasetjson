@@ -81,9 +81,33 @@ path_is_url <- function(path) {
 #' @noRd
 read_from_url <- function(path) {
   con <- url(path, method = "libcurl")
-  x <- readLines(con, warn=FALSE) # the EOL warning shouldn't be a problem for readers
-  close(con)
-  x
+  on.exit(close(con), add = TRUE)
+  # readLines splits on newlines; callers want the whole document, and a reader
+  # handed only the first line would silently see an empty dataset
+  x <- readLines(con, warn = FALSE) # the EOL warning shouldn't be a problem for readers
+  paste(x, collapse = "\n")
+}
+
+#' Read binary data from a URL
+#'
+#' `read_from_url()` reads lines, which would corrupt a compressed stream. This
+#' pulls the bytes through unchanged.
+#'
+#' @param path A URL
+#'
+#' @return A raw vector
+#' @noRd
+read_raw_from_url <- function(path) {
+  con <- url(path, open = "rb", method = "libcurl")
+  on.exit(close(con), add = TRUE)
+
+  chunks <- list()
+  repeat {
+    chunk <- readBin(con, "raw", n = 1048576L)
+    if (length(chunk) == 0L) break
+    chunks[[length(chunks) + 1L]] <- chunk
+  }
+  if (length(chunks) == 0L) raw() else unlist(chunks, use.names = FALSE)
 }
 
 #' Convert an dataframe into a named list of rows without NAs

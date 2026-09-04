@@ -11,7 +11,13 @@ Authors@R: c(
     person(given = "Nicholas",
            family = "Masel",
            email = "nmasel@its.jnj.com",
-           role = "aut")
+           role = "aut"),
+    person(given = "Atorus Research, Inc.",
+           role = "cph"),
+    person(given = "Yao",
+           family = "Yuan",
+           role = "cph",
+           comment = "Author of the bundled yyjson C library")
     )
 Description: Read, construct and write CDISC (Clinical Data Interchange Standards Consortium) Dataset JSON (JavaScript Object Notation) files, while validating per the Dataset JSON schema file, as described in CDISC (2023) <https://www.cdisc.org/standards/data-exchange/dataset-json>.
 URL: https://atorus-research.github.io/datasetjson/
@@ -19,12 +25,12 @@ BugReports: https://github.com/atorus-research/datasetjson/issues/
 Encoding: UTF-8
 Language: en-US
 License: Apache License (>= 2)
+Copyright: The included 'yyjson' C library is Copyright (c) 2020 YaoYuan and
+    is released under the MIT license. See inst/COPYRIGHTS.
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.3
 Depends: R (>= 4.0)
 Imports:
-    yyjsonr (>= 0.1.18),
     hms
 Suggests:
     testthat (>= 2.1.0),
@@ -42,3 +48,4 @@ Suggests:
     data.table
 VignetteBuilder: knitr
 Config/testthat/edition: 3
+Config/roxygen2/version: 8.0.0

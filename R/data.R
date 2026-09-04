@@ -23,3 +23,16 @@
 #'   A character vector with 1 element
 #' }
 "schema_1_1_0"
+
+#' Dataset NDJSON Schema Version 1.1.0
+#'
+#' This object is a character vector holding the schema used to validate the
+#' metadata line of a Dataset NDJSON file. It is the CDISC-published schema
+#' with three definitions hoisted into `$defs` so that the references to them
+#' resolve; see `data-raw/data.R`.
+#'
+#' @format ## `schema_ndjson_1_1_0`
+#' \describe{
+#'   A character vector with 1 element
+#' }
+"schema_ndjson_1_1_0"

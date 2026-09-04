@@ -132,3 +132,45 @@ test_that("read_dataset_json warnings are thrown properly", {
                  "The number of rows in the data does not match the number of records recorded in the metadata.")
 })
 
+
+test_that("a missing `records` value in the source file is reported", {
+  ds_json <- dataset_json(
+    head(iris, 4),
+    item_oid = "IG.IRIS",
+    name = "IRIS",
+    dataset_label = "Iris",
+    columns = iris_items
+  )
+  js <- write_dataset_json(ds_json)
+
+  # `records` is required by the standard; strip it to mimic a bad producer
+  no_records <- sub('"records":4,', "", js, fixed = TRUE)
+  expect_false(grepl('"records"', no_records, fixed = TRUE))
+
+  expect_warning(
+    read_dataset_json(no_records),
+    "does not contain a `records` value",
+    fixed = TRUE
+  )
+
+  # it still reads, falling back to the row count
+  dat <- suppressWarnings(read_dataset_json(no_records))
+  expect_equal(nrow(dat), 4L)
+  expect_equal(attr(dat, "records"), 4L)
+
+  # the NDJSON reader shares the same assembly, so it behaves the same
+  nd <- write_dataset_ndjson(ds_json)
+  nd_no_records <- sub('"records":4,', "", nd, fixed = TRUE)
+  expect_warning(
+    read_dataset_ndjson(nd_no_records),
+    "does not contain a `records` value",
+    fixed = TRUE
+  )
+
+  # a present-but-wrong value still reports the mismatch instead
+  wrong <- sub('"records":4,', '"records":99,', js, fixed = TRUE)
+  expect_warning(
+    read_dataset_json(wrong),
+    "does not match the number of records"
+  )
+})

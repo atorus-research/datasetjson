@@ -69,6 +69,74 @@ schema_file <- testthat::test_path("testdata", "dataset.schema.json")
 schema_1_1_0 = readChar(schema_file, file.info(schema_file)$size)
 usethis::use_data(schema_1_1_0, overwrite=TRUE)
 
+# Dataset NDJSON Schema V1.1.0 as Character Vector
+#
+# Two things need fixing up before this schema is usable:
+#   1. The source file is UTF-16LE encoded with a BOM.
+#   2. It references "#/$defs/Column", "#/$defs/DataTypesEnum" and
+#      "#/$defs/SourceSystem", none of which are in $defs - each definition is
+#      instead nested inside the object that references it. ajv refuses to
+#      compile the schema as shipped. We hoist the nested copies into $defs so
+#      the references resolve; the content itself is unchanged.
+ndjson_schema_file <- testthat::test_path("testdata", "dataset-ndjson-schema.json")
+ndjson_schema_raw <- paste(
+  system2("iconv", c("-f", "UTF-16LE", "-t", "UTF-8", ndjson_schema_file), stdout = TRUE),
+  collapse = "\n"
+)
+ndjson_schema_raw <- sub("^\uFEFF", "", ndjson_schema_raw)
+
+.ndjson_schema <- jsonlite::fromJSON(ndjson_schema_raw, simplifyVector = FALSE)
+
+# every "#/$defs/<name>" the schema refers to
+.collect_refs <- function(x, acc = character()) {
+  if (!is.list(x)) return(acc)
+  if (!is.null(x[["$ref"]])) acc <- c(acc, x[["$ref"]])
+  for (el in x) acc <- .collect_refs(el, acc)
+  acc
+}
+# the first definition of <name> found anywhere in the tree
+.find_def <- function(x, nm) {
+  if (!is.list(x)) return(NULL)
+  if (!is.null(x[[nm]]) && is.list(x[[nm]])) return(x[[nm]])
+  for (el in x) {
+    hit <- .find_def(el, nm)
+    if (!is.null(hit)) return(hit)
+  }
+  NULL
+}
+
+.prefix <- "#/$defs/"
+.wanted <- unique(sub(.prefix, "",
+  grep(.prefix, .collect_refs(.ndjson_schema), value = TRUE, fixed = TRUE),
+  fixed = TRUE))
+for (.nm in setdiff(.wanted, names(.ndjson_schema[["$defs"]]))) {
+  .def <- .find_def(.ndjson_schema, .nm)
+  if (is.null(.def)) stop("No definition found for ", .nm, " in the NDJSON schema")
+  .ndjson_schema[["$defs"]][[.nm]] <- .def
+}
+# the columns array now resolves through $defs rather than an inline copy
+.ndjson_schema[["$defs"]]$DatasetMetadata$properties$columns$items <-
+  list(`$ref` = "#/$defs/Column")
+
+schema_ndjson_1_1_0 <- as.character(
+  jsonlite::toJSON(.ndjson_schema, auto_unbox = TRUE, null = "null")
+)
+stopifnot(!inherits(
+  try(jsonvalidate::json_validate("{}", schema_ndjson_1_1_0, engine = "ajv"), silent = TRUE),
+  "try-error"
+))
+usethis::use_data(schema_ndjson_1_1_0, overwrite = TRUE)
+
+# Example files shipped in inst/extdata for datasetjson_example()
+#
+# dm.json is the CDISC-published Dataset JSON example. The NDJSON and
+# compressed forms are generated from it so all three stay in step.
+dm_example <- read_dataset_json(
+  system.file("extdata", "dm.json", package = "datasetjson")
+)
+write_dataset_ndjson(dm_example, file.path("inst", "extdata", "dm.ndjson"))
+write_dataset_dsjc(dm_example, file.path("inst", "extdata", "dm.dsjc"))
+
 # Test data metadata
 
 save_metadata <- function(df) {
