@@ -18,7 +18,7 @@ Dataset JSON inherently pulls some standards from the [ODM v2.0](https://wiki.cd
 
 > The Operational Data Model (ODM) is a vendor-neutral, platform-independent data exchange format, intended primarily for interchange and archival of clinical study data pertaining to individual subjects, aggregated collections of subjects, and integrated research studies. The model includes the clinical data along with its associated metadata, administrative data, reference data, and audit information. All information that needs to be shared among different software systems during the setup, operation, analysis, submission, and archiving of a study are included in the model.
 
-Without having a background in ODM, some fields within the Dataset JSON file may be hard to understand without the ODM references available. This vignette provides some quick defintions that may prove useful.
+Without having a background in ODM, some fields within the Dataset JSON file may be hard to understand without the ODM references available. This vignette provides some quick definitions that may prove useful.
 
 ## fileOID
 

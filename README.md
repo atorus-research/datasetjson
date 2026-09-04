@@ -17,8 +17,8 @@ formatted datasets.
 If you’re stumbling into the world of Dataset JSON, you might be
 wondering “Why JSON?”, as many have asked this question. We highly
 recommend you take a pit stop to read [this blog
-post](https://swhume.github.io/why-json-for-datasets) by Sam Hume one of
-the creators of the Dataset JSON standard.
+post](https://humedatalabs.com/why-json-for-datasets/) by Sam Hume one
+of the creators of the Dataset JSON standard.
 
 As always, we welcome your feedback. If you spot a bug, would like to
 see a new feature, or if any documentation is unclear - submit an issue
@@ -99,95 +99,95 @@ cat(js_text)
 ```
 
     ## {
-    ##   "datasetJSONCreationDateTime": "2025-01-27T16:45:36",
-    ##   "datasetJSONVersion": "1.1.0",
-    ##   "fileOID": "/some/path",
-    ##   "dbLastModifiedDateTime": "2025-01-21T13:34:50",
-    ##   "originator": "Some Org",
-    ##   "sourceSystem": {
-    ##     "name": "source system",
-    ##     "version": "1.0"
-    ##   },
-    ##   "studyOID": "SOMESTUDY",
-    ##   "metaDataVersionOID": "MDV.MSGv2.0.SDTMIG.3.3.SDTM.1.7",
-    ##   "metaDataRef": "some/define.xml",
-    ##   "itemGroupOID": "IG.IRIS",
-    ##   "records": 5,
-    ##   "name": "IRIS",
-    ##   "label": "Iris",
-    ##   "columns": [
-    ##     {
-    ##       "itemOID": "IT.IR.Sepal.Length",
-    ##       "name": "Sepal.Length",
-    ##       "label": "Sepal Length",
-    ##       "dataType": "float",
-    ##       "keySequence": 2
+    ##     "datasetJSONCreationDateTime": "2026-09-03T20:28:51",
+    ##     "datasetJSONVersion": "1.1.0",
+    ##     "fileOID": "/some/path",
+    ##     "dbLastModifiedDateTime": "2025-01-21T13:34:50",
+    ##     "originator": "Some Org",
+    ##     "sourceSystem": {
+    ##         "name": "source system",
+    ##         "version": "1.0"
     ##     },
-    ##     {
-    ##       "itemOID": "IT.IR.Sepal.Width",
-    ##       "name": "Sepal.Width",
-    ##       "label": "Sepal Width",
-    ##       "dataType": "float"
-    ##     },
-    ##     {
-    ##       "itemOID": "IT.IR.Petal.Length",
-    ##       "name": "Petal.Length",
-    ##       "label": "Petal Length",
-    ##       "dataType": "float",
-    ##       "keySequence": 3
-    ##     },
-    ##     {
-    ##       "itemOID": "IT.IR.Petal.Width",
-    ##       "name": "Petal.Width",
-    ##       "label": "Petal Width",
-    ##       "dataType": "float"
-    ##     },
-    ##     {
-    ##       "itemOID": "IT.IR.Species",
-    ##       "name": "Species",
-    ##       "label": "Flower Species",
-    ##       "dataType": "string",
-    ##       "length": 10,
-    ##       "keySequence": 1
-    ##     }
-    ##   ],
-    ##   "rows": [
-    ##     [
-    ##       5.1,
-    ##       3.5,
-    ##       1.4,
-    ##       0.2,
-    ##       "setosa"
+    ##     "studyOID": "SOMESTUDY",
+    ##     "metaDataVersionOID": "MDV.MSGv2.0.SDTMIG.3.3.SDTM.1.7",
+    ##     "metaDataRef": "some/define.xml",
+    ##     "itemGroupOID": "IG.IRIS",
+    ##     "records": 5,
+    ##     "name": "IRIS",
+    ##     "label": "Iris",
+    ##     "columns": [
+    ##         {
+    ##             "itemOID": "IT.IR.Sepal.Length",
+    ##             "name": "Sepal.Length",
+    ##             "label": "Sepal Length",
+    ##             "dataType": "float",
+    ##             "keySequence": 2
+    ##         },
+    ##         {
+    ##             "itemOID": "IT.IR.Sepal.Width",
+    ##             "name": "Sepal.Width",
+    ##             "label": "Sepal Width",
+    ##             "dataType": "float"
+    ##         },
+    ##         {
+    ##             "itemOID": "IT.IR.Petal.Length",
+    ##             "name": "Petal.Length",
+    ##             "label": "Petal Length",
+    ##             "dataType": "float",
+    ##             "keySequence": 3
+    ##         },
+    ##         {
+    ##             "itemOID": "IT.IR.Petal.Width",
+    ##             "name": "Petal.Width",
+    ##             "label": "Petal Width",
+    ##             "dataType": "float"
+    ##         },
+    ##         {
+    ##             "itemOID": "IT.IR.Species",
+    ##             "name": "Species",
+    ##             "label": "Flower Species",
+    ##             "dataType": "string",
+    ##             "length": 10,
+    ##             "keySequence": 1
+    ##         }
     ##     ],
-    ##     [
-    ##       4.9,
-    ##       3.0,
-    ##       1.4,
-    ##       0.2,
-    ##       "setosa"
-    ##     ],
-    ##     [
-    ##       4.7,
-    ##       3.2,
-    ##       1.3,
-    ##       0.2,
-    ##       "setosa"
-    ##     ],
-    ##     [
-    ##       4.6,
-    ##       3.1,
-    ##       1.5,
-    ##       0.2,
-    ##       "setosa"
-    ##     ],
-    ##     [
-    ##       5.0,
-    ##       3.6,
-    ##       1.4,
-    ##       0.2,
-    ##       "setosa"
+    ##     "rows": [
+    ##         [
+    ##             5.1,
+    ##             3.5,
+    ##             1.4,
+    ##             0.2,
+    ##             "setosa"
+    ##         ],
+    ##         [
+    ##             4.9,
+    ##             3.0,
+    ##             1.4,
+    ##             0.2,
+    ##             "setosa"
+    ##         ],
+    ##         [
+    ##             4.7,
+    ##             3.2,
+    ##             1.3,
+    ##             0.2,
+    ##             "setosa"
+    ##         ],
+    ##         [
+    ##             4.6,
+    ##             3.1,
+    ##             1.5,
+    ##             0.2,
+    ##             "setosa"
+    ##         ],
+    ##         [
+    ##             5.0,
+    ##             3.6,
+    ##             1.4,
+    ##             0.2,
+    ##             "setosa"
+    ##         ]
     ##     ]
-    ##   ]
     ## }
 
 To read a Dataset JSON file, you can use `read_dataset_json()`. You can
