@@ -32,7 +32,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">datasetjson</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -82,15 +82,19 @@
 
     
     
-<p>Numeric precision and issues with floating point decimals is a common
-problem to come across when working with data. Dataset JSON is not
-immune to these issues. Instead of writing out direct binary
-representations of the floating point numbers, which will vary depending
-on the system being used and the standard followed, Dataset JSON writes
-out character representations of these numbers. As such, when the
-numbers are serialized from numeric to character, and then read back
-into numeric format, you may come across precision issues.</p>
-<p>Consider the following example:</p>
+<p>Numeric precision and issues with floating point decimals are a
+common problem when working with data. Dataset JSON is not immune to
+these issues. Instead of writing out direct binary representations of
+floating point numbers, which vary depending on the system being used
+and the standard followed, Dataset JSON writes out character
+representations of these numbers. Whenever a number is serialized to
+text and parsed back, precision can be lost.</p>
+<p><strong>{datasetjson}</strong> parses and serializes numbers in C,
+using the <a href="https://github.com/ibireme/yyjson" class="external-link">yyjson</a> library
+that ships with the package. Numbers are written using the shortest text
+that reads back as the same value, and read straight into a double
+without passing through R’s <code><a href="https://rdrr.io/r/base/double.html" class="external-link">as.double()</a></code>. The practical
+effect is that a value survives a write and read unchanged:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://atorus-research.github.io/datasetjson/">datasetjson</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
@@ -134,25 +138,25 @@ into numeric format, you may come across precision issues.</p>
 <span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_dataset_json.html">read_dataset_json</a></span><span class="op">(</span><span class="va">json_out</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">test_df</span><span class="op">$</span><span class="va">float_col</span> <span class="op">-</span> <span class="va">out</span><span class="op">$</span><span class="va">float_col</span></span>
-<span><span class="co">#&gt; [1] -3.333330e-07 -3.333333e-07  3.333333e-07  4.594595e-07 -1.428571e-07</span></span>
+<span><span class="co">#&gt; [1] 0 0 0 0 0</span></span>
 <span><span class="co">#&gt; attr(,"label")</span></span>
 <span><span class="co">#&gt; [1] "Test column long decimal"</span></span></code></pre></div>
-<p>In this case, we start seeing differences at the 7th decimal point.
-To look at a specific value, the input of
-<code>143.66666666666699825</code> is written out in the JSON file as
-<code>143.666666666667</code>. This issue isn’t unique to R either. If
-you’re ever converted numeric to character and back to numeric in SAS,
-you’ll likely have encountered a similar problem.</p>
-<p>In the <strong>{datasetjson}</strong> package, the
-<strong>{yyjsonr}</strong> package is doing the heavy lifting of
-serializing the R numeric value into a character string. The underlying
-C library has some <a href="https://github.com/ibireme/yyjson/commit/6d416047822d86d53a3a0b45a6a5abf28383a1dc" class="external-link">recent
-updates</a> to work on improving read output number precision which we
-hope will improve the handling.</p>
-<p>Another way to handle numeric precision issues is to use the
-“decimal” types that’s available in the Dataset JSON standard. From the
-<a href="https://wiki.cdisc.org/display/PUB/Precision+and+Rounding" class="external-link">user
-guide</a>, this can be described as follows:</p>
+<p>Every difference is exactly zero: the values that came back are
+bit-for-bit the values that went in, and that holds across the full
+range of double precision, from <code>1e-300</code> to
+<code>1e+300</code>.</p>
+<p>This has not always been true. Before version 0.4.0 the numbers were
+converted to text by the JSON library in use at the time, at a fixed six
+decimal places. Values were rounded at around the seventh decimal, and
+anything smaller than roughly <code>5e-7</code> was read back as exactly
+<code>0</code>. If you have files written by an earlier version of the
+package, the data in them is fine - the loss happened on read, so
+re-reading them with this version recovers the original values.</p>
+<div class="section level2">
+<h2 id="the-decimal-data-type">The decimal data type<a class="anchor" aria-label="anchor" href="#the-decimal-data-type"></a>
+</h2>
+<p>The Dataset JSON standard also offers a “decimal” type. From the <a href="https://wiki.cdisc.org/display/PUB/Precision+and+Rounding" class="external-link">user
+guide</a>:</p>
 <blockquote>
 <h2 id="decimal-data-type">Decimal Data Type</h2>
 <p>Although the pilot findings on precision and rounding did not point
@@ -170,17 +174,19 @@ the decimal datatype or closest approximation available in the receiving
 technology. Note that not all technologies support an explicit decimal
 datatype.</p>
 </blockquote>
-<p>In order to address this problem, we’ve added the options
-<code>float_as_decimals</code> and <code>digits</code> to
-<code><a href="../reference/write_dataset_json.html">write_dataset_json()</a></code>. When
-<code>float_as_decimals = TRUE</code>, the columns are written as
-<code>decimal</code>/<code>decimal</code> in the JSON, and
-<code><a href="../reference/read_dataset_json.html">read_dataset_json()</a></code> will automatically convert them back to
-numeric on read per the Dataset JSON v1.1 specification.</p>
-<p>Considering the example before, here’s how these options can
-help.</p>
+<p><code><a href="../reference/write_dataset_json.html">write_dataset_json()</a></code> supports this through
+<code>float_as_decimals</code>. When set, float columns are written as
+<code>decimal</code>/<code>decimal</code> and the values are quoted, and
+<code><a href="../reference/read_dataset_json.html">read_dataset_json()</a></code> converts them back to numeric on read
+per the specification.</p>
+<p>Because this is no longer needed to protect precision, setting it
+warns:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">json_out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/write_dataset_json.html">write_dataset_json</a></span><span class="op">(</span><span class="va">dsjson</span>, float_as_decimals <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: As of datasetjson 0.4.0 numbers are written and read at full</span></span>
+<span><span class="co">#&gt; precision, so `float_as_decimals = TRUE` is no longer needed to protect against</span></span>
+<span><span class="co">#&gt; rounding and `FALSE` is preferred. Set it only when the receiving system</span></span>
+<span><span class="co">#&gt; requires the `decimal` data type.</span></span>
 <span></span>
 <span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_dataset_json.html">read_dataset_json</a></span><span class="op">(</span><span class="va">json_out</span><span class="op">)</span></span>
 <span></span>
@@ -188,33 +194,148 @@ help.</p>
 <span><span class="co">#&gt; [1] 0 0 0 0 0</span></span>
 <span><span class="co">#&gt; attr(,"label")</span></span>
 <span><span class="co">#&gt; [1] "Test column long decimal"</span></span></code></pre></div>
-<p>By manually handling how the decimal precision is rendered, the
-values were able to serialize and re-import more effectively.</p>
-<p>There are a few reasons we’ve chosen to NOT make
-<code>float_as_decimals</code> default behavior:</p>
+<p>The result is the same, because both paths are exact.
+<strong><code>float_as_decimals</code> is an interoperability choice,
+not a precision workaround.</strong> Reach for it when the system
+receiving your file needs numbers presented as strings; leave it off
+otherwise. It remains off by default for two reasons:</p>
 <ul>
-<li>This inherently adds overhead, because we convert the values prior
-to letting <code>yyjsonr</code> serialize them</li>
-<li>We’re changing the way the metadata is writing to use the
-<code>decimal</code> type. While the standard supports the use of the
-<code>decimal</code> type, it’s an extra step that that the consuming
-system needs to be aware of, and Dataset JSON is still a young
-standard.</li>
-<li>Our hope is that the <code>yyjson</code> C package grows to make
-this extra step less necessary</li>
+<li>Writing the <code>decimal</code> type is an extra step the consuming
+system has to be aware of, and Dataset JSON is still a young
+standard</li>
+<li>Quoted numbers make for larger files with no gain in fidelity</li>
 </ul>
-<p>As one last note, we default our choice of decimal precision to use
-16 digits. The reason we’ve chosen to do this is as follows:</p>
+</div>
+<div class="section level2">
+<h2 id="a-note-on-digits">A note on <code>digits</code><a class="anchor" aria-label="anchor" href="#a-note-on-digits"></a>
+</h2>
+<p><code>digits</code> is deprecated and ignored. Decimals are written
+at whatever precision reads back as the same value, so there is nothing
+left for it to control, and supplying it warns.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span><span class="fl">.2</span>, digits<span class="op">=</span><span class="fl">16</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "0.2"</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span><span class="fl">.2</span>, digits<span class="op">=</span><span class="fl">17</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "0.20000000000000001"</span></span></code></pre></div>
-<p>After a certain point, displaying extra digits is just going to show
-the where floating point values start to break down. 16 digits balances
-preserving the precision of output without turning low precision numbers
-into overly precise ones.</p>
-  </main>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="fu"><a href="../reference/write_dataset_json.html">write_dataset_json</a></span><span class="op">(</span><span class="va">dsjson</span>, float_as_decimals <span class="op">=</span> <span class="cn">TRUE</span>, pretty <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; {</span></span>
+<span><span class="co">#&gt;     "datasetJSONCreationDateTime": "2026-09-04T00:56:08",</span></span>
+<span><span class="co">#&gt;     "datasetJSONVersion": "1.1.0",</span></span>
+<span><span class="co">#&gt;     "itemGroupOID": "test_df",</span></span>
+<span><span class="co">#&gt;     "records": 5,</span></span>
+<span><span class="co">#&gt;     "name": "test_df",</span></span>
+<span><span class="co">#&gt;     "label": "test_df",</span></span>
+<span><span class="co">#&gt;     "columns": [</span></span>
+<span><span class="co">#&gt;         {</span></span>
+<span><span class="co">#&gt;             "itemOID": "IT.IR.Sepal.Length",</span></span>
+<span><span class="co">#&gt;             "name": "Sepal.Length",</span></span>
+<span><span class="co">#&gt;             "label": "Sepal Length",</span></span>
+<span><span class="co">#&gt;             "dataType": "decimal",</span></span>
+<span><span class="co">#&gt;             "keySequence": 2,</span></span>
+<span><span class="co">#&gt;             "targetDataType": "decimal"</span></span>
+<span><span class="co">#&gt;         },</span></span>
+<span><span class="co">#&gt;         {</span></span>
+<span><span class="co">#&gt;             "itemOID": "IT.IR.Sepal.Width",</span></span>
+<span><span class="co">#&gt;             "name": "Sepal.Width",</span></span>
+<span><span class="co">#&gt;             "label": "Sepal Width",</span></span>
+<span><span class="co">#&gt;             "dataType": "decimal",</span></span>
+<span><span class="co">#&gt;             "targetDataType": "decimal"</span></span>
+<span><span class="co">#&gt;         },</span></span>
+<span><span class="co">#&gt;         {</span></span>
+<span><span class="co">#&gt;             "itemOID": "IT.IR.Petal.Length",</span></span>
+<span><span class="co">#&gt;             "name": "Petal.Length",</span></span>
+<span><span class="co">#&gt;             "label": "Petal Length",</span></span>
+<span><span class="co">#&gt;             "dataType": "decimal",</span></span>
+<span><span class="co">#&gt;             "keySequence": 3,</span></span>
+<span><span class="co">#&gt;             "targetDataType": "decimal"</span></span>
+<span><span class="co">#&gt;         },</span></span>
+<span><span class="co">#&gt;         {</span></span>
+<span><span class="co">#&gt;             "itemOID": "IT.IR.Petal.Width",</span></span>
+<span><span class="co">#&gt;             "name": "Petal.Width",</span></span>
+<span><span class="co">#&gt;             "label": "Petal Width",</span></span>
+<span><span class="co">#&gt;             "dataType": "decimal",</span></span>
+<span><span class="co">#&gt;             "targetDataType": "decimal"</span></span>
+<span><span class="co">#&gt;         },</span></span>
+<span><span class="co">#&gt;         {</span></span>
+<span><span class="co">#&gt;             "itemOID": "IT.IR.Species",</span></span>
+<span><span class="co">#&gt;             "name": "Species",</span></span>
+<span><span class="co">#&gt;             "label": "Flower Species",</span></span>
+<span><span class="co">#&gt;             "dataType": "string",</span></span>
+<span><span class="co">#&gt;             "length": 10,</span></span>
+<span><span class="co">#&gt;             "keySequence": 1</span></span>
+<span><span class="co">#&gt;         },</span></span>
+<span><span class="co">#&gt;         {</span></span>
+<span><span class="co">#&gt;             "itemOID": "IT.IR.float_col",</span></span>
+<span><span class="co">#&gt;             "name": "float_col",</span></span>
+<span><span class="co">#&gt;             "label": "Test column long decimal",</span></span>
+<span><span class="co">#&gt;             "dataType": "decimal",</span></span>
+<span><span class="co">#&gt;             "targetDataType": "decimal"</span></span>
+<span><span class="co">#&gt;         }</span></span>
+<span><span class="co">#&gt;     ],</span></span>
+<span><span class="co">#&gt;     "rows": [</span></span>
+<span><span class="co">#&gt;         [</span></span>
+<span><span class="co">#&gt;             "5.1",</span></span>
+<span><span class="co">#&gt;             "3.5",</span></span>
+<span><span class="co">#&gt;             "1.4",</span></span>
+<span><span class="co">#&gt;             "0.2",</span></span>
+<span><span class="co">#&gt;             "setosa",</span></span>
+<span><span class="co">#&gt;             "143.666666666667"</span></span>
+<span><span class="co">#&gt;         ],</span></span>
+<span><span class="co">#&gt;         [</span></span>
+<span><span class="co">#&gt;             "4.9",</span></span>
+<span><span class="co">#&gt;             "3",</span></span>
+<span><span class="co">#&gt;             "1.4",</span></span>
+<span><span class="co">#&gt;             "0.2",</span></span>
+<span><span class="co">#&gt;             "setosa",</span></span>
+<span><span class="co">#&gt;             "0.6666666666666666"</span></span>
+<span><span class="co">#&gt;         ],</span></span>
+<span><span class="co">#&gt;         [</span></span>
+<span><span class="co">#&gt;             "4.7",</span></span>
+<span><span class="co">#&gt;             "3.2",</span></span>
+<span><span class="co">#&gt;             "1.3",</span></span>
+<span><span class="co">#&gt;             "0.2",</span></span>
+<span><span class="co">#&gt;             "setosa",</span></span>
+<span><span class="co">#&gt;             "0.3333333333333333"</span></span>
+<span><span class="co">#&gt;         ],</span></span>
+<span><span class="co">#&gt;         [</span></span>
+<span><span class="co">#&gt;             "4.6",</span></span>
+<span><span class="co">#&gt;             "3.1",</span></span>
+<span><span class="co">#&gt;             "1.5",</span></span>
+<span><span class="co">#&gt;             "0.2",</span></span>
+<span><span class="co">#&gt;             "setosa",</span></span>
+<span><span class="co">#&gt;             "4.45945945945946"</span></span>
+<span><span class="co">#&gt;         ],</span></span>
+<span><span class="co">#&gt;         [</span></span>
+<span><span class="co">#&gt;             "5",</span></span>
+<span><span class="co">#&gt;             "3.6",</span></span>
+<span><span class="co">#&gt;             "1.4",</span></span>
+<span><span class="co">#&gt;             "0.2",</span></span>
+<span><span class="co">#&gt;             "setosa",</span></span>
+<span><span class="co">#&gt;             "0.8571428571428571"</span></span>
+<span><span class="co">#&gt;         ]</span></span>
+<span><span class="co">#&gt;     ]</span></span>
+<span><span class="co">#&gt; }</span></span></code></pre></div>
+<p>If you need values at a fixed precision - to match another system’s
+output, say - format the column to character yourself and declare it as
+<code>decimal</code>/<code>decimal</code> in the column metadata. The
+writer passes such columns through verbatim:</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">fixed</span> <span class="op">&lt;-</span> <span class="va">test_df</span></span>
+<span><span class="va">fixed</span><span class="op">$</span><span class="va">float_col</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span><span class="va">fixed</span><span class="op">$</span><span class="va">float_col</span>, digits <span class="op">=</span> <span class="fl">8</span>, trim <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">fixed_items</span> <span class="op">&lt;-</span> <span class="va">test_items</span></span>
+<span><span class="va">fixed_items</span><span class="op">$</span><span class="va">dataType</span><span class="op">[</span><span class="va">fixed_items</span><span class="op">$</span><span class="va">name</span> <span class="op">==</span> <span class="st">"float_col"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="st">"decimal"</span></span>
+<span><span class="va">fixed_items</span><span class="op">$</span><span class="va">targetDataType</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">fixed_items</span><span class="op">$</span><span class="va">name</span> <span class="op">==</span> <span class="st">"float_col"</span>,</span>
+<span>                                     <span class="st">"decimal"</span>, <span class="cn">NA_character_</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">fixed_json</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/write_dataset_json.html">write_dataset_json</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="../reference/dataset_json.html">dataset_json</a></span><span class="op">(</span><span class="va">fixed</span>, item_oid <span class="op">=</span> <span class="st">"test_df"</span>, name <span class="op">=</span> <span class="st">"test_df"</span>,</span>
+<span>               dataset_label <span class="op">=</span> <span class="st">"test_df"</span>, columns <span class="op">=</span> <span class="va">fixed_items</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/read_dataset_json.html">read_dataset_json</a></span><span class="op">(</span><span class="va">fixed_json</span><span class="op">)</span><span class="op">$</span><span class="va">float_col</span></span>
+<span><span class="co">#&gt; [1] 143.6666667   0.6666667   0.3333333   4.4594595   0.8571429</span></span>
+<span><span class="co">#&gt; attr(,"label")</span></span>
+<span><span class="co">#&gt; [1] "Test column long decimal"</span></span></code></pre></div>
+</div>
+  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
+    </nav></aside>
 </div>
 
 

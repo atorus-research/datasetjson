@@ -28,7 +28,7 @@ variables.
 | IT.DF.CHARDT | CHARDT | Character Date | date | 8 | NA | NA | NA |
 | IT.DF.CHARTM | CHARTM | Character Time | time | 10 | NA | NA | NA |
 | IT.DF.CHARDTM | CHARDTM | Character Datetime | datetime | 19 | NA | NA | NA |
-| IT.DF.NUMDT | NUMDT | Numeric date | time | NA | integer | TIME8 | NA |
+| IT.DF.NUMDT | NUMDT | Numeric date | date | NA | integer | E8601DA | NA |
 | IT.DF.NUMTM | NUMTM | Numeric time | time | NA | integer | TIME8 | NA |
 | IT.DF.NUMDTM | NUMDTM | Numeric datetime | datetime | NA | integer | E8601DT | NA |
 

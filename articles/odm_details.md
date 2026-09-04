@@ -18,7 +18,7 @@ v2.0](https://wiki.cdisc.org/display/ODM2/ODM+v2.0+Specification)
 
 Without having a background in ODM, some fields within the Dataset JSON
 file may be hard to understand without the ODM references available.
-This vignette provides some quick defintions that may prove useful.
+This vignette provides some quick definitions that may prove useful.
 
 ## fileOID
 

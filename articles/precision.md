@@ -1,15 +1,19 @@
 # Numeric Precision
 
-Numeric precision and issues with floating point decimals is a common
-problem to come across when working with data. Dataset JSON is not
-immune to these issues. Instead of writing out direct binary
-representations of the floating point numbers, which will vary depending
-on the system being used and the standard followed, Dataset JSON writes
-out character representations of these numbers. As such, when the
-numbers are serialized from numeric to character, and then read back
-into numeric format, you may come across precision issues.
+Numeric precision and issues with floating point decimals are a common
+problem when working with data. Dataset JSON is not immune to these
+issues. Instead of writing out direct binary representations of floating
+point numbers, which vary depending on the system being used and the
+standard followed, Dataset JSON writes out character representations of
+these numbers. Whenever a number is serialized to text and parsed back,
+precision can be lost.
 
-Consider the following example:
+**{datasetjson}** parses and serializes numbers in C, using the
+[yyjson](https://github.com/ibireme/yyjson) library that ships with the
+package. Numbers are written using the shortest text that reads back as
+the same value, and read straight into a double without passing through
+R’s [`as.double()`](https://rdrr.io/r/base/double.html). The practical
+effect is that a value survives a write and read unchanged:
 
 ``` r
 
@@ -55,29 +59,27 @@ json_out <-write_dataset_json(dsjson)
 out <- read_dataset_json(json_out)
 
 test_df$float_col - out$float_col
-#> [1] -3.333330e-07 -3.333333e-07  3.333333e-07  4.594595e-07 -1.428571e-07
+#> [1] 0 0 0 0 0
 #> attr(,"label")
 #> [1] "Test column long decimal"
 ```
 
-In this case, we start seeing differences at the 7th decimal point. To
-look at a specific value, the input of `143.66666666666699825` is
-written out in the JSON file as `143.666666666667`. This issue isn’t
-unique to R either. If you’re ever converted numeric to character and
-back to numeric in SAS, you’ll likely have encountered a similar
-problem.
+Every difference is exactly zero: the values that came back are
+bit-for-bit the values that went in, and that holds across the full
+range of double precision, from `1e-300` to `1e+300`.
 
-In the **{datasetjson}** package, the **{yyjsonr}** package is doing the
-heavy lifting of serializing the R numeric value into a character
-string. The underlying C library has some [recent
-updates](https://github.com/ibireme/yyjson/commit/6d416047822d86d53a3a0b45a6a5abf28383a1dc)
-to work on improving read output number precision which we hope will
-improve the handling.
+This has not always been true. Before version 0.4.0 the numbers were
+converted to text by the JSON library in use at the time, at a fixed six
+decimal places. Values were rounded at around the seventh decimal, and
+anything smaller than roughly `5e-7` was read back as exactly `0`. If
+you have files written by an earlier version of the package, the data in
+them is fine - the loss happened on read, so re-reading them with this
+version recovers the original values.
 
-Another way to handle numeric precision issues is to use the “decimal”
-types that’s available in the Dataset JSON standard. From the [user
-guide](https://wiki.cdisc.org/display/PUB/Precision+and+Rounding), this
-can be described as follows:
+## The decimal data type
+
+The Dataset JSON standard also offers a “decimal” type. From the [user
+guide](https://wiki.cdisc.org/display/PUB/Precision+and+Rounding):
 
 > ## Decimal Data Type
 >
@@ -97,20 +99,21 @@ can be described as follows:
 > in the receiving technology. Note that not all technologies support an
 > explicit decimal datatype.
 
-In order to address this problem, we’ve added the options
-`float_as_decimals` and `digits` to
-[`write_dataset_json()`](https://atorus-research.github.io/datasetjson/reference/write_dataset_json.md).
-When `float_as_decimals = TRUE`, the columns are written as
-`decimal`/`decimal` in the JSON, and
+[`write_dataset_json()`](https://atorus-research.github.io/datasetjson/reference/write_dataset_json.md)
+supports this through `float_as_decimals`. When set, float columns are
+written as `decimal`/`decimal` and the values are quoted, and
 [`read_dataset_json()`](https://atorus-research.github.io/datasetjson/reference/read_dataset_json.md)
-will automatically convert them back to numeric on read per the Dataset
-JSON v1.1 specification.
+converts them back to numeric on read per the specification.
 
-Considering the example before, here’s how these options can help.
+Because this is no longer needed to protect precision, setting it warns:
 
 ``` r
 
 json_out <- write_dataset_json(dsjson, float_as_decimals = TRUE)
+#> Warning: As of datasetjson 0.4.0 numbers are written and read at full
+#> precision, so `float_as_decimals = TRUE` is no longer needed to protect against
+#> rounding and `FALSE` is preferred. Set it only when the receiving system
+#> requires the `decimal` data type.
 
 out <- read_dataset_json(json_out)
 
@@ -120,33 +123,146 @@ test_df$float_col - out$float_col
 #> [1] "Test column long decimal"
 ```
 
-By manually handling how the decimal precision is rendered, the values
-were able to serialize and re-import more effectively.
+The result is the same, because both paths are exact.
+**`float_as_decimals` is an interoperability choice, not a precision
+workaround.** Reach for it when the system receiving your file needs
+numbers presented as strings; leave it off otherwise. It remains off by
+default for two reasons:
 
-There are a few reasons we’ve chosen to NOT make `float_as_decimals`
-default behavior:
+- Writing the `decimal` type is an extra step the consuming system has
+  to be aware of, and Dataset JSON is still a young standard
+- Quoted numbers make for larger files with no gain in fidelity
 
-- This inherently adds overhead, because we convert the values prior to
-  letting `yyjsonr` serialize them
-- We’re changing the way the metadata is writing to use the `decimal`
-  type. While the standard supports the use of the `decimal` type, it’s
-  an extra step that that the consuming system needs to be aware of, and
-  Dataset JSON is still a young standard.
-- Our hope is that the `yyjson` C package grows to make this extra step
-  less necessary
+## A note on `digits`
 
-As one last note, we default our choice of decimal precision to use 16
-digits. The reason we’ve chosen to do this is as follows:
+`digits` is deprecated and ignored. Decimals are written at whatever
+precision reads back as the same value, so there is nothing left for it
+to control, and supplying it warns.
 
 ``` r
 
-print(format(.2, digits=16))
-#> [1] "0.2"
-print(format(.2, digits=17))
-#> [1] "0.20000000000000001"
+cat(write_dataset_json(dsjson, float_as_decimals = TRUE, pretty = TRUE))
+#> {
+#>     "datasetJSONCreationDateTime": "2026-09-04T00:56:08",
+#>     "datasetJSONVersion": "1.1.0",
+#>     "itemGroupOID": "test_df",
+#>     "records": 5,
+#>     "name": "test_df",
+#>     "label": "test_df",
+#>     "columns": [
+#>         {
+#>             "itemOID": "IT.IR.Sepal.Length",
+#>             "name": "Sepal.Length",
+#>             "label": "Sepal Length",
+#>             "dataType": "decimal",
+#>             "keySequence": 2,
+#>             "targetDataType": "decimal"
+#>         },
+#>         {
+#>             "itemOID": "IT.IR.Sepal.Width",
+#>             "name": "Sepal.Width",
+#>             "label": "Sepal Width",
+#>             "dataType": "decimal",
+#>             "targetDataType": "decimal"
+#>         },
+#>         {
+#>             "itemOID": "IT.IR.Petal.Length",
+#>             "name": "Petal.Length",
+#>             "label": "Petal Length",
+#>             "dataType": "decimal",
+#>             "keySequence": 3,
+#>             "targetDataType": "decimal"
+#>         },
+#>         {
+#>             "itemOID": "IT.IR.Petal.Width",
+#>             "name": "Petal.Width",
+#>             "label": "Petal Width",
+#>             "dataType": "decimal",
+#>             "targetDataType": "decimal"
+#>         },
+#>         {
+#>             "itemOID": "IT.IR.Species",
+#>             "name": "Species",
+#>             "label": "Flower Species",
+#>             "dataType": "string",
+#>             "length": 10,
+#>             "keySequence": 1
+#>         },
+#>         {
+#>             "itemOID": "IT.IR.float_col",
+#>             "name": "float_col",
+#>             "label": "Test column long decimal",
+#>             "dataType": "decimal",
+#>             "targetDataType": "decimal"
+#>         }
+#>     ],
+#>     "rows": [
+#>         [
+#>             "5.1",
+#>             "3.5",
+#>             "1.4",
+#>             "0.2",
+#>             "setosa",
+#>             "143.666666666667"
+#>         ],
+#>         [
+#>             "4.9",
+#>             "3",
+#>             "1.4",
+#>             "0.2",
+#>             "setosa",
+#>             "0.6666666666666666"
+#>         ],
+#>         [
+#>             "4.7",
+#>             "3.2",
+#>             "1.3",
+#>             "0.2",
+#>             "setosa",
+#>             "0.3333333333333333"
+#>         ],
+#>         [
+#>             "4.6",
+#>             "3.1",
+#>             "1.5",
+#>             "0.2",
+#>             "setosa",
+#>             "4.45945945945946"
+#>         ],
+#>         [
+#>             "5",
+#>             "3.6",
+#>             "1.4",
+#>             "0.2",
+#>             "setosa",
+#>             "0.8571428571428571"
+#>         ]
+#>     ]
+#> }
 ```
 
-After a certain point, displaying extra digits is just going to show the
-where floating point values start to break down. 16 digits balances
-preserving the precision of output without turning low precision numbers
-into overly precise ones.
+If you need values at a fixed precision - to match another system’s
+output, say - format the column to character yourself and declare it as
+`decimal`/`decimal` in the column metadata. The writer passes such
+columns through verbatim:
+
+``` r
+
+fixed <- test_df
+fixed$float_col <- format(fixed$float_col, digits = 8, trim = TRUE)
+
+fixed_items <- test_items
+fixed_items$dataType[fixed_items$name == "float_col"] <- "decimal"
+fixed_items$targetDataType <- ifelse(fixed_items$name == "float_col",
+                                     "decimal", NA_character_)
+
+fixed_json <- write_dataset_json(
+  dataset_json(fixed, item_oid = "test_df", name = "test_df",
+               dataset_label = "test_df", columns = fixed_items)
+)
+
+read_dataset_json(fixed_json)$float_col
+#> [1] 143.6666667   0.6666667   0.3333333   4.4594595   0.8571429
+#> attr(,"label")
+#> [1] "Test column long decimal"
+```

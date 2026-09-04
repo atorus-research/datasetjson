@@ -13,13 +13,21 @@
 <url><loc>https://atorus-research.github.io/datasetjson/reference/dataset_json.html</loc></url>
 <url><loc>https://atorus-research.github.io/datasetjson/reference/dataset_metadata_setters.html</loc></url>
 <url><loc>https://atorus-research.github.io/datasetjson/reference/datasetjson-package.html</loc></url>
+<url><loc>https://atorus-research.github.io/datasetjson/reference/datasetjson_example.html</loc></url>
 <url><loc>https://atorus-research.github.io/datasetjson/reference/get_column_metadata.html</loc></url>
 <url><loc>https://atorus-research.github.io/datasetjson/reference/index.html</loc></url>
 <url><loc>https://atorus-research.github.io/datasetjson/reference/iris_items.html</loc></url>
+<url><loc>https://atorus-research.github.io/datasetjson/reference/read_dataset_dsjc.html</loc></url>
 <url><loc>https://atorus-research.github.io/datasetjson/reference/read_dataset_json.html</loc></url>
+<url><loc>https://atorus-research.github.io/datasetjson/reference/read_dataset_ndjson.html</loc></url>
 <url><loc>https://atorus-research.github.io/datasetjson/reference/schema_1_1_0.html</loc></url>
+<url><loc>https://atorus-research.github.io/datasetjson/reference/schema_ndjson_1_1_0.html</loc></url>
 <url><loc>https://atorus-research.github.io/datasetjson/reference/set_variable_attributes.html</loc></url>
+<url><loc>https://atorus-research.github.io/datasetjson/reference/validate_dataset_dsjc.html</loc></url>
 <url><loc>https://atorus-research.github.io/datasetjson/reference/validate_dataset_json.html</loc></url>
+<url><loc>https://atorus-research.github.io/datasetjson/reference/validate_dataset_ndjson.html</loc></url>
+<url><loc>https://atorus-research.github.io/datasetjson/reference/write_dataset_dsjc.html</loc></url>
 <url><loc>https://atorus-research.github.io/datasetjson/reference/write_dataset_json.html</loc></url>
+<url><loc>https://atorus-research.github.io/datasetjson/reference/write_dataset_ndjson.html</loc></url>
 </urlset>
 

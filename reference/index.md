@@ -27,7 +27,8 @@ Setter functions to add attributes
 
 ## Read, Write, and Validate
 
-Functions to read, write, and validate Dataset JSON files
+Functions to read, write, and validate Dataset JSON, Dataset NDJSON and
+compressed (DSJC) files
 
 - [`read_dataset_json()`](https://atorus-research.github.io/datasetjson/reference/read_dataset_json.md)
   : Read a Dataset JSON to datasetjson object
@@ -35,6 +36,18 @@ Functions to read, write, and validate Dataset JSON files
   : Write out a Dataset JSON file
 - [`validate_dataset_json()`](https://atorus-research.github.io/datasetjson/reference/validate_dataset_json.md)
   : Validate a Dataset JSON file
+- [`read_dataset_ndjson()`](https://atorus-research.github.io/datasetjson/reference/read_dataset_ndjson.md)
+  : Read a Dataset NDJSON file to a datasetjson object
+- [`write_dataset_ndjson()`](https://atorus-research.github.io/datasetjson/reference/write_dataset_ndjson.md)
+  : Write out a Dataset NDJSON file
+- [`validate_dataset_ndjson()`](https://atorus-research.github.io/datasetjson/reference/validate_dataset_ndjson.md)
+  : Validate a Dataset NDJSON file
+- [`read_dataset_dsjc()`](https://atorus-research.github.io/datasetjson/reference/read_dataset_dsjc.md)
+  : Read a Dataset JSON Compressed (DSJC) file to a datasetjson object
+- [`write_dataset_dsjc()`](https://atorus-research.github.io/datasetjson/reference/write_dataset_dsjc.md)
+  : Write out a Dataset JSON Compressed (DSJC) file
+- [`validate_dataset_dsjc()`](https://atorus-research.github.io/datasetjson/reference/validate_dataset_dsjc.md)
+  : Validate a Dataset JSON Compressed (DSJC) file
 
 ## Helper Functions
 
@@ -44,6 +57,8 @@ Additional helpers
   : Assign Dataset JSON attributes to data frame columns
 - [`get_column_metadata()`](https://atorus-research.github.io/datasetjson/reference/get_column_metadata.md)
   : Extract column metadata to data frame
+- [`datasetjson_example()`](https://atorus-research.github.io/datasetjson/reference/datasetjson_example.md)
+  : Get path to a datasetjson example file
 
 ## Data Objects
 
@@ -53,3 +68,5 @@ Data objects stored in the datasetjson package
   : Example Variable Metadata for Iris
 - [`schema_1_1_0`](https://atorus-research.github.io/datasetjson/reference/schema_1_1_0.md)
   : Dataset JSON Schema Version 1.1.0
+- [`schema_ndjson_1_1_0`](https://atorus-research.github.io/datasetjson/reference/schema_ndjson_1_1_0.md)
+  : Dataset NDJSON Schema Version 1.1.0

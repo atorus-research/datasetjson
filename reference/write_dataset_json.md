@@ -10,7 +10,7 @@ write_dataset_json(
   file,
   pretty = FALSE,
   float_as_decimals = FALSE,
-  digits = 16
+  digits = NULL
 )
 ```
 
@@ -32,20 +32,23 @@ write_dataset_json(
 
 - float_as_decimals:
 
-  If TRUE, Convert float variables to "decimal" data type in the JSON
-  output. This will manually convert the numeric values using the
-  [`format()`](https://rdrr.io/r/base/format.html) function using the
-  number of digits specified in `digits`, bypassing the `yyjsonr`
-  handling of float values and writing the numbers out as JSON character
-  strings. See the [Dataset JSON user
+  If TRUE, write float variables as the "decimal" data type, quoting the
+  numbers as JSON strings rather than writing them as JSON numbers. This
+  is an interoperability choice for systems that expect the decimal
+  type; it is not needed for precision, as numbers are written at full
+  precision either way, and setting it raises a warning to that effect.
+  See the [Dataset JSON user
   guide](https://wiki.cdisc.org/display/PUB/Precision+and+Rounding) for
   more information. Defaults to FALSE
 
 - digits:
 
-  When using `float_as_decimals`, the number of digits to use when
-  writing out floats. Going higher than 16 may start writing otherwise
-  sufficiently precise decimals (i.e. .2) to long strings.
+  Deprecated and ignored. Decimals are written at whatever precision
+  reads back as the same value, so there is no precision for this
+  argument to control. It is ignored, and supplying it warns. If you
+  need values rendered at a fixed precision, format the column to
+  character yourself and declare it as `decimal`/`decimal` in the column
+  metadata; the writer passes such columns through verbatim.
 
 ## Value
 
@@ -65,7 +68,15 @@ ds_json <- dataset_json(
 js <- write_dataset_json(ds_json)
 
 # Write to disk
-if (FALSE) { # \dontrun{
-  write_dataset_json(ds_json, "path/to/file.json")
-} # }
+write_dataset_json(ds_json, tempfile(fileext = ".json"))
+#> NULL
+
+# float_as_decimals writes floats as the "decimal" type, quoting the numbers.
+# It is an interoperability choice for systems that require that type - it is
+# not needed for precision, and setting it warns to say so.
+js <- suppressWarnings(write_dataset_json(ds_json, float_as_decimals = TRUE))
+
+# `digits` is deprecated and ignored; decimals are written at whatever
+# precision reads back as the same value
+js <- suppressWarnings(write_dataset_json(ds_json, digits = 16))
 ```

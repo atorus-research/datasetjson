@@ -71,14 +71,21 @@ the user. Note that these attributes are only populated if available.
 
 ``` r
 # Read from disk
+dat <- read_dataset_json(datasetjson_example("dm.json"))
+
+# Read from a URL
 if (FALSE) { # \dontrun{
-  dat <- read_dataset_json("path/to/file.json")
- # Read file from URL
-  dat <- dataset_json('https://www.somesite.com/file.json')
+  dat <- read_dataset_json('https://www.somesite.com/file.json')
 } # }
 
 # Read from an already imported character vector
-ds_json <- dataset_json(iris, "IG.IRIS", "IRIS", "Iris", columns=iris_items)
+ds_json <- dataset_json(
+  iris,
+  item_oid = "IG.IRIS",
+  name = "IRIS",
+  dataset_label = "Iris",
+  columns = iris_items
+)
 js <- write_dataset_json(ds_json)
 dat <- read_dataset_json(js)
 ```

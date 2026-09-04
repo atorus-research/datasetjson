@@ -13,7 +13,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">datasetjson</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -49,11 +49,46 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.4.0" id="datasetjson-040">datasetjson 0.4.0<a class="anchor" aria-label="anchor" href="#datasetjson-040"></a></h2>
+<div class="section level3">
+<h3 id="json-handling-moved-into-the-package-0-4-0">JSON handling moved into the package<a class="anchor" aria-label="anchor" href="#json-handling-moved-into-the-package-0-4-0"></a></h3>
+<p>Reading and writing are now handled by the <code>yyjson</code> C library, bundled with the package, rather than by an R JSON package. The practical effects:</p>
 <ul><li>
-<code>decimals_as_floats</code> parameter removed from <code><a href="../reference/read_dataset_json.html">read_dataset_json()</a></code>. Variables with <code>dataType = "decimal"</code> and <code>targetDataType = "decimal"</code> are now always converted to numeric on read, per the Dataset JSON v1.1 specification.</li>
-<li>Fixed a bug in the <code>converting_files</code> vignette where <code>extract_xpt_meta()</code> could return <code>-Inf</code> for the <code>length</code> field of empty or all-NA string columns; minimum length is now 1 (<a href="https://github.com/atorus-research/datasetjson/issues/71" class="external-link">#71</a>)</li>
-<li>Fixed a bug where <code><a href="../reference/write_dataset_json.html">write_dataset_json()</a></code> with <code>float_as_decimals = TRUE</code> would write <code>NA</code> values as padded strings (e.g., <code>"    NA"</code>) instead of JSON <code>null</code> (<a href="https://github.com/atorus-research/datasetjson/issues/76" class="external-link">#76</a>)</li>
+<strong>Numbers survive a write and read unchanged.</strong> Previously a float below roughly 5e-7 was read back as <code>0</code>, and larger values could lose their final digits. Values are now written at the shortest precision that reads back identically, and parsed to a double in C rather than through R. Files written by earlier versions are unaffected - the loss happened on read, so re-reading them with this version recovers the original values (<a href="https://github.com/atorus-research/datasetjson/issues/97" class="external-link">#97</a>).</li>
+<li>
+<strong>Reading is substantially faster</strong> - roughly 15-18x on files of a few hundred thousand rows and up, and it scales linearly with file size.</li>
+<li>
+<code>yyjsonr</code> and <code>jsonvalidate</code> are no longer required. <code>Imports</code> is now just <code>hms</code>; <code>jsonvalidate</code> moved to <code>Suggests</code> and is needed only for the <code>validate_*()</code> functions (<a href="https://github.com/atorus-research/datasetjson/issues/70" class="external-link">#70</a>).</li>
 </ul></div>
+<div class="section level3">
+<h3 id="new-formats-0-4-0">New formats<a class="anchor" aria-label="anchor" href="#new-formats-0-4-0"></a></h3>
+<ul><li>
+<code><a href="../reference/read_dataset_ndjson.html">read_dataset_ndjson()</a></code>, <code><a href="../reference/write_dataset_ndjson.html">write_dataset_ndjson()</a></code> and <code><a href="../reference/validate_dataset_ndjson.html">validate_dataset_ndjson()</a></code> support the Dataset NDJSON representation, where the dataset metadata forms the first line and each row follows as a JSON array.</li>
+<li>
+<code><a href="../reference/read_dataset_dsjc.html">read_dataset_dsjc()</a></code>, <code><a href="../reference/write_dataset_dsjc.html">write_dataset_dsjc()</a></code> and <code><a href="../reference/validate_dataset_dsjc.html">validate_dataset_dsjc()</a></code> support Dataset JSON Compressed (<code>.dsjc</code>), a zLib stream of Dataset NDJSON content. Rows are compressed as they are written, so a large dataset never needs its uncompressed form held in memory (<a href="https://github.com/atorus-research/datasetjson/issues/78" class="external-link">#78</a>).</li>
+<li>
+<code><a href="../reference/datasetjson_example.html">datasetjson_example()</a></code> now ships <code>dm.json</code>, <code>dm.ndjson</code> and <code>dm.dsjc</code>.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="behavior-changes-0-4-0">Behavior changes<a class="anchor" aria-label="anchor" href="#behavior-changes-0-4-0"></a></h3>
+<ul><li>
+<code>decimals_as_floats</code> has been removed from <code><a href="../reference/read_dataset_json.html">read_dataset_json()</a></code>. Columns with <code>dataType = "decimal"</code> and <code>targetDataType = "decimal"</code> are always converted to numeric on read, as the Dataset JSON v1.1 specification requires (<a href="https://github.com/atorus-research/datasetjson/issues/77" class="external-link">#77</a>).</li>
+<li>
+<code>digits</code> is deprecated in <code><a href="../reference/write_dataset_json.html">write_dataset_json()</a></code> and <code><a href="../reference/write_dataset_ndjson.html">write_dataset_ndjson()</a></code>. It is ignored, and supplying it warns. Decimals are written at whatever precision reads back as the same value, so there is no precision left for it to control. To render values at a fixed precision, format the column to character yourself and declare it as <code>decimal</code>/<code>decimal</code> in the column metadata.</li>
+<li>
+<code>float_as_decimals</code> is no longer needed to protect precision and setting it now warns to say so. It remains available as an interoperability choice for systems that require the <code>decimal</code> type.</li>
+<li>Reading a file whose columns lack a <code>name</code>, or whose <code>records</code> value is missing, now reports the problem rather than failing obscurely or silently substituting a value.</li>
+</ul></div>
+<div class="section level3">
+<h3 id="fixes-0-4-0">Fixes<a class="anchor" aria-label="anchor" href="#fixes-0-4-0"></a></h3>
+<ul><li>
+<code><a href="../reference/read_dataset_json.html">read_dataset_json()</a></code> sets <code>format.sas</code> from the <code>displayFormat</code> column attribute (<a href="https://github.com/atorus-research/datasetjson/issues/87" class="external-link">#87</a>).</li>
+<li>Reading from a URL returned only the first line of the file, so any pretty-printed JSON lost everything after it and NDJSON returned no rows.</li>
+<li>
+<code><a href="../reference/write_dataset_json.html">write_dataset_json()</a></code> with <code>float_as_decimals = TRUE</code> wrote <code>NA</code> as a padded string rather than JSON <code>null</code> (<a href="https://github.com/atorus-research/datasetjson/issues/76" class="external-link">#76</a>).</li>
+<li>
+<code>extract_xpt_meta()</code> in the <code>converting_files</code> vignette could return <code>-Inf</code> for the <code>length</code> of an empty or all-<code>NA</code> string column; the minimum is now 1 (<a href="https://github.com/atorus-research/datasetjson/issues/71" class="external-link">#71</a>).</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.3.0" id="datasetjson-030">datasetjson 0.3.0<a class="anchor" aria-label="anchor" href="#datasetjson-030"></a></h2><p class="text-muted">CRAN release: 2025-01-30</p>
 <p>This release provides a significant overhaul of the package due to the updates for Dataset JSON 1.1.0. Performance has also been significantly improved, as well as the main object interface.</p>

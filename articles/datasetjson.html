@@ -32,7 +32,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">datasetjson</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -167,10 +167,13 @@ Define-XML file)</td>
 </tr>
 <tr class="odd">
 <td>targetDataType</td>
-<td>Required</td>
-<td>Type of the variable. Allowed values: “integer”, “decimal”.
-Indicates the data type into which the receiving system must transform
-the associated Dataset-JSON variable.</td>
+<td>Optional</td>
+<td>Allowed values: “integer”, “decimal”. Indicates the data type into
+which the receiving system must transform the variable. Only specify it
+when it differs from <code>dataType</code> and the data needs
+transforming - for example <code>integer</code> for the numeric dates
+and times used in ADaM, or <code>decimal</code> where a number is
+carried as a string.</td>
 </tr>
 <tr class="even">
 <td>length</td>
@@ -228,85 +231,85 @@ the JSON output as a character string.</p>
 <code class="sourceCode R"><span><span class="va">js</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/write_dataset_json.html">write_dataset_json</a></span><span class="op">(</span><span class="va">ds_json</span>, pretty<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="va">js</span><span class="op">)</span></span>
 <span><span class="co">#&gt; {</span></span>
-<span><span class="co">#&gt;   "datasetJSONCreationDateTime": "2026-09-02T14:30:19",</span></span>
-<span><span class="co">#&gt;   "datasetJSONVersion": "1.1.0",</span></span>
-<span><span class="co">#&gt;   "itemGroupOID": "IG.IRIS",</span></span>
-<span><span class="co">#&gt;   "records": 5,</span></span>
-<span><span class="co">#&gt;   "name": "IRIS",</span></span>
-<span><span class="co">#&gt;   "label": "Iris",</span></span>
-<span><span class="co">#&gt;   "columns": [</span></span>
-<span><span class="co">#&gt;     {</span></span>
-<span><span class="co">#&gt;       "itemOID": "IT.IR.Sepal.Length",</span></span>
-<span><span class="co">#&gt;       "name": "Sepal.Length",</span></span>
-<span><span class="co">#&gt;       "label": "Sepal Length",</span></span>
-<span><span class="co">#&gt;       "dataType": "float",</span></span>
-<span><span class="co">#&gt;       "keySequence": 2</span></span>
-<span><span class="co">#&gt;     },</span></span>
-<span><span class="co">#&gt;     {</span></span>
-<span><span class="co">#&gt;       "itemOID": "IT.IR.Sepal.Width",</span></span>
-<span><span class="co">#&gt;       "name": "Sepal.Width",</span></span>
-<span><span class="co">#&gt;       "label": "Sepal Width",</span></span>
-<span><span class="co">#&gt;       "dataType": "float"</span></span>
-<span><span class="co">#&gt;     },</span></span>
-<span><span class="co">#&gt;     {</span></span>
-<span><span class="co">#&gt;       "itemOID": "IT.IR.Petal.Length",</span></span>
-<span><span class="co">#&gt;       "name": "Petal.Length",</span></span>
-<span><span class="co">#&gt;       "label": "Petal Length",</span></span>
-<span><span class="co">#&gt;       "dataType": "float",</span></span>
-<span><span class="co">#&gt;       "keySequence": 3</span></span>
-<span><span class="co">#&gt;     },</span></span>
-<span><span class="co">#&gt;     {</span></span>
-<span><span class="co">#&gt;       "itemOID": "IT.IR.Petal.Width",</span></span>
-<span><span class="co">#&gt;       "name": "Petal.Width",</span></span>
-<span><span class="co">#&gt;       "label": "Petal Width",</span></span>
-<span><span class="co">#&gt;       "dataType": "float"</span></span>
-<span><span class="co">#&gt;     },</span></span>
-<span><span class="co">#&gt;     {</span></span>
-<span><span class="co">#&gt;       "itemOID": "IT.IR.Species",</span></span>
-<span><span class="co">#&gt;       "name": "Species",</span></span>
-<span><span class="co">#&gt;       "label": "Flower Species",</span></span>
-<span><span class="co">#&gt;       "dataType": "string",</span></span>
-<span><span class="co">#&gt;       "length": 10,</span></span>
-<span><span class="co">#&gt;       "keySequence": 1</span></span>
-<span><span class="co">#&gt;     }</span></span>
-<span><span class="co">#&gt;   ],</span></span>
-<span><span class="co">#&gt;   "rows": [</span></span>
-<span><span class="co">#&gt;     [</span></span>
-<span><span class="co">#&gt;       5.1,</span></span>
-<span><span class="co">#&gt;       3.5,</span></span>
-<span><span class="co">#&gt;       1.4,</span></span>
-<span><span class="co">#&gt;       0.2,</span></span>
-<span><span class="co">#&gt;       "setosa"</span></span>
+<span><span class="co">#&gt;     "datasetJSONCreationDateTime": "2026-09-04T00:56:05",</span></span>
+<span><span class="co">#&gt;     "datasetJSONVersion": "1.1.0",</span></span>
+<span><span class="co">#&gt;     "itemGroupOID": "IG.IRIS",</span></span>
+<span><span class="co">#&gt;     "records": 5,</span></span>
+<span><span class="co">#&gt;     "name": "IRIS",</span></span>
+<span><span class="co">#&gt;     "label": "Iris",</span></span>
+<span><span class="co">#&gt;     "columns": [</span></span>
+<span><span class="co">#&gt;         {</span></span>
+<span><span class="co">#&gt;             "itemOID": "IT.IR.Sepal.Length",</span></span>
+<span><span class="co">#&gt;             "name": "Sepal.Length",</span></span>
+<span><span class="co">#&gt;             "label": "Sepal Length",</span></span>
+<span><span class="co">#&gt;             "dataType": "float",</span></span>
+<span><span class="co">#&gt;             "keySequence": 2</span></span>
+<span><span class="co">#&gt;         },</span></span>
+<span><span class="co">#&gt;         {</span></span>
+<span><span class="co">#&gt;             "itemOID": "IT.IR.Sepal.Width",</span></span>
+<span><span class="co">#&gt;             "name": "Sepal.Width",</span></span>
+<span><span class="co">#&gt;             "label": "Sepal Width",</span></span>
+<span><span class="co">#&gt;             "dataType": "float"</span></span>
+<span><span class="co">#&gt;         },</span></span>
+<span><span class="co">#&gt;         {</span></span>
+<span><span class="co">#&gt;             "itemOID": "IT.IR.Petal.Length",</span></span>
+<span><span class="co">#&gt;             "name": "Petal.Length",</span></span>
+<span><span class="co">#&gt;             "label": "Petal Length",</span></span>
+<span><span class="co">#&gt;             "dataType": "float",</span></span>
+<span><span class="co">#&gt;             "keySequence": 3</span></span>
+<span><span class="co">#&gt;         },</span></span>
+<span><span class="co">#&gt;         {</span></span>
+<span><span class="co">#&gt;             "itemOID": "IT.IR.Petal.Width",</span></span>
+<span><span class="co">#&gt;             "name": "Petal.Width",</span></span>
+<span><span class="co">#&gt;             "label": "Petal Width",</span></span>
+<span><span class="co">#&gt;             "dataType": "float"</span></span>
+<span><span class="co">#&gt;         },</span></span>
+<span><span class="co">#&gt;         {</span></span>
+<span><span class="co">#&gt;             "itemOID": "IT.IR.Species",</span></span>
+<span><span class="co">#&gt;             "name": "Species",</span></span>
+<span><span class="co">#&gt;             "label": "Flower Species",</span></span>
+<span><span class="co">#&gt;             "dataType": "string",</span></span>
+<span><span class="co">#&gt;             "length": 10,</span></span>
+<span><span class="co">#&gt;             "keySequence": 1</span></span>
+<span><span class="co">#&gt;         }</span></span>
 <span><span class="co">#&gt;     ],</span></span>
-<span><span class="co">#&gt;     [</span></span>
-<span><span class="co">#&gt;       4.9,</span></span>
-<span><span class="co">#&gt;       3.0,</span></span>
-<span><span class="co">#&gt;       1.4,</span></span>
-<span><span class="co">#&gt;       0.2,</span></span>
-<span><span class="co">#&gt;       "setosa"</span></span>
-<span><span class="co">#&gt;     ],</span></span>
-<span><span class="co">#&gt;     [</span></span>
-<span><span class="co">#&gt;       4.7,</span></span>
-<span><span class="co">#&gt;       3.2,</span></span>
-<span><span class="co">#&gt;       1.3,</span></span>
-<span><span class="co">#&gt;       0.2,</span></span>
-<span><span class="co">#&gt;       "setosa"</span></span>
-<span><span class="co">#&gt;     ],</span></span>
-<span><span class="co">#&gt;     [</span></span>
-<span><span class="co">#&gt;       4.6,</span></span>
-<span><span class="co">#&gt;       3.1,</span></span>
-<span><span class="co">#&gt;       1.5,</span></span>
-<span><span class="co">#&gt;       0.2,</span></span>
-<span><span class="co">#&gt;       "setosa"</span></span>
-<span><span class="co">#&gt;     ],</span></span>
-<span><span class="co">#&gt;     [</span></span>
-<span><span class="co">#&gt;       5.0,</span></span>
-<span><span class="co">#&gt;       3.6,</span></span>
-<span><span class="co">#&gt;       1.4,</span></span>
-<span><span class="co">#&gt;       0.2,</span></span>
-<span><span class="co">#&gt;       "setosa"</span></span>
+<span><span class="co">#&gt;     "rows": [</span></span>
+<span><span class="co">#&gt;         [</span></span>
+<span><span class="co">#&gt;             5.1,</span></span>
+<span><span class="co">#&gt;             3.5,</span></span>
+<span><span class="co">#&gt;             1.4,</span></span>
+<span><span class="co">#&gt;             0.2,</span></span>
+<span><span class="co">#&gt;             "setosa"</span></span>
+<span><span class="co">#&gt;         ],</span></span>
+<span><span class="co">#&gt;         [</span></span>
+<span><span class="co">#&gt;             4.9,</span></span>
+<span><span class="co">#&gt;             3.0,</span></span>
+<span><span class="co">#&gt;             1.4,</span></span>
+<span><span class="co">#&gt;             0.2,</span></span>
+<span><span class="co">#&gt;             "setosa"</span></span>
+<span><span class="co">#&gt;         ],</span></span>
+<span><span class="co">#&gt;         [</span></span>
+<span><span class="co">#&gt;             4.7,</span></span>
+<span><span class="co">#&gt;             3.2,</span></span>
+<span><span class="co">#&gt;             1.3,</span></span>
+<span><span class="co">#&gt;             0.2,</span></span>
+<span><span class="co">#&gt;             "setosa"</span></span>
+<span><span class="co">#&gt;         ],</span></span>
+<span><span class="co">#&gt;         [</span></span>
+<span><span class="co">#&gt;             4.6,</span></span>
+<span><span class="co">#&gt;             3.1,</span></span>
+<span><span class="co">#&gt;             1.5,</span></span>
+<span><span class="co">#&gt;             0.2,</span></span>
+<span><span class="co">#&gt;             "setosa"</span></span>
+<span><span class="co">#&gt;         ],</span></span>
+<span><span class="co">#&gt;         [</span></span>
+<span><span class="co">#&gt;             5.0,</span></span>
+<span><span class="co">#&gt;             3.6,</span></span>
+<span><span class="co">#&gt;             1.4,</span></span>
+<span><span class="co">#&gt;             0.2,</span></span>
+<span><span class="co">#&gt;             "setosa"</span></span>
+<span><span class="co">#&gt;         ]</span></span>
 <span><span class="co">#&gt;     ]</span></span>
-<span><span class="co">#&gt;   ]</span></span>
 <span><span class="co">#&gt; }</span></span></code></pre></div>
 <p>Similarly, to read a Dataset JSON object, you can use the function
 <code><a href="../reference/read_dataset_json.html">read_dataset_json()</a></code>. This function will return a dataframe
@@ -317,16 +320,103 @@ to you, ready to use. To read, provide a file path.</p>
 already read in.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_dataset_json.html">read_dataset_json</a></span><span class="op">(</span><span class="va">js</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="ndjson">NDJSON<a class="anchor" aria-label="anchor" href="#ndjson"></a>
+</h3>
+<p>Dataset JSON also has a newline-delimited representation, which
+carries exactly the same content with different framing: the dataset
+metadata as a single JSON object on line 1, then one JSON array per data
+row. This makes a dataset straightforward to read or write a row at a
+time rather than loading the whole file.</p>
+<p><code><a href="../reference/write_dataset_ndjson.html">write_dataset_ndjson()</a></code> and
+<code><a href="../reference/read_dataset_ndjson.html">read_dataset_ndjson()</a></code> mirror their JSON counterparts, and
+<code><a href="../reference/validate_dataset_ndjson.html">validate_dataset_ndjson()</a></code> checks a file against the Dataset
+NDJSON schema.</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/write_dataset_ndjson.html">write_dataset_ndjson</a></span><span class="op">(</span><span class="va">ds_json</span>, file <span class="op">=</span> <span class="st">"iris.ndjson"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_dataset_ndjson.html">read_dataset_ndjson</a></span><span class="op">(</span><span class="st">"iris.ndjson"</span><span class="op">)</span></span></code></pre></div>
+<p>As with <code><a href="../reference/write_dataset_json.html">write_dataset_json()</a></code>, leaving out
+<code>file</code> returns the content instead, which shows the shape of
+the format - the metadata object first, then one array per row:</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">nd</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/write_dataset_ndjson.html">write_dataset_ndjson</a></span><span class="op">(</span><span class="va">ds_json</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="va">nd</span><span class="op">)</span></span>
+<span><span class="co">#&gt; {"datasetJSONCreationDateTime":"2026-09-04T00:56:05","datasetJSONVersion":"1.1.0","itemGroupOID":"IG.IRIS","records":5,"name":"IRIS","label":"Iris","columns":[{"itemOID":"IT.IR.Sepal.Length","name":"Sepal.Length","label":"Sepal Length","dataType":"float","keySequence":2},{"itemOID":"IT.IR.Sepal.Width","name":"Sepal.Width","label":"Sepal Width","dataType":"float"},{"itemOID":"IT.IR.Petal.Length","name":"Petal.Length","label":"Petal Length","dataType":"float","keySequence":3},{"itemOID":"IT.IR.Petal.Width","name":"Petal.Width","label":"Petal Width","dataType":"float"},{"itemOID":"IT.IR.Species","name":"Species","label":"Flower Species","dataType":"string","length":10,"keySequence":1}]}</span></span>
+<span><span class="co">#&gt; [5.1,3.5,1.4,0.2,"setosa"]</span></span>
+<span><span class="co">#&gt; [4.9,3.0,1.4,0.2,"setosa"]</span></span>
+<span><span class="co">#&gt; [4.7,3.2,1.3,0.2,"setosa"]</span></span>
+<span><span class="co">#&gt; [4.6,3.1,1.5,0.2,"setosa"]</span></span>
+<span><span class="co">#&gt; [5.0,3.6,1.4,0.2,"setosa"]</span></span></code></pre></div>
+<p>The two formats are interchangeable - reading <code>iris.json</code>
+and <code>iris.ndjson</code> written from the same object gives you the
+same dataframe, with the same attributes.</p>
+</div>
+<div class="section level3">
+<h3 id="compressed-files">Compressed files<a class="anchor" aria-label="anchor" href="#compressed-files"></a>
+</h3>
+<p>Dataset JSON files are text, and text of this shape compresses very
+well. The standard defines a compressed representation, DSJC, which is
+simply the NDJSON content of a dataset as a zLib stream - no header, no
+wrapper, nothing but the compressed bytes. Files use the
+<code>.dsjc</code> extension.</p>
+<p><code><a href="../reference/write_dataset_dsjc.html">write_dataset_dsjc()</a></code>, <code><a href="../reference/read_dataset_dsjc.html">read_dataset_dsjc()</a></code>
+and <code><a href="../reference/validate_dataset_dsjc.html">validate_dataset_dsjc()</a></code> mirror the other two sets of
+functions:</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/write_dataset_dsjc.html">write_dataset_dsjc</a></span><span class="op">(</span><span class="va">ds_json</span>, file <span class="op">=</span> <span class="st">"iris.dsjc"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_dataset_dsjc.html">read_dataset_dsjc</a></span><span class="op">(</span><span class="st">"iris.dsjc"</span><span class="op">)</span></span></code></pre></div>
+<p>Because a DSJC file is a plain zLib stream, any zLib implementation
+can read it, and a stream produced by another tool reads here. The
+example files shipped with the package show the size difference on a
+small dataset:</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">sizes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">vapply</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"dm.json"</span>, <span class="st">"dm.ndjson"</span>, <span class="st">"dm.dsjc"</span><span class="op">)</span>,</span>
+<span>  <span class="kw">function</span><span class="op">(</span><span class="va">f</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/file.info.html" class="external-link">file.size</a></span><span class="op">(</span><span class="fu"><a href="../reference/datasetjson_example.html">datasetjson_example</a></span><span class="op">(</span><span class="va">f</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">numeric</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">sizes</span></span>
+<span><span class="co">#&gt;   dm.json dm.ndjson   dm.dsjc </span></span>
+<span><span class="co">#&gt;      7984      7976      1644</span></span></code></pre></div>
+<p>The saving grows with the dataset. On a 300,000 row file the NDJSON
+is 26 MB and the DSJC around 11 MB.</p>
+<p><code>level</code> controls the compression, from 0 (none) to 9. It
+defaults to 9, which the standard recommends for data exchange, but the
+top of the range earns little: on that same 26 MB dataset, level 1 wrote
+in a fifth of the time for a file only 4% larger. Reading is unaffected
+by the level a file was written at.</p>
+<p>With no <code>file</code> argument, <code><a href="../reference/write_dataset_dsjc.html">write_dataset_dsjc()</a></code>
+returns a raw vector rather than a character string, since the format is
+binary:</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">bytes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/write_dataset_dsjc.html">write_dataset_dsjc</a></span><span class="op">(</span><span class="va">ds_json</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">bytes</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 78 da 95 92 d1 4e</span></span></code></pre></div>
+<p>Rows are compressed as they are written, so producing a large file
+never holds the whole uncompressed dataset in memory.</p>
 <p>The data frame that’s read in is itself a <code>datasetjson</code>
 object and carries a number of attributes. For example, opening the
 dataframe within the RStudio IDE will present the variable labels.
 Additionally, the extra metadata provided in a Dataset JSON file is
 available. The attributes provided follow the naming convention of the
 Dataset JSON standard.</p>
-<p>We’ve provided some helper functions to leverage this data further.
-If you’d like to grab the column metadata from the <code>columns</code>
-element, you can use the function <code><a href="../reference/get_column_metadata.html">get_column_metadata()</a></code></p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+</div>
+<div class="section level3">
+<h3 id="working-with-the-metadata">Working with the metadata<a class="anchor" aria-label="anchor" href="#working-with-the-metadata"></a>
+</h3>
+<p>Everything above is what you need to read and write Dataset JSON
+files. The two functions in this section are optional conveniences for
+working with the column metadata once a file is read, and can be skipped
+on a first pass.</p>
+<p>If you’d like to grab the column metadata from the
+<code>columns</code> element, you can use the function
+<code><a href="../reference/get_column_metadata.html">get_column_metadata()</a></code></p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/get_column_metadata.html">get_column_metadata</a></span><span class="op">(</span><span class="va">dat</span><span class="op">)</span></span>
 <span><span class="co">#&gt;              itemOID         name          label dataType keySequence</span></span>
 <span><span class="co">#&gt; 1 IT.IR.Sepal.Length Sepal.Length   Sepal Length    float           2</span></span>
@@ -344,7 +434,7 @@ element, you can use the function <code><a href="../reference/get_column_metadat
 function <code><a href="../reference/set_variable_attributes.html">set_variable_attributes()</a></code> to apply the
 <code>columns</code> metadata to the individual variables within the
 data frame.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/set_variable_attributes.html">set_variable_attributes</a></span><span class="op">(</span><span class="va">dat</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/attributes.html" class="external-link">attributes</a></span><span class="op">(</span><span class="va">dat</span><span class="op">$</span><span class="va">Species</span><span class="op">)</span></span>
 <span><span class="co">#&gt; $label</span></span>
@@ -356,11 +446,11 @@ data frame.</p>
 <span><span class="co">#&gt; $dataType</span></span>
 <span><span class="co">#&gt; [1] "string"</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $keySequence</span></span>
-<span><span class="co">#&gt; [1] 1</span></span>
-<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $length</span></span>
-<span><span class="co">#&gt; [1] 10</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 10</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $keySequence</span></span>
+<span><span class="co">#&gt; [1] 1</span></span></code></pre></div>
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

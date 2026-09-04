@@ -21,4 +21,13 @@ Useful links:
 
 Authors:
 
+- Mike Stackhouse <mike.stackhouse@atorusresearch.com>
+  ([ORCID](https://orcid.org/0000-0001-6030-723X))
+
 - Nicholas Masel <nmasel@its.jnj.com>
+
+Other contributors:
+
+- Atorus Research, Inc. \[copyright holder\]
+
+- Yao Yuan (Author of the bundled yyjson C library) \[copyright holder\]

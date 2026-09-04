@@ -19,7 +19,7 @@ appropriate metadata would be maintained separate from the dataset
 itself. Inevitably some information will get lost while being exchanged
 because of differences of what information was applied or how R
 interprets SAS datasets. This is one reason why **{datasetjson}**
-improves upon XPTs as an exchange format. In leiu of external metadata,
+improves upon XPTs as an exchange format. In lieu of external metadata,
 here’s an example of how you can make a best effort conversion.
 
 ``` r
@@ -106,8 +106,11 @@ compliant with the schema.
 
 ``` r
 
-# Check schema compliance
-validate_dataset_json(json_file_content)
+# Check schema compliance. jsonvalidate is a suggested package rather than a
+# hard dependency, so guard the call.
+if (requireNamespace("jsonvalidate", quietly = TRUE)) {
+  validate_dataset_json(json_file_content)
+}
 #> File is valid per the Dataset JSON v1.1.0 schema
 #> [1] instancePath schemaPath   keyword      params       message     
 #> [6] schema       parentSchema dataPath    
