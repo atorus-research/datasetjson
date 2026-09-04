@@ -25,7 +25,7 @@ Some users may be interested in converting SAS Version 5 Transport files into XP
 
 ## Converting from XPT
 
-Ideally if you're converting from an XPT file or a SAS7BDAT file, the appropriate metadata would be maintained separate from the dataset itself. Inevitably some information will get lost while being exchanged because of differences of what information was applied or how R interprets SAS datasets. This is one reason why **{datasetjson}** improves upon XPTs as an exchange format. In leiu of external metadata, here's an example of how you can make a best effort conversion.
+Ideally if you're converting from an XPT file or a SAS7BDAT file, the appropriate metadata would be maintained separate from the dataset itself. Inevitably some information will get lost while being exchanged because of differences of what information was applied or how R interprets SAS datasets. This is one reason why **{datasetjson}** improves upon XPTs as an exchange format. In lieu of external metadata, here's an example of how you can make a best effort conversion.
 
 ```{r XPT conversion}
 adsl <- haven::read_xpt(file.path(system.file(package='datasetjson'), "adsl.xpt"))
