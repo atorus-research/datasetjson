@@ -1,4 +1,19 @@
-# Submission 0.4.0
+# Submission 0.4.1
+
+This release fixes the test ERRORs on r-devel-linux-x86_64-fedora-clang and
+r-devel-linux-x86_64-fedora-gcc reported by Prof Ripley on 2026-10-22.
+
+- The failing test, along with four others, compared the output of two
+  separate writes. Each write records its creation time to the second, so on a
+  slow machine the two writes could fall in different seconds. These tests now
+  pin the clock.
+- The failure showed up as an error because the test passed a number to
+  `testthat`'s `info` argument, which current `testthat` rejects. Fixed.
+- None of the package's tests, examples or vignettes use Internet resources.
+
+There are no changes to package code.
+
+# Previous submission 0.4.0
 
 - JSON parsing and serialization moved into the package, using the bundled
   `yyjson` C library. This is the first release of `datasetjson` to contain

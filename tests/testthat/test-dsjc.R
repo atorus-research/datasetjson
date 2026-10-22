@@ -9,6 +9,7 @@ make_ds <- function(d = iris, items = iris_items) {
 }
 
 test_that("DSJC is a plain zLib stream of the NDJSON content", {
+  local_frozen_datetime()
   ds <- make_ds()
   bytes <- write_dataset_dsjc(ds)
 
@@ -30,6 +31,7 @@ test_that("DSJC is a plain zLib stream of the NDJSON content", {
 })
 
 test_that("DSJC round-trips through a file and through raw bytes", {
+  local_frozen_datetime()
   ds <- make_ds()
   from_ndjson <- read_dataset_ndjson(write_dataset_ndjson(ds))
 
@@ -42,6 +44,7 @@ test_that("DSJC round-trips through a file and through raw bytes", {
 })
 
 test_that("every compression level produces a readable stream", {
+  local_frozen_datetime()
   ds <- make_ds(head(iris, 20))
   f <- withr::local_tempfile(fileext = ".ndjson")
   write_dataset_ndjson(ds, f)
@@ -50,9 +53,10 @@ test_that("every compression level produces a readable stream", {
   sizes <- integer()
   for (lvl in c(0L, 1L, 6L, 9L)) {
     b <- write_dataset_dsjc(ds, level = lvl)
-    expect_identical(memDecompress(b, type = "gzip"), nd, info = lvl)
+    expect_identical(memDecompress(b, type = "gzip"), nd,
+                     info = paste("level", lvl))
     expect_equal(read_dataset_dsjc(b), read_dataset_dsjc(write_dataset_dsjc(ds)),
-                 info = lvl)
+                 info = paste("level", lvl))
     sizes <- c(sizes, length(b))
   }
   # level 0 stores, higher levels compress
