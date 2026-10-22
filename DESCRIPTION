@@ -1,7 +1,7 @@
 Package: datasetjson
 Type: Package
 Title: Read and Write CDISC Dataset JSON Files
-Version: 0.4.0
+Version: 0.4.1
 Authors@R: c(
     person(given = "Mike",
            family = "Stackhouse",
@@ -33,7 +33,7 @@ Depends: R (>= 4.0)
 Imports:
     hms
 Suggests:
-    testthat (>= 2.1.0),
+    testthat (>= 3.1.7),
     jsonvalidate (>= 1.3.1),
     jsonlite (>= 1.8.0),
     mockery,

@@ -399,6 +399,7 @@ test_that("float_as_decimals advises that it is no longer needed for precision",
 })
 
 test_that("digits is deprecated, ignored, and warns", {
+  local_frozen_datetime()
   dsjson <- dataset_json(
     head(iris, 3),
     item_oid = "test_df",
@@ -458,6 +459,7 @@ test_that("fixed precision is still reachable by formatting the column", {
 })
 
 test_that("float_as_decimals reports when it had no effect", {
+  local_frozen_datetime()
   # no float, double or decimal columns for the flag to act on
   d <- data.frame(SUBJ = c("A", "B"), SEQ = 1:2, FLAG = c("Y", "N"),
                   stringsAsFactors = FALSE)

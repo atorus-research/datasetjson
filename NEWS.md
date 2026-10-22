@@ -1,3 +1,12 @@
+# datasetjson 0.4.1
+
+- Fixes test failures on CRAN's Fedora r-devel check machines. Several tests
+  compared the output of two separate writes, and each write stamps
+  `datasetJSONCreationDateTime` with the current second, so on a slow machine
+  the two could straddle a second boundary and differ. These tests now pin the
+  clock. Tests also no longer pass a number to `info`, which current
+  `testthat` rejects. No changes to package behavior.
+
 # datasetjson 0.4.0
 
 ## JSON handling moved into the package
