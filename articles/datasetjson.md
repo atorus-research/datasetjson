@@ -109,7 +109,7 @@ also has the option to return the JSON output as a character string.
 js <- write_dataset_json(ds_json, pretty=TRUE)
 cat(js)
 #> {
-#>     "datasetJSONCreationDateTime": "2026-10-22T18:38:50",
+#>     "datasetJSONCreationDateTime": "2026-10-22T19:24:39",
 #>     "datasetJSONVersion": "1.1.0",
 #>     "itemGroupOID": "IG.IRIS",
 #>     "records": 5,
@@ -240,7 +240,7 @@ the format - the metadata object first, then one array per row:
 
 nd <- write_dataset_ndjson(ds_json)
 cat(nd)
-#> {"datasetJSONCreationDateTime":"2026-10-22T18:38:50","datasetJSONVersion":"1.1.0","itemGroupOID":"IG.IRIS","records":5,"name":"IRIS","label":"Iris","columns":[{"itemOID":"IT.IR.Sepal.Length","name":"Sepal.Length","label":"Sepal Length","dataType":"float","keySequence":2},{"itemOID":"IT.IR.Sepal.Width","name":"Sepal.Width","label":"Sepal Width","dataType":"float"},{"itemOID":"IT.IR.Petal.Length","name":"Petal.Length","label":"Petal Length","dataType":"float","keySequence":3},{"itemOID":"IT.IR.Petal.Width","name":"Petal.Width","label":"Petal Width","dataType":"float"},{"itemOID":"IT.IR.Species","name":"Species","label":"Flower Species","dataType":"string","length":10,"keySequence":1}]}
+#> {"datasetJSONCreationDateTime":"2026-10-22T19:24:39","datasetJSONVersion":"1.1.0","itemGroupOID":"IG.IRIS","records":5,"name":"IRIS","label":"Iris","columns":[{"itemOID":"IT.IR.Sepal.Length","name":"Sepal.Length","label":"Sepal Length","dataType":"float","keySequence":2},{"itemOID":"IT.IR.Sepal.Width","name":"Sepal.Width","label":"Sepal Width","dataType":"float"},{"itemOID":"IT.IR.Petal.Length","name":"Petal.Length","label":"Petal Length","dataType":"float","keySequence":3},{"itemOID":"IT.IR.Petal.Width","name":"Petal.Width","label":"Petal Width","dataType":"float"},{"itemOID":"IT.IR.Species","name":"Species","label":"Flower Species","dataType":"string","length":10,"keySequence":1}]}
 #> [5.1,3.5,1.4,0.2,"setosa"]
 #> [4.9,3.0,1.4,0.2,"setosa"]
 #> [4.7,3.2,1.3,0.2,"setosa"]
@@ -310,7 +310,7 @@ binary:
 bytes <- write_dataset_dsjc(ds_json)
 
 head(bytes)
-#> [1] 78 da 95 92 d1 4e
+#> [1] 78 da 95 92 5d 4f
 ```
 
 Rows are compressed as they are written, so producing a large file never
